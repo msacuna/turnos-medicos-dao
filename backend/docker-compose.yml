@@ -1,0 +1,25 @@
+services:
+  db-turnero:
+    image: mysql:8.0
+    container_name: mysql-turnero
+    environment:
+      MYSQL_USER: admin
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: turnos_medicos_bd
+      MYSQL_PASSWORD: admin
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "3307:3306"  # Usa 3307 si 3306 ya está ocupado
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d        # Ejecuta scripts .sql al iniciar
+      - turnero-mysqldata:/var/lib/mysql             # Datos persistentes
+      - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uadmin -padmin"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  turnero-mysqldata:
