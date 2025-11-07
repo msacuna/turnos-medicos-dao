@@ -1,0 +1,65 @@
+-- Inicialización de datos (inserts)
+INSERT INTO rol (nombre) VALUES
+('Administrador'), ('Profesional');
+
+INSERT INTO grupo_sanguineo (nombre) VALUES
+('A+'), ('A-'),
+('B+'), ('B-'),
+('AB+'), ('AB-'),
+('O+'), ('O-');
+
+INSERT INTO estado_turno (nombre) VALUES
+('Agendado'), -- no llegó a fecha_hora_inicio
+('Cancelado'), -- cancelado antes de fecha_hora_inicio
+('En proceso'), -- llegó a fecha_hora_inicio y se agenda como atendido 15 min antes de fecha_hora_fin
+('Ausente'), -- llegó a fecha_hora_inicio y no se agenda como atendido 15 min antes de fecha_hora_fin
+('Finalizado'), -- llegó a fecha_hora_inicio y fue atendido
+('Confirmado'); -- se acepta la generación de consulta asociada al turno
+
+INSERT INTO especialidad (nombre) VALUES
+('Cardiología'),
+('Dermatología'),
+('Endocrinología'),
+('Gastroenterología'),
+('Neurología'),
+('Pediatría'),
+('Psiquiatría'),
+('Traumatología'),
+('Urología');
+
+INSERT INTO motivo_consulta (nombre) VALUES
+('Chequeo General'),
+('Seguimiento de tratamiento'),
+('Control'),
+('Dolor'),
+('Urgencia');
+
+INSERT INTO alergia (nombre) VALUES
+('Penicilina'),
+('Ibuprofeno'),
+('Polvo'),
+('Pólenes'),
+('Picaduras de insectos'),
+('Lácteos');
+
+INSERT INTO antecedente (nombre) VALUES
+('Diabetes'),
+('Hipertensión'),
+('Asma'),
+('Enfermedad cardíaca'),
+('Colesterol alto'),
+('Tabaquismo'),
+('Obesidad');
+
+INSERT INTO tipo_obra_social (nombre) VALUES
+('Prepaga'),
+('Obra Social Sindical'),
+('Obra Social Estatal');
+
+INSERT INTO obra_social (nombre, cuit, porcentaje_cobertura, id_tipo) VALUES
+('OSDE', '30573419671', 90.00, 1),
+('Swiss Medical', '30678945211', 85.00, 1),
+('Galeno', '30710002911', 80.00, 1),
+('PAMI', '30523467891', 100.00, 3),
+('APROSS', '30500612781', 90.00, 3),
+('OSECAC', '30517890123', 80.00, 2);
