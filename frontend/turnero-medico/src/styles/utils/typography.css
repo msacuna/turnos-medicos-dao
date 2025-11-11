@@ -1,0 +1,14 @@
+.h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.text-muted {
+  color: rgba(66, 76, 89, 0.7);
+}
