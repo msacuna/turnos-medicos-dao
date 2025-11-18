@@ -47,7 +47,7 @@ CREATE TABLE tipo_obra_social (
 CREATE TABLE obra_social (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
-    cuit VARCHAR(11) NOT NULL,
+    cuit VARCHAR(11) NOT NULL UNIQUE,
     porcentaje_cobertura DECIMAL(5, 2) NOT NULL,
     id_tipo INT NOT NULL,
     CONSTRAINT chk_porcentaje CHECK (porcentaje_cobertura >= 0 AND porcentaje_cobertura <= 100),
