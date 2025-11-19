@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .turno import Turno
 
 class Paciente(SQLModel, table=True):
+    __tablename__ = "paciente" # type: ignore
     dni: int = Field(primary_key=True)
     nombre: str = Field(max_length=100)
     apellido: str = Field(max_length=100)

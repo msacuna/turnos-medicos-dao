@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .obra_social import ObraSocial
 
 class Profesional(SQLModel, table=True):
+    __tablename__ = "profesional" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     matricula: str = Field(unique=True, max_length=50)
     nombre: str = Field(max_length=100)

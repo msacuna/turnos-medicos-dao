@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from .profesional import Profesional
 
 class ObraSocial(SQLModel, table=True):
+    __tablename__ = "obra_social" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(max_length=100, unique=True)
     cuit: str = Field(max_length=11, unique=True)

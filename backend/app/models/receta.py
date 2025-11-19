@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .consulta import Consulta
 
 class Receta(SQLModel, table=True):
+    __tablename__ = 'receta' # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     fecha: date
     dispensada: bool = Field(default=False)

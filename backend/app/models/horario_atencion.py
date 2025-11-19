@@ -17,6 +17,7 @@ class DiaSemana(enum.Enum): # nativo de python
     SABADO = 'Sabado'
 
 class HorarioAtencion(SQLModel, table=True):
+    __tablename__ = "horario_atencion" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     dia_semana: DiaSemana = Field(index=True) # para busquedas rapidas
     hora_inicio: time

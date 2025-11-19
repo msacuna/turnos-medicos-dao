@@ -10,7 +10,7 @@ from .horario_atencion import HorarioAtencion
 from .laboratorio import Laboratorio
 from .links import MedicamentoLaboratorioLink, PacienteAlergiaLink, PacienteAntecedenteLink, HorarioProfesionalLink, ObraSocialProfesionalLink
 from .medicamento import Medicamento
-from motivo_consulta import MotivoConsulta
+from .motivo_consulta import MotivoConsulta
 from .obra_social import ObraSocial
 from .paciente import Paciente
 from .profesional import Profesional

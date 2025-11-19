@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .medicamento import Medicamento
 
 class DetalleReceta(SQLModel, table=True):
+    __tablename__ = "detalle_receta" # type: ignore
     item: Optional[int] = Field(default=None, primary_key=True)
     id_receta: int = Field(foreign_key="receta.id", primary_key=True)
     id_medicamento: int = Field(foreign_key="medicamento.id")

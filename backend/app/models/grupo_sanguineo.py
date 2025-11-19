@@ -5,6 +5,7 @@ if TYPE_CHECKING:
     from .paciente import Paciente
 
 class GrupoSanguineo(SQLModel, table=True):
+    __tablename__ = "grupo_sanguineo" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(max_length=5, unique=True)
 

@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .medicamento import Medicamento
 
 class Laboratorio(SQLModel, table=True):
+    __tablename__ = "laboratorio" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(max_length=100)
 

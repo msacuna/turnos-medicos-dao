@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .turno import Turno
 
 class Especialidad(SQLModel, table=True):
+    __tablename__ = 'especialidad' # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(unique=True, max_length=100)
 

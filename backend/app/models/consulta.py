@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .receta import Receta
 
 class Consulta(SQLModel, table=True):
+    __tablename__ = 'consulta' # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     observaciones: Optional[str] = Field(default=None, max_length=255)
     id_turno: int = Field(foreign_key="turno.id")

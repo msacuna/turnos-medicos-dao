@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .consulta import Consulta
 
 class Turno(SQLModel, table=True):
+    __tablename__ = "turno" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     fecha: date
     hora_inicio: time

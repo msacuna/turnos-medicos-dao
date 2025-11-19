@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .turno import Turno
 
 class AgendaProfesional(SQLModel, table=True):
+    __tablename__ = "agenda_profesional" # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     id_profesional: int = Field(foreign_key="profesional.id")
     anio: int
