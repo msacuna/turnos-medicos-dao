@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import inspect
-from app.core.config import settings
+from .config import settings
 
 # 1. Configuración del Engine
 engine = create_engine(
@@ -20,7 +20,7 @@ def get_db():
     finally:
         db.close()
 
-# 4. VALIDACIÓN DE ESQUEMA (Simple y Directa)
+# 4. VALIDACIÓN DE ESQUEMA (Simple y Directa) --> BORRAR UNA VEZ VALIDADOS
 def validate_db_schema():
     """
     Compara las tablas de la Base de Datos contra los Modelos de SQLModel.

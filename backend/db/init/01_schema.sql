@@ -160,8 +160,7 @@ CREATE TABLE agenda_profesional (
 -- Turnos (turno, estado turno, receta, consulta, motivo consulta)
 -- =============================================================================
 CREATE TABLE estado_turno (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE
+    nombre VARCHAR(100) PRIMARY KEY
 );
 
 CREATE TABLE turno (
@@ -170,14 +169,14 @@ CREATE TABLE turno (
     hora_inicio TIME NOT NULL,
     hora_fin_estimada TIME NOT NULL,
     dni_paciente INT NOT NULL,
-    id_estado INT NOT NULL,
+    nombre_estado VARCHAR(100) NOT NULL,
     id_especialidad INT NOT NULL,
     id_agenda_profesional INT NOT NULL,
     CONSTRAINT chk_hora_turno CHECK (hora_fin_estimada > hora_inicio),
     CONSTRAINT fk_turno_especialidad FOREIGN KEY (id_especialidad) REFERENCES especialidad(id),
     CONSTRAINT fk_turno_agenda_profesional FOREIGN KEY (id_agenda_profesional) REFERENCES agenda_profesional(id),
     CONSTRAINT fk_turno_paciente FOREIGN KEY (dni_paciente) REFERENCES paciente(dni),
-    CONSTRAINT fk_turno_estado FOREIGN KEY (id_estado) REFERENCES estado_turno(id)
+    CONSTRAINT fk_turno_estado FOREIGN KEY (nombre_estado) REFERENCES estado_turno(nombre)
 );
 
 CREATE TABLE receta (
@@ -198,18 +197,17 @@ CREATE TABLE detalle_receta (
 );
 
 CREATE TABLE motivo_consulta (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE -- general, control, urgencia
+    nombre VARCHAR(100) PRIMARY KEY -- general, control, urgencia
 );
 
 CREATE TABLE consulta (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     observaciones VARCHAR(255), -- notas del profesional
     id_turno INT NOT NULL,
-    id_motivo_consulta INT NOT NULL,
+    nombre_motivo_consulta VARCHAR(100) NOT NULL,
     id_receta INT,
     CONSTRAINT fk_consulta_turno FOREIGN KEY (id_turno) REFERENCES turno(id) ON DELETE CASCADE,
-    CONSTRAINT fk_consulta_motivo_consulta FOREIGN KEY (id_motivo_consulta) REFERENCES motivo_consulta(id),
+    CONSTRAINT fk_consulta_motivo_consulta FOREIGN KEY (nombre_motivo_consulta) REFERENCES motivo_consulta(nombre),
     CONSTRAINT fk_consulta_receta FOREIGN KEY (id_receta) REFERENCES receta(id) ON DELETE SET NULL
 );
 
