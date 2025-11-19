@@ -1,18 +1,18 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .turno import Turno
+    from .motivo_consulta import MotivoConsulta
+    from .receta import Receta
 
-class Consulta(Base):
-    __tablename__ = 'consulta'
+class Consulta(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    observaciones: Optional[str] = Field(default=None, max_length=255)
+    id_turno: int = Field(foreign_key="turno.id")
+    nombre_motivo_consulta: str = Field(foreign_key="motivo_consulta.nombre")
+    id_receta: Optional[int] = Field(default=None, foreign_key="receta.id")
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    observaciones = Column(String(255), nullable=True)
-    id_turno = Column(Integer, ForeignKey("turno.id"), nullable=False)
-    id_motivo_consulta = Column(Integer, ForeignKey("motivo_consulta.id"), nullable=False)
-    id_receta = Column(Integer, ForeignKey("receta.id"), nullable=True)
-
-    # Relaciones directas
-    turno = relationship("Turno", back_populates="consulta")
-    receta = relationship("Receta", back_populates="consulta")
-    motivo_consulta = relationship("MotivoConsulta", back_populates="consulta")
+    turno: "Turno" = Relationship(back_populates="consultas")
+    motivo_consulta: "MotivoConsulta" = Relationship(back_populates="consultas")
+    receta: Optional["Receta"] = Relationship(back_populates="consultas")

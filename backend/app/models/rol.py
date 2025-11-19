@@ -1,12 +1,11 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from typing import List, Optional, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
 
-class Rol(Base):
-    __tablename__ = "rol"
+if TYPE_CHECKING:
+    from .usuario import Usuario
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False, unique=True)
+class Rol(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(unique=True, max_length=100)
 
-    # Relaciones directas
-    usuarios = relationship("Usuario", back_populates="rol")
+    usuarios: List["Usuario"] = Relationship(back_populates="rol")

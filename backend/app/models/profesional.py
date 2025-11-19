@@ -1,32 +1,23 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from .links import HorarioProfesionalLink, ObraSocialProfesionalLink
 
-class Profesional(Base):
-    __tablename__ = 'profesional'
+if TYPE_CHECKING:
+    from .especialidad import Especialidad
+    from .agenda_profesional import AgendaProfesional
+    from .horario_atencion import HorarioAtencion
+    from .obra_social import ObraSocial
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    matricula = Column(String(50), nullable=False, unique=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    email = Column(String(255), nullable=False, unique=True)
-    telefono = Column(String(20), nullable=False)
+class Profesional(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    matricula: str = Field(unique=True, max_length=50)
+    nombre: str = Field(max_length=100)
+    apellido: str = Field(max_length=100)
+    email: str = Field(unique=True, max_length=255)
+    telefono: str = Field(max_length=20)
+    id_especialidad: int = Field(foreign_key="especialidad.id")
 
-    id_especialidad = Column(Integer, ForeignKey("especialidad.id"), nullable=False)
-
-    # Relaciones directas
-    especialidad = relationship("Especialidad", back_populates="profesionales")
-    obra_social_profesionales = relationship("ObraSocialProfesional", back_populates="profesional")
-    horario_profesionales = relationship("HorarioProfesional", back_populates="profesional")
-
-    agendas_profesionales = relationship("AgendaProfesional", back_populates="profesional")
-
-    # Acceder directamente a las obras sociales vigentes
-    @property
-    def obras_sociales_vigentes(self):
-        return [osp.obra_social for osp in self.obra_social_profesionales if osp.vigente]
-    
-    # Acceder directamente al horario vigente del profesional
-    @property
-    def horarios_vigentes(self):
-        return [hp.horario_atencion for hp in self.horario_profesionales if hp.vigente]
+    especialidad: Optional["Especialidad"] = Relationship(back_populates="profesionales")
+    agendas_profesionales: list["AgendaProfesional"] = Relationship(back_populates="profesional")
+    horario_atenciones: list["HorarioAtencion"] = Relationship(back_populates="profesionales", link_model=HorarioProfesionalLink)
+    obras_sociales: list["ObraSocial"] = Relationship(back_populates="profesionales", link_model=ObraSocialProfesionalLink)

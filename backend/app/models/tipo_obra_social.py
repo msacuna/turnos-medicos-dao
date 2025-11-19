@@ -1,12 +1,11 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import Relationship, SQLModel, Field
+from typing import Optional, TYPE_CHECKING
 
-class TipoObraSocial(Base):
-    __tablename__ = "tipo_obra_social"
+if TYPE_CHECKING:
+    from .obra_social import ObraSocial
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False)
+class TipoObraSocial(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(max_length=100)
 
-    # Relaciones inversas
-    obras_sociales = relationship("ObraSocial", back_populates="tipo")
+    obras_sociales: list["ObraSocial"] = Relationship(back_populates="tipo")

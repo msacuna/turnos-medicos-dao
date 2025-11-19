@@ -1,23 +1,23 @@
-from sqlalchemy import Column, Integer, ForeignKey, String, CheckConstraint
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from pydantic import model_validator
 
+if TYPE_CHECKING:
+    from .receta import Receta
+    from .medicamento import Medicamento
 
-class DetalleReceta(Base):
-    __tablename__ = "detalle_receta"
+class DetalleReceta(SQLModel, table=True):
+    item: Optional[int] = Field(default=None, primary_key=True)
+    id_receta: int = Field(foreign_key="receta.id", primary_key=True)
+    id_medicamento: int = Field(foreign_key="medicamento.id")
+    cantidad: int
+    indicaciones: Optional[str] = Field(default=None, max_length=255)
 
-    # Clave primaria compuesta según BD: (item, id_receta)
-    item = Column(Integer, primary_key=True, autoincrement=True)
-    id_receta = Column(Integer, ForeignKey("receta.id"), primary_key=True, nullable=False)
-    
-    id_medicamento = Column(Integer, ForeignKey("medicamento.id"), nullable=False)
-    cantidad = Column(Integer, nullable=False)
-    indicaciones = Column(String(255), nullable=True)
+    receta: "Receta" = Relationship(back_populates="detalles_receta")
+    medicamento: "Medicamento" = Relationship(back_populates="detalles_receta")
 
-    __table_args__ = (
-        CheckConstraint('cantidad > 0', name='chk_cantidad_positiva'),
-    )
-
-    # Relaciones directas
-    receta = relationship("Receta", back_populates="detalles_receta")
-    medicamento = relationship("Medicamento", back_populates="detalles_receta")
+    @model_validator(mode="after")
+    def check_cantidad_positiva(self):
+        if self.cantidad <= 0:
+            raise ValueError("La cantidad debe ser un número positivo.")
+        return self

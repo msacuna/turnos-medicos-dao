@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from .links import PacienteAlergiaLink
 
-class Alergia(Base):
-    __tablename__ = "alergia"
+if TYPE_CHECKING:
+    from .paciente import Paciente
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False, unique=True)
+class Alergia(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(max_length=100, unique=True)
 
-    # Relaciones Many-to-Many
-    pacientes = relationship(
-        "Paciente",
-        secondary="paciente_alergia", 
-        back_populates="alergias"
+    pacientes: list["Paciente"] = Relationship(
+        back_populates="alergias", link_model=PacienteAlergiaLink
     )

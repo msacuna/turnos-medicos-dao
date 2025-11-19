@@ -1,10 +1,14 @@
-from sqlalchemy import CheckConstraint, Column, Integer, Time, Enum
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from pydantic import model_validator
+from datetime import time
 import enum
+from .links import HorarioProfesionalLink
 
-# Crear enum de Python
-class DiaSemana(enum.Enum):
+if TYPE_CHECKING:
+    from .profesional import Profesional
+
+class DiaSemana(enum.Enum): # nativo de python
     LUNES = 'Lunes'
     MARTES = 'Martes'
     MIERCOLES = 'Miercoles'
@@ -12,22 +16,17 @@ class DiaSemana(enum.Enum):
     VIERNES = 'Viernes'
     SABADO = 'Sabado'
 
-class HorarioAtencion(Base):
-    __tablename__ = 'horario_atencion'
+class HorarioAtencion(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    dia_semana: DiaSemana = Field(index=True) # para busquedas rapidas
+    hora_inicio: time
+    hora_fin: time
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    dia_semana = Column(Enum(DiaSemana), nullable=False)
-    hora_inicio = Column(Time, nullable=False)
-    hora_fin = Column(Time, nullable=False)
+    profesionales: list["Profesional"] = Relationship(back_populates="horario_atenciones", link_model=HorarioProfesionalLink)
 
-    __table_args__ = (
-        CheckConstraint('hora_fin > hora_inicio', name='chk_hora_fin_mayor_hora_inicio'),
-    )
-
-    # Relaciones directas
-    horario_profesionales = relationship("HorarioProfesional", back_populates="horario_atencion")
-
-    # Acceder directamente a los profesionales con horario vigente
-    @property
-    def profesionales_vigentes(self):
-        return [hp.profesional for hp in self.horario_profesionales if hp.vigente]
+    @model_validator(mode="after")
+    def validar_rango_horario(self):
+        # 'self' ya tiene los datos cargados
+        if self.hora_inicio >= self.hora_fin:
+            raise ValueError("La hora de fin debe ser posterior a la hora de inicio")
+        return self

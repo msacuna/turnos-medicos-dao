@@ -1,21 +1,24 @@
-from sqlalchemy import CheckConstraint, Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from pydantic import model_validator
 
+if TYPE_CHECKING:
+    from .profesional import Profesional
+    from .turno import Turno
 
-class AgendaProfesional(Base):
-    __tablename__ = "agenda_profesional"
+class AgendaProfesional(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    id_profesional: int = Field(foreign_key="profesional.id")
+    anio: int
+    mes: int
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    id_profesional = Column(Integer, ForeignKey("profesional.id"), nullable=False)
-    anio = Column(Integer, nullable=False)
-    mes = Column(Integer, nullable=False)
+    profesional: "Profesional" = Relationship(back_populates="agendas_profesionales")
+    turnos: list["Turno"] = Relationship(back_populates="agenda_profesional")
 
-    __table_args__ = (
-        CheckConstraint('mes >= 1 AND mes <= 12', name='chk_mes_valido'),
-    )
-
-    turnos = relationship("Turno", back_populates="agenda_profesional")
-
-    # Relaciones directas
-    profesional = relationship("Profesional", back_populates="agendas_profesionales")
+    @model_validator(mode="after")
+    def validar_mes_anio(self):
+        if not (1 <= self.mes <= 12):
+            raise ValueError("El mes debe estar entre 1 y 12")
+        if self.anio < 1900:
+            raise ValueError("El año debe ser mayor o igual a 1900")
+        return self

@@ -1,11 +1,10 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import TYPE_CHECKING
 
-class MotivoConsulta(Base):
-    __tablename__ = 'motivo_consulta'
+if TYPE_CHECKING:
+    from .consulta import Consulta
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False, unique=True)
+class MotivoConsulta(SQLModel, table=True):
+    nombre: str = Field(primary_key=True, max_length=100)
 
-    consultas = relationship("Consulta", back_populates="motivo_consulta")
+    consultas: list["Consulta"] = Relationship(back_populates="motivo_consulta")

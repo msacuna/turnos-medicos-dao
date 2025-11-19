@@ -1,19 +1,15 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from .links import MedicamentoLaboratorioLink
 
-class Medicamento(Base):
-    __tablename__ = "medicamento"
+if TYPE_CHECKING:
+    from .laboratorio import Laboratorio
+    from .detalle_receta import DetalleReceta
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False)
-    descripcion = Column(String(255), nullable=True)
+class Medicamento(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(max_length=100)
+    descripcion: Optional[str] = Field(default=None, max_length=255)
 
-    # Relaciones Many-to-Many
-    laboratorios = relationship(
-        "Laboratorio",
-        secondary="medicamento_laboratorio",
-        back_populates="medicamentos"
-    )
-
-    detalles_receta = relationship("DetalleReceta", back_populates="medicamento")
+    laboratorios: list["Laboratorio"] = Relationship(back_populates="medicamentos", link_model=MedicamentoLaboratorioLink)
+    detalles_receta: list["DetalleReceta"] = Relationship(back_populates="medicamento")

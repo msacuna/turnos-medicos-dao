@@ -1,11 +1,10 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import TYPE_CHECKING
 
-class EstadoTurno(Base):
-    __tablename__ = 'estado_turno'
+if TYPE_CHECKING:
+    from .turno import Turno
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False, unique=True) # Podría ser la PK
+class EstadoTurno(SQLModel, table=True):
+    nombre: str = Field(primary_key=True)
 
-    turnos = relationship("Turno", back_populates="estado")
+    turnos: list["Turno"] = Relationship(back_populates="estado")

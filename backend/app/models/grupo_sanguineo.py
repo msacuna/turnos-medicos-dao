@@ -1,12 +1,11 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
 
-class GrupoSanguineo(Base):
-    __tablename__ = "grupo_sanguineo"
+if TYPE_CHECKING:
+    from .paciente import Paciente
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(5), nullable=False, unique=True)
+class GrupoSanguineo(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(max_length=5, unique=True)
 
-    # Relaciones inversas
-    pacientes = relationship("Paciente", back_populates="grupo_sanguineo")
+    pacientes: list["Paciente"] = Relationship(back_populates="grupo_sanguineo")

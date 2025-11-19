@@ -1,27 +1,33 @@
-from sqlalchemy import CheckConstraint, Column, Integer, ForeignKey, Date, Time
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from pydantic import model_validator
+from datetime import date, time
 
-class Turno(Base):
-    __tablename__ = "turno"
+if TYPE_CHECKING:
+    from .paciente import Paciente
+    from .estado_turno import EstadoTurno
+    from .especialidad import Especialidad
+    from .agenda_profesional import AgendaProfesional
+    from .consulta import Consulta
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    fecha = Column(Date, nullable=False)
-    hora_inicio = Column(Time, nullable=False)
-    hora_fin_estimada = Column(Time, nullable=False)
-    dni_paciente = Column(Integer, ForeignKey("paciente.dni"), nullable=False)
-    id_estado = Column(Integer, ForeignKey("estado_turno.id"), nullable=False)
-    id_especialidad = Column(Integer, ForeignKey("especialidad.id"), nullable=False)
-    id_agenda_profesional = Column(Integer, ForeignKey("agenda_profesional.id"), nullable=False)
+class Turno(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    fecha: date
+    hora_inicio: time
+    hora_fin_estimada: time
+    dni_paciente: int = Field(foreign_key="paciente.dni")
+    nombre_estado: str = Field(foreign_key="estado_turno.nombre")
+    id_especialidad: int = Field(foreign_key="especialidad.id")
+    id_agenda_profesional: int = Field(foreign_key="agenda_profesional.id")
 
-    __table_args__ = (
-        CheckConstraint('hora_fin_estimada > hora_inicio', name='chk_hora_fin_mayor_hora_inicio'),
-    )
+    paciente: Optional["Paciente"] = Relationship(back_populates="turnos")
+    estado: Optional["EstadoTurno"] = Relationship(back_populates="turnos")
+    especialidad: Optional["Especialidad"] = Relationship(back_populates="turnos")
+    agenda_profesional: Optional["AgendaProfesional"] = Relationship(back_populates="turnos")
+    consultas: list["Consulta"] = Relationship(back_populates="turno")
 
-    # Relaciones directas
-    paciente = relationship("Paciente", back_populates="turnos")
-    estado = relationship("EstadoTurno", back_populates="turnos")
-    especialidad = relationship("Especialidad", back_populates="turnos")
-    agenda_profesional = relationship("AgendaProfesional", back_populates="turnos")
-
-    consultas = relationship("Consulta", back_populates="turno")
+    @model_validator(mode="after")
+    def validar_rango_horario(self):
+        if self.hora_fin_estimada <= self.hora_inicio:
+            raise ValueError("hora_fin_estimada debe ser mayor que hora_inicio")
+        return self

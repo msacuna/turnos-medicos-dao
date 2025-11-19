@@ -1,34 +1,27 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from datetime import date
+from .links import PacienteAlergiaLink, PacienteAntecedenteLink
 
-class Paciente(Base):
-    __tablename__ = 'paciente'
+if TYPE_CHECKING:
+    from .grupo_sanguineo import GrupoSanguineo
+    from .obra_social import ObraSocial
+    from .alergia import Alergia
+    from .antecedente import Antecedente
+    from .turno import Turno
 
-    dni = Column(Integer, primary_key=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    fecha_nacimiento = Column(Date, nullable=False)
-    email = Column(String(255), nullable=False, unique=True)
-    telefono = Column(String(20), nullable=False)
-    id_grupo_sanguineo = Column(Integer, ForeignKey("grupo_sanguineo.id"), nullable=False)
-    id_obra_social = Column(Integer, ForeignKey("obra_social.id"), nullable=True)
+class Paciente(SQLModel, table=True):
+    dni: int = Field(primary_key=True)
+    nombre: str = Field(max_length=100)
+    apellido: str = Field(max_length=100)
+    fecha_nacimiento: date
+    email: str = Field(max_length=255, unique=True)
+    telefono: str = Field(max_length=20)
+    id_grupo_sanguineo: int = Field(foreign_key="grupo_sanguineo.id")
+    id_obra_social: Optional[int] = Field(default=None, foreign_key="obra_social.id")
 
-    # Relaciones directas
-    grupo_sanguineo = relationship("GrupoSanguineo", back_populates="pacientes")
-    obra_social = relationship("ObraSocial", back_populates="pacientes")
-
-    # Relaciones Many-to-Many
-    alergias = relationship(
-        "Alergia",
-        secondary="paciente_alergia",
-        back_populates="pacientes"
-    )
-    
-    antecedentes = relationship(
-        "Antecedente", 
-        secondary="paciente_antecedente",
-        back_populates="pacientes"
-    )
-
-    turnos = relationship("Turno", back_populates="paciente")
+    grupo_sanguineo: "GrupoSanguineo" = Relationship(back_populates="pacientes")
+    obra_social: Optional["ObraSocial"] = Relationship(back_populates="pacientes")
+    alergias: list["Alergia"] = Relationship(back_populates="pacientes", link_model=PacienteAlergiaLink)
+    antecedentes: list["Antecedente"] = Relationship(back_populates="pacientes", link_model=PacienteAntecedenteLink)
+    turnos: list["Turno"] = Relationship(back_populates="paciente")

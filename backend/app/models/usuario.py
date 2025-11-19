@@ -1,14 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models import Base
+from typing import Optional, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
 
-class Usuario(Base):
-    __tablename__ = "usuario"
+if TYPE_CHECKING:
+    from .rol import Rol
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(100), nullable=False, unique=True)
-    password = Column(String(100), nullable=False)
-    id_rol = Column(Integer, ForeignKey("rol.id"), nullable=False)
+class Usuario(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(unique=True, max_length=100)
+    password: str = Field(max_length=100) # Aquí guardaremos el HASH, no texto plano
+    id_rol: int = Field(foreign_key="rol.id")
 
-    # Relaciones directas
-    rol = relationship("Rol", back_populates="usuarios")
+    rol: Optional["Rol"] = Relationship(back_populates="usuarios")

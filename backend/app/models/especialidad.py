@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
 
-class Especialidad(Base):
-    __tablename__ = 'especialidad'
+if TYPE_CHECKING:
+    from .profesional import Profesional
+    from .turno import Turno
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False, unique=True)
+class Especialidad(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(unique=True, max_length=100)
 
-    profesionales = relationship("Profesional", back_populates="especialidad")
-    turnos = relationship("Turno", back_populates="especialidad")
+    profesionales: list["Profesional"] = Relationship(back_populates="especialidad")
+    turnos: list["Turno"] = Relationship(back_populates="especialidad")

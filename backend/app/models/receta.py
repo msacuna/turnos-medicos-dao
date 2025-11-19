@@ -1,13 +1,15 @@
-from sqlalchemy import Column, Integer, Date, Boolean
-from sqlalchemy.orm import relationship
-from app.models import Base
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+from datetime import date
 
-class Receta(Base):
-    __tablename__ = 'receta'
+if TYPE_CHECKING:
+    from .detalle_receta import DetalleReceta
+    from .consulta import Consulta
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    fecha = Column(Date, nullable=False)
-    dispensada = Column(Boolean, nullable=False, default=False)
-
-    detalles_receta = relationship("DetalleReceta", back_populates="receta")
-    consultas = relationship("Consulta", back_populates="receta")
+class Receta(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    fecha: date
+    dispensada: bool = Field(default=False)
+    
+    detalles_receta: list["DetalleReceta"] = Relationship(back_populates="receta")
+    consultas: list["Consulta"] = Relationship(back_populates="receta")
