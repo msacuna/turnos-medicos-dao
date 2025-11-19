@@ -1,5 +1,4 @@
-from sqlmodel import SQLModel, create_engine, text
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy import inspect
 from .config import settings
 
@@ -9,18 +8,13 @@ engine = create_engine(
     pool_pre_ping=True, # Verifica conexión antes de usarla
     pool_recycle=300    # Recicla conexiones cada 5 min
 )
-# 2. Fábrica de sesiones
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 3. Dependencia para FastAPI (Dependency Injection)
+# 2. Dependencia para FastAPI (Dependency Injection)
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session
 
-# 4. VALIDACIÓN DE ESQUEMA (Simple y Directa) --> BORRAR UNA VEZ VALIDADOS
+# 3. VALIDACIÓN DE ESQUEMA (Simple y Directa) --> BORRAR UNA VEZ VALIDADOS
 def validate_db_schema():
     """
     Compara las tablas de la Base de Datos contra los Modelos de SQLModel.
