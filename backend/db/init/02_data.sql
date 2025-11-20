@@ -17,15 +17,15 @@ INSERT INTO estado_turno (nombre) VALUES
 ('Confirmado'); -- se acepta la generación de consulta asociada al turno
 
 INSERT INTO especialidad (nombre) VALUES
-('Cardiología'),
-('Dermatología'),
-('Endocrinología'),
-('Gastroenterología'),
-('Neurología'),
-('Pediatría'),
-('Psiquiatría'),
-('Traumatología'),
-('Urología');
+('Cardiologia'),
+('Dermatologia'),
+('Endocrinologia'),
+('Gastroenterologia'),
+('Neurologia'),
+('Pediatria'),
+('Psiquiatria'),
+('Traumatologia'),
+('Urologia');
 
 INSERT INTO motivo_consulta (nombre) VALUES
 ('Chequeo General'),
@@ -38,15 +38,15 @@ INSERT INTO alergia (nombre) VALUES
 ('Penicilina'),
 ('Ibuprofeno'),
 ('Polvo'),
-('Pólenes'),
+('Polenes'),
 ('Picaduras de insectos'),
-('Lácteos');
+('Lacteos');
 
 INSERT INTO antecedente (nombre) VALUES
 ('Diabetes'),
-('Hipertensión'),
+('Hipertension'),
 ('Asma'),
-('Enfermedad cardíaca'),
+('Enfermedad cardiaca'),
 ('Colesterol alto'),
 ('Tabaquismo'),
 ('Obesidad');
