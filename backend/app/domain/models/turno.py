@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from pydantic import model_validator
 from datetime import date, time
+from .estado_turno import EstadoTurnoEnum
 
 if TYPE_CHECKING:
     from .paciente import Paciente
@@ -17,7 +18,7 @@ class Turno(SQLModel, table=True):
     hora_inicio: time
     hora_fin_estimada: time
     dni_paciente: int = Field(foreign_key="paciente.dni")
-    nombre_estado: str = Field(foreign_key="estado_turno.nombre")
+    nombre_estado: EstadoTurnoEnum = Field(foreign_key="estado_turno.nombre", default=EstadoTurnoEnum.AGENDADO)
     id_especialidad: int = Field(foreign_key="especialidad.id")
     id_agenda_profesional: int = Field(foreign_key="agenda_profesional.id")
 
