@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from app.api.dependencies import get_especialidad_service
 from app.services import EspecialidadService
-from app.domain.models import Especialidad
 from app.domain.schemas import EspecialidadCreate, EspecialidadUpdate, EspecialidadRead
 
 router = APIRouter(prefix="/especialidades", tags=["Especialidades"])
