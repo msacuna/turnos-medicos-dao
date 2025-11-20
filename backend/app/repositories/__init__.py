@@ -1,5 +1,5 @@
 from .base import BaseRepository
-from .especialidad_repository import EspecialidadRepository
+from .especialidad_repo import EspecialidadRepository
 
 __all__ = [
     "BaseRepository",

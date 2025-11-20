@@ -3,18 +3,13 @@ from sqlalchemy import inspect
 from .config import settings
 
 # 1. Configuración del Engine
-engine = create_engine(
-    settings.DATABASE_URL,
-    pool_pre_ping=True, # Verifica conexión antes de usarla
-    pool_recycle=300    # Recicla conexiones cada 5 min
-)
+engine = create_engine(settings.DATABASE_URL)
 
-# 2. Dependencia para FastAPI (Dependency Injection)
-def get_db():
+# 2. Función para obtener sesión de DB
+def get_session():
     with Session(engine) as session:
         yield session
 
-# 3. VALIDACIÓN DE ESQUEMA (Simple y Directa) --> BORRAR UNA VEZ VALIDADOS
 def validate_db_schema():
     """
     Compara las tablas de la Base de Datos contra los Modelos de SQLModel.
@@ -22,7 +17,7 @@ def validate_db_schema():
     """
     # ¡VITAL! Importar 'models' aquí fuerza a que SQLModel lea todos tus archivos
     # y registre las clases en 'metadata'. Sin esto, model_tables estaría vacío.
-    from app import models 
+    from app.domain import models
 
     print("🔍 Iniciando validación de esquema...")
     
