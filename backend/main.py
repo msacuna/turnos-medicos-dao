@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.core.database import validate_db_schema
 
-from app.api.routes import especialidad_router
+from app.api.routes import *
 
 # ESTO ES PARA VALIDAR LA BD AL INICIAR LA APP
 # Podriamos eliminarlo en producción si queremos optimizar el arranque
@@ -24,6 +24,10 @@ app = FastAPI(
 )
 
 app.include_router(especialidad_router)
+app.include_router(medicamentos_router)
+app.include_router(laboratorios_router)
+app.include_router(alergias_router)
+app.include_router(antecedentes_router)
 
 @app.get("/")
 def root():

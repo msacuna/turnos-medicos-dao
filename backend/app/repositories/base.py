@@ -22,9 +22,10 @@ class BaseRepository(Generic[T]):
         self.session.refresh(entity)
         return entity
     
-    def update(self, entity: T, new_data: dict) -> T:
-        for key, value in new_data.items():
-            setattr(entity, key, value)
+    def update(self, entity: T, new_data: dict | None = None) -> T:
+        if new_data:
+            for key, value in new_data.items():
+                setattr(entity, key, value)
         
         self.session.add(entity)
         self.session.commit()
