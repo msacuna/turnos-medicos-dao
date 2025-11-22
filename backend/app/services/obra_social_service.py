@@ -10,11 +10,17 @@ class ObraSocialService:
         obras_sociales = self.repo.get_all()
         return [ObraSocialRead.model_validate(o) for o in obras_sociales]
     
-    def obtener_por_id(self, id: int) -> ObraSocialRead | None:
-        obra_social = self.repo.get_by_id(id)
+    def obtener_por_nombre(self, nombre: str) -> ObraSocialRead | None:
+        obra_social = self.repo.get_by_nombre(nombre)
         if not obra_social:
-            raise ValueError(f"No se encontró la obra social con ID {id}.")
+            raise ValueError(f"No se encontró la obra social con nombre {nombre}.")
         return ObraSocialRead.model_validate(obra_social)
+    
+    def obtener_modelo_por_nombre(self, nombre: str) -> ObraSocial | None:
+        obra_social = self.repo.get_by_nombre(nombre)
+        if not obra_social:
+            raise ValueError(f"No se encontró la obra social con nombre {nombre}.")
+        return obra_social
 
     def crear_obra_social(self, obra_social_in: ObraSocialCreate) -> ObraSocialRead:
         obra_social = ObraSocial.model_validate(obra_social_in)

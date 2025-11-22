@@ -15,4 +15,4 @@ class ObraSocialUpdate(ObraSocialBase):
     pass
 
 class ObraSocialRead(ObraSocialBase):
-    id: int
+    pass

@@ -44,8 +44,7 @@ CREATE TABLE tipo_obra_social (
 );
 
 CREATE TABLE obra_social (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
+    nombre VARCHAR(100) PRIMARY KEY,
     cuit VARCHAR(11) NOT NULL UNIQUE,
     porcentaje_cobertura DECIMAL(5, 2) NOT NULL,
     nombre_tipo VARCHAR(100) NOT NULL,
@@ -78,9 +77,9 @@ CREATE TABLE paciente (
     email VARCHAR(255) NOT NULL UNIQUE,
     telefono VARCHAR(20) NOT NULL,
     nombre_grupo_sanguineo VARCHAR(5) NOT NULL,
-    id_obra_social INT,
+    nombre_obra_social VARCHAR(100),
     CONSTRAINT fk_paciente_grupo_sanguineo FOREIGN KEY (nombre_grupo_sanguineo) REFERENCES grupo_sanguineo(nombre),
-    CONSTRAINT fk_paciente_obra_social FOREIGN KEY (id_obra_social) REFERENCES obra_social(id) ON DELETE SET NULL
+    CONSTRAINT fk_paciente_obra_social FOREIGN KEY (nombre_obra_social) REFERENCES obra_social(nombre) ON DELETE SET NULL
 );
 
 CREATE TABLE paciente_alergia (
@@ -137,11 +136,11 @@ CREATE TABLE horario_profesional (
 );
 
 CREATE TABLE obra_social_profesional (
-    id_obra_social INT NOT NULL,
+    nombre_obra_social VARCHAR(100) NOT NULL,
     id_profesional INT NOT NULL,
     vigente BOOLEAN NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_obra_social_profesional PRIMARY KEY (id_obra_social, id_profesional),
-    CONSTRAINT fk_obra_social_profesional_obra_social FOREIGN KEY (id_obra_social) REFERENCES obra_social(id) ON DELETE CASCADE,
+    CONSTRAINT pk_obra_social_profesional PRIMARY KEY (nombre_obra_social, id_profesional),
+    CONSTRAINT fk_obra_social_profesional_obra_social FOREIGN KEY (nombre_obra_social) REFERENCES obra_social(nombre) ON DELETE CASCADE,
     CONSTRAINT fk_obra_social_profesional_profesional FOREIGN KEY (id_profesional) REFERENCES profesional(id) ON DELETE CASCADE
 );
 
