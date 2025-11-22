@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, Field
-from typing import TYPE_CHECKING
 
 class MedicamentoLaboratorioLink(SQLModel, table=True):
     __tablename__ = "medicamento_laboratorio" # type: ignore
@@ -8,7 +7,7 @@ class MedicamentoLaboratorioLink(SQLModel, table=True):
 
 class ObraSocialProfesionalLink(SQLModel, table=True):
     __tablename__ = "obra_social_profesional" # type: ignore
-    id_obra_social: int = Field(default=None, foreign_key="obra_social.id", primary_key=True)
+    nombre_obra_social: str = Field(default=None, foreign_key="obra_social.nombre", primary_key=True)
     id_profesional: int = Field(default=None, foreign_key="profesional.id", primary_key=True)
     vigente: bool = Field(default=True)
 

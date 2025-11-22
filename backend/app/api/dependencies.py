@@ -37,3 +37,18 @@ def get_obra_social_repo() -> ObraSocialRepository:
     return ObraSocialRepository(model=ObraSocial)
 def get_obra_social_service(repo: ObraSocialRepository = Depends(get_obra_social_repo)) -> ObraSocialService:
     return ObraSocialService(repo)
+
+def get_grupo_sanguineo_repo() -> GrupoSanguineoRepository:
+    return GrupoSanguineoRepository(model=GrupoSanguineo)
+def get_grupo_sanguineo_service(repo: GrupoSanguineoRepository = Depends(get_grupo_sanguineo_repo)) -> GrupoSanguineoService:
+    return GrupoSanguineoService(repo)
+
+def get_paciente_repo() -> PacienteRepository:
+    return PacienteRepository(model=Paciente)
+def get_paciente_service(
+            repo: PacienteRepository = Depends(get_paciente_repo),
+            alergia_service: AlergiaService = Depends(get_alergia_service),
+            antecedente_service: AntecedenteService = Depends(get_antecedente_service),
+            grupo_sanguineo_service: GrupoSanguineoService = Depends(get_grupo_sanguineo_service),
+            obra_social_service: ObraSocialService = Depends(get_obra_social_service)) -> PacienteService:
+    return PacienteService(repo, alergia_service, antecedente_service, grupo_sanguineo_service, obra_social_service)

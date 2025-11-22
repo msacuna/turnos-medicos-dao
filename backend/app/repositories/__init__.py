@@ -5,6 +5,8 @@ from .alergia_repo import AlergiaRepository
 from .antecedente_repo import AntecedenteRepository
 from .laboratorio_repo import LaboratorioRepository
 from .obra_social_repo import ObraSocialRepository
+from .paciente_repo import PacienteRepository
+from .grupo_sanguineo_repo import GrupoSanguineoRepository
 
 __all__ = [
     "BaseRepository",
@@ -14,4 +16,6 @@ __all__ = [
     "AntecedenteRepository",
     "LaboratorioRepository",
     "ObraSocialRepository",
+    "PacienteRepository",
+    "GrupoSanguineoRepository",
 ]

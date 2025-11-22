@@ -4,6 +4,8 @@ from .laboratorio import LaboratorioCreate, LaboratorioUpdate, LaboratorioRead
 from .alergia import AlergiaCreate, AlergiaUpdate, AlergiaRead
 from .antecedente import AntecedenteCreate, AntecedenteUpdate, AntecedenteRead
 from .obra_social import ObraSocialCreate, ObraSocialUpdate, ObraSocialRead
+from .paciente import PacienteCreate, PacienteUpdate, PacienteRead
+from .grupo_sanguineo import GrupoSanguineoRead
 
 __all__ = [
     "EspecialidadCreate",
@@ -24,4 +26,8 @@ __all__ = [
     "ObraSocialCreate",
     "ObraSocialUpdate",
     "ObraSocialRead",
+    "PacienteCreate",
+    "PacienteUpdate",
+    "PacienteRead",
+    "GrupoSanguineoRead",
 ]
