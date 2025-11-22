@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from .links import ObraSocialProfesionalLink
+from .tipo_obra_social import TipoObraSocialEnum
 
 if TYPE_CHECKING:
     from .tipo_obra_social import TipoObraSocial
@@ -13,7 +14,7 @@ class ObraSocial(SQLModel, table=True):
     nombre: str = Field(max_length=100, unique=True)
     cuit: str = Field(max_length=11, unique=True)
     porcentaje_cobertura: float = Field(ge=0, le=100)
-    id_tipo: int = Field(foreign_key="tipo_obra_social.id")
+    nombre_tipo: TipoObraSocialEnum = Field(foreign_key="tipo_obra_social.nombre")
 
     tipo: Optional["TipoObraSocial"] = Relationship(back_populates="obras_sociales")
     pacientes: list["Paciente"] = Relationship(back_populates="obra_social")

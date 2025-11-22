@@ -52,14 +52,14 @@ INSERT INTO antecedente (nombre) VALUES
 ('Obesidad');
 
 INSERT INTO tipo_obra_social (nombre) VALUES
-('Prepaga'),
-('Obra Social Sindical'),
-('Obra Social Estatal');
+('Nacional'),
+('Provincial'),
+('Jubilado');
 
-INSERT INTO obra_social (nombre, cuit, porcentaje_cobertura, id_tipo) VALUES
-('OSDE', '30573419671', 90.00, 1),
-('Swiss Medical', '30678945211', 85.00, 1),
-('Galeno', '30710002911', 80.00, 1),
-('PAMI', '30523467891', 100.00, 3),
-('APROSS', '30500612781', 90.00, 3),
-('OSECAC', '30517890123', 80.00, 2);
+INSERT INTO obra_social (nombre, cuit, porcentaje_cobertura, nombre_tipo) VALUES
+('OSDE', '30573419671', 90.00, 'Nacional'),
+('Swiss Medical', '30678945211', 85.00, 'Nacional'),
+('APROSS', '30500612781', 90.00, 'Nacional'),
+('Galeno', '30710002911', 80.00, 'Provincial'),
+('OSECAC', '30517890123', 80.00, 'Provincial'),
+('PAMI', '30523467891', 100.00, 'Jubilado');

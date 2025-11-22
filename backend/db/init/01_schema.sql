@@ -40,8 +40,7 @@ CREATE TABLE medicamento_laboratorio (
 
 -- Obras sociales
 CREATE TABLE tipo_obra_social (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
+    nombre VARCHAR(100) PRIMARY KEY
 );
 
 CREATE TABLE obra_social (
@@ -49,9 +48,9 @@ CREATE TABLE obra_social (
     nombre VARCHAR(100) NOT NULL UNIQUE,
     cuit VARCHAR(11) NOT NULL UNIQUE,
     porcentaje_cobertura DECIMAL(5, 2) NOT NULL,
-    id_tipo INT NOT NULL,
+    nombre_tipo VARCHAR(100) NOT NULL,
     CONSTRAINT chk_porcentaje CHECK (porcentaje_cobertura >= 0 AND porcentaje_cobertura <= 100),
-    CONSTRAINT fk_obra_social_tipo FOREIGN KEY (id_tipo) REFERENCES tipo_obra_social(id)
+    CONSTRAINT fk_obra_social_tipo FOREIGN KEY (nombre_tipo) REFERENCES tipo_obra_social(nombre)
 );
 
 -- =============================================================================
