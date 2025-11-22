@@ -57,8 +57,7 @@ CREATE TABLE obra_social (
 -- Pacientes (paciente, grupo sanguineo, alergias, antecedentes)
 -- =============================================================================
 CREATE TABLE grupo_sanguineo (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(5) NOT NULL UNIQUE -- 'A+', 'O-'
+    nombre VARCHAR(5) PRIMARY KEY -- 'A+', 'O-'
 );
 
 CREATE TABLE alergia (
@@ -78,9 +77,9 @@ CREATE TABLE paciente (
     fecha_nacimiento DATE NOT NULL, 
     email VARCHAR(255) NOT NULL UNIQUE,
     telefono VARCHAR(20) NOT NULL,
-    id_grupo_sanguineo INT NOT NULL,
+    nombre_grupo_sanguineo VARCHAR(5) NOT NULL,
     id_obra_social INT,
-    CONSTRAINT fk_paciente_grupo_sanguineo FOREIGN KEY (id_grupo_sanguineo) REFERENCES grupo_sanguineo(id),
+    CONSTRAINT fk_paciente_grupo_sanguineo FOREIGN KEY (nombre_grupo_sanguineo) REFERENCES grupo_sanguineo(nombre),
     CONSTRAINT fk_paciente_obra_social FOREIGN KEY (id_obra_social) REFERENCES obra_social(id) ON DELETE SET NULL
 );
 

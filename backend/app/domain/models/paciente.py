@@ -18,7 +18,7 @@ class Paciente(SQLModel, table=True):
     fecha_nacimiento: date
     email: str = Field(max_length=255, unique=True)
     telefono: str = Field(max_length=20)
-    id_grupo_sanguineo: int = Field(foreign_key="grupo_sanguineo.id")
+    nombre_grupo_sanguineo: str = Field(foreign_key="grupo_sanguineo.nombre", max_length=5)
     id_obra_social: Optional[int] = Field(default=None, foreign_key="obra_social.id")
 
     grupo_sanguineo: "GrupoSanguineo" = Relationship(back_populates="pacientes")

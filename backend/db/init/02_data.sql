@@ -6,7 +6,7 @@ INSERT INTO grupo_sanguineo (nombre) VALUES
 ('A+'), ('A-'),
 ('B+'), ('B-'),
 ('AB+'), ('AB-'),
-('O+'), ('O-');
+('0+'), ('0-');
 
 INSERT INTO estado_turno (nombre) VALUES
 ('Agendado'), -- no llegó a fecha_hora_inicio
