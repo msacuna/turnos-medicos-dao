@@ -1,13 +1,34 @@
-from sqlmodel import SQLModel, create_engine, Session
-from sqlalchemy import inspect
+from sqlmodel import SQLModel, create_engine, Session, inspect
+from contextvars import ContextVar
+from typing import Optional
 from .config import settings
 
 # 1. Configuración del Engine
 engine = create_engine(settings.DATABASE_URL)
 
 # 2. Función para obtener sesión de DB
+_current_session: ContextVar[Optional[Session]] = ContextVar("current_session", default=None)
+
+class DatabaseManagerSingleton:
+    _instance: Optional["DatabaseManagerSingleton"] = None
+
+    def __new__(cls) -> "DatabaseManagerSingleton":
+        if cls._instance is None:
+            cls._instance = super(DatabaseManagerSingleton, cls).__new__(cls)
+        return cls._instance
+
+    @property
+    def get_session(self) -> Session:
+        current_session = _current_session.get()
+        if current_session is None:
+            current_session = Session(engine)
+            _current_session.set(current_session)
+        return current_session
+    
+db = DatabaseManagerSingleton()
+
 def get_session():
-    with Session(engine) as session:
+    with db.get_session as session:
         yield session
 
 def validate_db_schema():
