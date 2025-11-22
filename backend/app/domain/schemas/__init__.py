@@ -6,6 +6,7 @@ from .antecedente import AntecedenteCreate, AntecedenteUpdate, AntecedenteRead
 from .obra_social import ObraSocialCreate, ObraSocialUpdate, ObraSocialRead
 from .paciente import PacienteCreate, PacienteUpdate, PacienteRead
 from .grupo_sanguineo import GrupoSanguineoRead
+from .motivo_consulta import MotivoConsultaCreate, MotivoConsultaUpdate, MotivoConsultaRead
 
 __all__ = [
     "EspecialidadCreate",
@@ -30,4 +31,7 @@ __all__ = [
     "PacienteUpdate",
     "PacienteRead",
     "GrupoSanguineoRead",
+    "MotivoConsultaCreate",
+    "MotivoConsultaUpdate",
+    "MotivoConsultaRead",
 ]

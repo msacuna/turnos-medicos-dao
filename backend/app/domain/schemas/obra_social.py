@@ -4,7 +4,7 @@ from app.domain.models import TipoObraSocialEnum
 class ObraSocialBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nombre: str
-    cuit: str
+    cuit: int
     porcentaje_cobertura: float
     nombre_tipo: TipoObraSocialEnum
 

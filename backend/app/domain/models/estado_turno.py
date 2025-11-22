@@ -18,3 +18,4 @@ class EstadoTurno(SQLModel, table=True):
     nombre: str = Field(primary_key=True)
 
     turnos: list["Turno"] = Relationship(back_populates="estado")
+    # Dependencias circulares?

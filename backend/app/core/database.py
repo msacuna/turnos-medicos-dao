@@ -33,6 +33,8 @@ def get_session():
     with db.get_session as session:
         yield session
 
+# Faltaria cerrar la session en algun momento?
+
 def validate_db_schema():
     """
     Compara las tablas de la Base de Datos contra los Modelos de SQLModel.
