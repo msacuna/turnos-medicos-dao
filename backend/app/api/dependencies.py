@@ -21,9 +21,9 @@ def get_laboratorio_service(repo: LaboratorioRepository = Depends(get_laboratori
 def get_medicamento_repo(session: Session = Depends(get_session)) -> MedicamentoRepository:
     return MedicamentoRepository(session, model=Medicamento)
 def get_medicamento_service(
-        repo: MedicamentoRepository = Depends(get_medicamento_repo),
-        laboratorio_repo: LaboratorioRepository = Depends(get_laboratorio_repo)) -> MedicamentoService:
-    return MedicamentoService(repo, laboratorio_repo)
+            repo: MedicamentoRepository = Depends(get_medicamento_repo),
+            laboratorio_service: LaboratorioService = Depends(get_laboratorio_service)) -> MedicamentoService:
+    return MedicamentoService(repo, laboratorio_service)
 
 def get_alergia_repo(session: Session = Depends(get_session)) -> AlergiaRepository:
     return AlergiaRepository(session, model=Alergia)

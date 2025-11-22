@@ -16,6 +16,12 @@ class LaboratorioService:
             raise ValueError(f"No se encontró el laboratorio con ID {id}.")
         return LaboratorioRead.model_validate(laboratorio)
     
+    def obtener_modelo_por_id(self, id: int) -> Laboratorio | None:
+        laboratorio = self.repo.get_by_id(id)
+        if not laboratorio:
+            raise ValueError(f"No se encontró el laboratorio con ID {id}.")
+        return laboratorio
+    
     def crear_laboratorio(self, laboratorio_in: LaboratorioCreate) -> LaboratorioRead:
         laboratorio = Laboratorio.model_validate(laboratorio_in)
         return LaboratorioRead.model_validate(self.repo.add(laboratorio))
