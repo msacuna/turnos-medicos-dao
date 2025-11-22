@@ -15,6 +15,12 @@ class AntecedenteService:
         if not antecedente:
             raise ValueError(f"No se encontró el antecedente con ID {id}.")
         return AntecedenteRead.model_validate(antecedente)
+
+    def obtener_modelo_por_id(self, id: int) -> Antecedente | None:
+        antecedente = self.repo.get_by_id(id)
+        if not antecedente:
+            raise ValueError(f"No se encontró el antecedente con ID {id}.")
+        return antecedente
     
     def crear_antecedente(self, antecedente_in: AntecedenteCreate) -> AntecedenteRead:
         antecedente = Antecedente.model_validate(antecedente_in)

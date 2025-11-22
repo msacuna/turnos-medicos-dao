@@ -15,6 +15,12 @@ class AlergiaService:
         if not alergia:
             raise ValueError(f"No se encontró la alergia con ID {id}.")
         return AlergiaRead.model_validate(alergia)
+    
+    def obtener_modelo_por_id(self, id: int) -> Alergia | None:
+        alergia = self.repo.get_by_id(id)
+        if not alergia:
+            raise ValueError(f"No se encontró la alergia con ID {id}.")
+        return alergia
 
     def crear_alergia(self, alergia_in: AlergiaCreate) -> AlergiaRead:
         alergia = Alergia.model_validate(alergia_in)
