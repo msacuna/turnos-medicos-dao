@@ -4,14 +4,14 @@ from .antecedente import Antecedente
 from .consulta import Consulta
 from .detalle_receta import DetalleReceta
 from .especialidad import Especialidad
-from .estado_turno import EstadoTurno
+from .estado_turno import EstadoTurno, EstadoTurnoEnum
 from .grupo_sanguineo import GrupoSanguineo
 from .horario_atencion import HorarioAtencion
 from .laboratorio import Laboratorio
 from .links import MedicamentoLaboratorioLink, PacienteAlergiaLink, PacienteAntecedenteLink, HorarioProfesionalLink, ObraSocialProfesionalLink
 from .medicamento import Medicamento
 from .motivo_consulta import MotivoConsulta
-from .obra_social import ObraSocial
+from .obra_social import ObraSocial, TipoObraSocialEnum
 from .paciente import Paciente
 from .profesional import Profesional
 from .receta import Receta
@@ -28,6 +28,7 @@ __all__ = [
     "DetalleReceta",
     "Especialidad",
     "EstadoTurno",
+    "EstadoTurnoEnum",
     "GrupoSanguineo",
     "HorarioAtencion",
     "HorarioProfesionalLink",
@@ -44,6 +45,7 @@ __all__ = [
     "Receta",
     "Rol",
     "TipoObraSocial",
+    "TipoObraSocialEnum",
     "Turno",
     "Usuario"
 ]

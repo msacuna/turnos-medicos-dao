@@ -1,6 +1,4 @@
 from fastapi import Depends
-from sqlmodel import Session
-from app.core.database import get_session
 
 from app.services import *
 from app.repositories import *
@@ -34,3 +32,8 @@ def get_antecedente_repo() -> AntecedenteRepository:
     return AntecedenteRepository(model=Antecedente)
 def get_antecedente_service(repo: AntecedenteRepository = Depends(get_antecedente_repo)) -> AntecedenteService:
     return AntecedenteService(repo)
+
+def get_obra_social_repo() -> ObraSocialRepository:
+    return ObraSocialRepository(model=ObraSocial)
+def get_obra_social_service(repo: ObraSocialRepository = Depends(get_obra_social_repo)) -> ObraSocialService:
+    return ObraSocialService(repo)
