@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.core.database import validate_db_schema
+from app.core.handlers import ManejadorDeExcepciones
 
 from app.api.routes import *
 
@@ -23,6 +24,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+ManejadorDeExcepciones.configurar_handlers(app)
 app.include_router(pacientes_router)
 app.include_router(alergias_router)
 app.include_router(antecedentes_router)

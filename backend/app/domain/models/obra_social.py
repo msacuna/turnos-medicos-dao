@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 class ObraSocial(SQLModel, table=True):
     __tablename__ = "obra_social" # type: ignore
-    nombre: str = Field(max_length=100)
-    cuit: int = Field(min_length=11, unique=True, primary_key=True) # Este deberia ser el primary key
+    nombre: str = Field(max_length=100, primary_key=True)
+    cuit: int = Field(min_length=11, unique=True) # Este deberia ser el primary key
     porcentaje_cobertura: float = Field(ge=0, le=100)
     nombre_tipo: TipoObraSocialEnum = Field(foreign_key="tipo_obra_social.nombre")
 

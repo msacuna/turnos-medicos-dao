@@ -119,3 +119,7 @@ class PacienteService:
             paciente_actual.antecedentes = nuevos_antecedentes
         
         return self.repository.update(paciente_actual)
+    
+    def existe_paciente(self, dni: int) -> bool:
+        paciente = self.repository.get_by_dni(dni)
+        return paciente is not None
