@@ -1,0 +1,31 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 10px 16px;
+  border-radius: 12px; /* Borde bien redondeado */
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+
+  border: none;
+  transition: background 0.2s ease, transform 0.08s ease;
+  color: black; /* SIEMPRE texto negro */
+}
+
+/* Al presionar baja levemente */
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Variante PRIMARY – usa tu color primary */
+.primary {
+  background: var(--primary);
+}
+
+/* Variante DANGER – usa tu color secondary */
+.danger {
+  background: var(--secondary);
+}

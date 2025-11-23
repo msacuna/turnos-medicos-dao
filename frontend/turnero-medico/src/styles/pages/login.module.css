@@ -1,0 +1,61 @@
+.container {
+  height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #cce3ea 0%, #d0e6dd 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 380px;
+  padding: 40px 30px;
+}
+
+.logo {
+  width: 280px;
+  margin-bottom: 0px;
+}
+
+.title {
+  color: #2e3a45;
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #5f6e78;
+  margin-bottom: 30px;
+  letter-spacing: 0.3px;
+}
+
+.error {
+  color: red;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.registerText {
+  margin-top: 20px;
+  color: #4a5c52;
+  font-size: 14px;
+}
+
+.link {
+  color: #4a5c52;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* separación label ↔ input */
+  width: 100%;
+  margin-bottom: 16px; /* separación entre cada input */
+}

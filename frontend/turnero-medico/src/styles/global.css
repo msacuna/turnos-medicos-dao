@@ -1,29 +1,53 @@
-/* Reset básico */
+:root {
+  --bg: #cce3ea;
+  --primary: #90cbe3;
+  --secondary: #d0e6dd;
+  --accent: #9cd3e8;
+  --text: #000000;
+
+  /* spacing */
+  --container-max-w: 1200px;
+  --radius: 8px;
+  --gap: 1rem;
+  --navbar-height: 64px;
+}
+
+/* Base resets */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
-
+html,
+body,
+#root {
+  height: 100%;
+}
 body {
-  font-family: var(--font-family);
-  background-color: var(--background-color);
-  color: var(--text-color);
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  cursor: pointer;
-  border-radius: var(--border-radius);
-}
-
-/* Ejemplo de clase global reusable */
-.container {
-  max-width: 1200px;
+/* Contenedor central con borde (espacio entre texto y final pantalla) */
+.app-container {
+  max-width: var(--container-max-w);
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 24px;
+}
+
+/* Card default */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+}
+
+/* Reglas responsivas simples */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 12px;
+  }
 }
