@@ -21,10 +21,3 @@ class PacienteAntecedenteLink(SQLModel, table=True):
     __tablename__ = "paciente_antecedente" # type: ignore
     dni_paciente: int = Field(default=None, foreign_key="paciente.dni", primary_key=True)
     id_antecedente: int = Field(default=None, foreign_key="antecedente.id", primary_key=True)
-
-
-class HorarioProfesionalLink(SQLModel, table=True):
-    __tablename__ = "horario_profesional" # type: ignore
-    id_horario_atencion: int = Field(default=None, foreign_key="horario_atencion.id", primary_key=True)
-    id_profesional: int = Field(default=None, foreign_key="profesional.id", primary_key=True)
-    vigente: bool = Field(default=True)

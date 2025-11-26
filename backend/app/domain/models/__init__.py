@@ -6,9 +6,9 @@ from .detalle_receta import DetalleReceta
 from .especialidad import Especialidad
 from .estado_turno import EstadoTurno, EstadoTurnoEnum
 from .grupo_sanguineo import GrupoSanguineo
-from .horario_atencion import HorarioAtencion
+from .horario_atencion import HorarioAtencion, DiaSemanaEnum
 from .laboratorio import Laboratorio
-from .links import MedicamentoLaboratorioLink, PacienteAlergiaLink, PacienteAntecedenteLink, HorarioProfesionalLink, ObraSocialProfesionalLink
+from .links import MedicamentoLaboratorioLink, PacienteAlergiaLink, PacienteAntecedenteLink, ObraSocialProfesionalLink
 from .medicamento import Medicamento
 from .motivo_consulta import MotivoConsulta
 from .obra_social import ObraSocial, TipoObraSocialEnum
@@ -31,7 +31,7 @@ __all__ = [
     "EstadoTurnoEnum",
     "GrupoSanguineo",
     "HorarioAtencion",
-    "HorarioProfesionalLink",
+    "DiaSemanaEnum",
     "Laboratorio",
     "Medicamento",
     "MedicamentoLaboratorioLink",
