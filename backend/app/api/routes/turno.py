@@ -3,8 +3,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from app.domain.schemas.turno import TurnoRead, TurnoCreate, TurnoUpdate
-from backend.app.api.dependencies import get_turno_service
-from backend.app.services.turno_service import TurnoService
+from app.api.dependencies import get_turno_service
+from app.domain.schemas.consulta import ConsultaCreate
+from app.services.turno_service import TurnoService
 
 router = APIRouter(prefix="/turnos", tags=["Turnos"])
 
@@ -42,10 +43,11 @@ def iniciar_turno(
 @router.patch("/{turno_id}/finalizar", response_model=TurnoRead)
 def finalizar_turno(
     turno_id: int,
+    consulta_data: ConsultaCreate,
     service: TurnoService = Depends(get_turno_service)
 ):
     try:
-        return service.finalizar_turno(turno_id)
+        return service.finalizar_turno(turno_id, consulta_data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     

@@ -72,6 +72,12 @@ def get_horario_profesional_service(
             profesional_repo: ProfesionalRepository = Depends(get_profesional_repo)) -> HorarioProfesionalService:
     return HorarioProfesionalService(horario_repo, profesional_repo)
 
+def get_estado_turno_repo() -> EstadoTurnoRepository:
+    return EstadoTurnoRepository(model=EstadoTurno)
+
+def get_estado_turno_service(repo: EstadoTurnoRepository = Depends(get_estado_turno_repo)) -> EstadoTurnoService:
+    return EstadoTurnoService(repo)
+
 def get_turno_repo() -> TurnoRepository:
     return TurnoRepository(model=Turno)
 def get_turno_service(
@@ -84,9 +90,8 @@ def get_turno_service(
 def get_receta_repo() -> RecetaRepository:
     return RecetaRepository(model=Receta)
 def get_receta_service(
-            repo: RecetaRepository = Depends(get_receta_repo),
-            detalle_receta_service: DetalleRecetaService = Depends(get_detalle_receta_service)) -> RecetaService:
-    return RecetaService(repo, detalle_receta_service)
+            repo: RecetaRepository = Depends(get_receta_repo)) -> RecetaService:
+    return RecetaService(repo)
 def get_detalle_receta_repo() -> DetalleRecetaRepository:
     return DetalleRecetaRepository(model=DetalleReceta)
 def get_detalle_receta_service(

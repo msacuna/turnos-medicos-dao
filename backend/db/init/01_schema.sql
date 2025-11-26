@@ -167,7 +167,7 @@ CREATE TABLE turno (
     CONSTRAINT fk_turno_especialidad FOREIGN KEY (id_especialidad) REFERENCES especialidad(id),
     CONSTRAINT fk_turno_agenda_profesional FOREIGN KEY (id_agenda_profesional) REFERENCES agenda_profesional(id),
     CONSTRAINT fk_turno_paciente FOREIGN KEY (dni_paciente) REFERENCES paciente(dni),
-    CONSTRAINT fk_turno_estado FOREIGN KEY (nombre_estado) REFERENCES estado_turno(nombre)
+    CONSTRAINT fk_turno_estado FOREIGN KEY (nombre_estado) REFERENCES estados_turno(nombre)
 );
 
 CREATE TABLE receta (

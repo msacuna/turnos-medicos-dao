@@ -1,10 +1,15 @@
 
 
+from __future__ import annotations
+
 from datetime import date
+from typing import TYPE_CHECKING, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
-from backend.app.domain.schemas.consulta import ConsultaRead
-from backend.app.domain.schemas.detalle_receta import DetalleRecetaRead
+if TYPE_CHECKING:
+    from app.domain.schemas.consulta import ConsultaRead
+
+from app.domain.schemas.detalle_receta import DetalleRecetaRead
 from .detalle_receta import DetalleRecetaCreate
 
 class RecetaBase(BaseModel):
@@ -46,3 +51,7 @@ class RecetaCreate(BaseModel):
 class RecetaRead(RecetaBase):
     detalles_receta: list[DetalleRecetaRead] = []
     consultas: list[ConsultaRead] = []
+
+class RecetaUpdate(BaseModel):
+    fecha: Optional[date] = None
+    dispensada: Optional[bool] = None

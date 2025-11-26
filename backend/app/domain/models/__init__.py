@@ -4,6 +4,7 @@ from .antecedente import Antecedente
 from .consulta import Consulta
 from .detalle_receta import DetalleReceta
 from .especialidad import Especialidad
+from .estados_turno.estado_turno import EstadoTurno
 from .estados_turno.estado_turno_abs import EstadoTurnoAbs
 from .grupo_sanguineo import GrupoSanguineo
 from .horario_atencion import HorarioAtencion, DiaSemanaEnum
@@ -30,7 +31,6 @@ __all__ = [
     "Especialidad",
     "EstadoTurno",
     "EstadoTurnoAbs",
-    "EstadoTurnoEnum",
     "GrupoSanguineo",
     "HorarioAtencion",
     "DiaSemanaEnum",

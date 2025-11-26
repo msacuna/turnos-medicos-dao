@@ -3,7 +3,7 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
-from backend.app.domain.schemas.medicamento import MedicamentoRead
+from app.domain.schemas.medicamento import MedicamentoRead
 
 
 class DetalleRecetaBase(BaseModel):
@@ -33,3 +33,8 @@ class DetalleRecetaCreate(BaseModel):
 
 class DetalleRecetaRead(DetalleRecetaBase):
     medicamento: Optional[MedicamentoRead] = None
+
+class DetalleRecetaUpdate(BaseModel):
+    id_medicamento: Optional[int] = None
+    cantidad: Optional[int] = None
+    indicaciones: Optional[str] = None

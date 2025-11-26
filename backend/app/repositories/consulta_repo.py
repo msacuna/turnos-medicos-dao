@@ -1,7 +1,7 @@
 import select
 from typing import Optional
 
-from backend.app.domain.models.consulta import Consulta
+from app.domain.models.consulta import Consulta
 
 from .base import BaseRepository
 

@@ -1,6 +1,6 @@
 from app.domain.models import DetalleReceta
-from backend.app.domain.schemas.detalle_receta import DetalleRecetaCreate, DetalleRecetaRead, DetalleRecetaUpdate
-from backend.app.repositories.detalle_receta_repo import DetalleRecetaRepository
+from app.domain.schemas.detalle_receta import DetalleRecetaCreate, DetalleRecetaRead, DetalleRecetaUpdate
+from app.repositories.detalle_receta_repo import DetalleRecetaRepository
 from .medicamento_service import MedicamentoService
 
 

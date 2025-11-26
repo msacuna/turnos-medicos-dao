@@ -1,8 +1,8 @@
 
 
-from backend.app.domain.models.detalle_receta import DetalleReceta
-from backend.app.domain.schemas.receta import RecetaCreate, RecetaRead, RecetaUpdate
-from backend.app.repositories.receta_repo import RecetaRepository
+from app.domain.models.detalle_receta import DetalleReceta
+from app.domain.schemas.receta import RecetaCreate, RecetaRead, RecetaUpdate
+from app.repositories.receta_repo import RecetaRepository
 from app.domain.models import Receta
 from .detalle_receta_service import DetalleRecetaService
 

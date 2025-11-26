@@ -1,4 +1,4 @@
-from backend.app.services.interfaces.observador_turno import ObservadorTurno
+from app.services.interfaces.observador_turno import ObservadorTurno
 
 
 class NotificadorEmail(ObservadorTurno):

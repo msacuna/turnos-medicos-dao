@@ -1,15 +1,19 @@
 
 
-from backend.app.repositories.agenda_profesional_repo import AgendaProfesionalRepo
-from backend.app.services.horario_profesional_service import HorarioProfesionalService
+from typing import TYPE_CHECKING
+
+from app.repositories.agenda_profesional_repo import AgendaProfesionalRepo
+from app.services.horario_profesional_service import HorarioProfesionalService
 from app.domain.models import Profesional
-from backend.app.services.interfaces.sujeto_turno import SujetoTurno
-from backend.app.services.notificador_email import NotificadorEmail
-from backend.app.services.notificador_sms import NotificadorSMS
-from backend.app.services.profesional_service import ProfesionalService
+from app.services.interfaces.sujeto_turno import SujetoTurno
+from app.services.notificador_email import NotificadorEmail
+from app.services.notificador_sms import NotificadorSMS
+
+if TYPE_CHECKING:
+    from app.services.profesional_service import ProfesionalService
 from app.domain.models.agenda_profesional import AgendaProfesional
-from backend.app.services.turno_service import TurnoService
-from backend.app.domain.schemas.turno import TurnoCreate
+from app.services.turno_service import TurnoService
+from app.domain.schemas.turno import TurnoCreate
 from datetime import date, time, timedelta, datetime
 from app.domain.models.horario_atencion import DiaSemanaEnum
 import calendar
@@ -20,7 +24,7 @@ class AgendaProfesionalService(SujetoTurno):
     
 
     def __init__(self, agenda_repo: AgendaProfesionalRepo, horarios_profesional_service: HorarioProfesionalService,
-                 profesional_service: ProfesionalService, turno_service: TurnoService):
+                 profesional_service: "ProfesionalService", turno_service: TurnoService):
         self.agenda_repo = agenda_repo
         self.horarios_profesional_service = horarios_profesional_service
         self.profesional_service = profesional_service

@@ -1,7 +1,7 @@
 
 
-from backend.app.domain.models.agenda_profesional import AgendaProfesional
-from backend.app.repositories.base import BaseRepository
+from app.domain.models.agenda_profesional import AgendaProfesional
+from app.repositories.base import BaseRepository
 from sqlmodel import select
 from typing import Optional
 

@@ -1,9 +1,9 @@
 
-from backend.app.repositories.profesional_repo import ProfesionalRepository
-from backend.app.services.especialidad_service import EspecialidadService
+from app.repositories.profesional_repo import ProfesionalRepository
+from app.services.especialidad_service import EspecialidadService
 from app.domain.schemas.profesional import ProfesionalCreate, ProfesionalRead
 from app.domain.models import Profesional
-from services.agenda_profesional_service import AgendaProfesionalService
+from app.services.agenda_profesional_service import AgendaProfesionalService
 
 
 class ProfesionalService:
@@ -32,6 +32,6 @@ class ProfesionalService:
         if not profesional:
             raise ValueError(f"No se encontró el profesional con ID {id_profesional}")
         
-        
+
         
         

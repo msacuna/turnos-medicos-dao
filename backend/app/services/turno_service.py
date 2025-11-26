@@ -4,8 +4,8 @@ from app.repositories.turno_repo import TurnoRepository
 from app.domain.schemas.turno import TurnoCreate, TurnoUpdate, TurnoRead
 from app.services import EstadoTurnoService
 from app.services.paciente_service import PacienteService
-from backend.app.domain.schemas.consulta import ConsultaCreate
-from backend.app.services.consulta_service import ConsultaService
+from app.domain.schemas.consulta import ConsultaCreate
+from app.services.consulta_service import ConsultaService
 
 
 class TurnoService:

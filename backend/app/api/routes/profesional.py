@@ -4,7 +4,7 @@ from app.api.dependencies import get_agenda_profesional_service, get_horario_pro
 from app.services import HorarioProfesionalService, ProfesionalService
 from app.domain.schemas import HorarioProfesionalRead, HorarioDiaInput, ProfesionalRead, ProfesionalCreate
 from app.domain.models import DiaSemanaEnum
-from backend.app.services.agenda_profesional_service import AgendaProfesionalService
+from app.services.agenda_profesional_service import AgendaProfesionalService
 
 
 router = APIRouter(prefix="/profesionales", tags=["Profesionales"])

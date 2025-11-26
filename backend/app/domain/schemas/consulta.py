@@ -1,8 +1,12 @@
 
 
-from typing import Literal, Optional
+from __future__ import annotations
+
+from typing import Literal, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict
-from .receta import RecetaCreate, RecetaRead
+
+if TYPE_CHECKING:
+    from .receta import RecetaCreate, RecetaRead
 
 
 TipoConsulta = Literal["Consulta General", "Control", "Urgencia", "Seguimiento"]

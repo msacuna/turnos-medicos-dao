@@ -1,7 +1,7 @@
 from sqlmodel import select
 from sqlalchemy import func
-from backend.app.repositories.base import BaseRepository
-from backend.app.domain.models.estados_turno.estado_turno import EstadoTurno
+from app.repositories.base import BaseRepository
+from app.domain.models.estados_turno.estado_turno import EstadoTurno
 
 
 class EstadoTurnoRepository(BaseRepository[EstadoTurno]):
