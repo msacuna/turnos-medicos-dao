@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from pydantic import model_validator
 from datetime import date, time
-from .estado_turno import EstadoTurnoEnum
+from .estados_turno.estado_turno_abs import EstadoTurnoAbs
 
 if TYPE_CHECKING:
     from .paciente import Paciente
@@ -12,18 +12,20 @@ if TYPE_CHECKING:
     from .consulta import Consulta
 
 class Turno(SQLModel, table=True):
-    __tablename__ = "turno" # type: ignore
+    __tablename__ = "turno"  # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True)
     fecha: date
     hora_inicio: time
     hora_fin_estimada: time
-    dni_paciente: int = Field(foreign_key="paciente.dni")
-    nombre_estado: EstadoTurnoEnum = Field(foreign_key="estado_turno.nombre", default=EstadoTurnoEnum.AGENDADO)
+    dni_paciente: Optional[int] = Field(foreign_key="paciente.dni", nullable=True)
     id_especialidad: int = Field(foreign_key="especialidad.id")
     id_agenda_profesional: int = Field(foreign_key="agenda_profesional.id")
 
+    # Relación con el estado (State Pattern)
+    id_estado: int = Field(foreign_key="estado_turno.id")  # Clave foránea al estado
+    estado: Optional[EstadoTurnoAbs] = Relationship()  # Relación con la clase abstracta
+
     paciente: Optional["Paciente"] = Relationship(back_populates="turnos")
-    estado: Optional["EstadoTurno"] = Relationship(back_populates="turnos")
     especialidad: Optional["Especialidad"] = Relationship(back_populates="turnos")
     agenda_profesional: Optional["AgendaProfesional"] = Relationship(back_populates="turnos")
     consultas: list["Consulta"] = Relationship(back_populates="turno")

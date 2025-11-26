@@ -4,6 +4,7 @@ from sqlmodel import Field
 
 class EstadoTurnoAbs(ABC):
 
+    id: int = Field(primary_key=True)
     nombre: str = Field()
 
     def __init__(self):

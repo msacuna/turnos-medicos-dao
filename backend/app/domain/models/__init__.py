@@ -19,6 +19,12 @@ from .rol import Rol
 from .tipo_obra_social import TipoObraSocial
 from .turno import Turno
 from .usuario import Usuario
+from .estados_turno.agendado import Agendado
+from .estados_turno.disponible import Disponible
+from .estados_turno.cancelado import Cancelado
+from .estados_turno.en_proceso import EnProceso
+from .estados_turno.ausente import Ausente
+from .estados_turno.finalizado import Finalizado
 
 __all__ = [
     "AgendaProfesional",
@@ -47,5 +53,11 @@ __all__ = [
     "TipoObraSocial",
     "TipoObraSocialEnum",
     "Turno",
-    "Usuario"
+    "Usuario",
+    "Agendado",
+    "Disponible",
+    "Cancelado",
+    "EnProceso",
+    "Ausente",
+    "Finalizado"
 ]
