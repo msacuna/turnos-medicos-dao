@@ -2,7 +2,8 @@
 
 from typing import Literal, Optional
 from pydantic import BaseModel, ConfigDict
-from .receta import RecetaRead
+from .receta import RecetaCreate, RecetaRead
+
 
 TipoConsulta = Literal["Consulta General", "Control", "Urgencia", "Seguimiento"]
 
@@ -22,10 +23,30 @@ class ConsultaCreate(ConsultaBase):
                 "observaciones": "Paciente presenta síntomas leves.",
                 "id_turno": 1,
                 "nombre_motivo_consulta": "Consulta General",
-                "id_receta": 2
+                "id_receta": 2,
+                "receta": {
+                    "fecha": "2024-07-10",
+                    "detalles_receta": [
+                        {
+                            "nombre_medicamento": "Paracetamol",
+                            "dosis": "500mg",
+                            "frecuencia": "Cada 8 horas",
+                            "duracion_dias": 5
+                        },
+                        {
+                            "nombre_medicamento": "Ibuprofeno",
+                            "dosis": "200mg",
+                            "frecuencia": "Cada 12 horas",
+                            "duracion_dias": 3
+                        }
+                    ]
+                }
+
             }
         }
     )
+    receta: RecetaCreate
+
 
 class ConsultaUpdate(BaseModel):
     model_config = ConfigDict(

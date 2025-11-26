@@ -103,7 +103,8 @@ CREATE TABLE paciente_antecedente (
 -- =============================================================================
 CREATE TABLE especialidad (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    precio DECIMAL(10, 2) NOT NULL
 );
 
 CREATE TABLE profesional (
@@ -148,8 +149,8 @@ CREATE TABLE agenda_profesional (
 -- =============================================================================
 -- Turnos (turno, estado turno, receta, consulta, motivo consulta)
 -- =============================================================================
-CREATE TABLE estado_turno (
-    nombre VARCHAR(100) PRIMARY KEY
+CREATE TABLE estados_turno (
+    nombre VARCHAR(30) PRIMARY KEY
 );
 
 CREATE TABLE turno (
@@ -158,9 +159,10 @@ CREATE TABLE turno (
     hora_inicio TIME NOT NULL,
     hora_fin_estimada TIME NOT NULL,
     dni_paciente INT NOT NULL,
-    nombre_estado VARCHAR(100) NOT NULL,
+    nombre_estado VARCHAR(30) NOT NULL,
     id_especialidad INT NOT NULL,
     id_agenda_profesional INT NOT NULL,
+    monto DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     CONSTRAINT chk_hora_turno CHECK (hora_fin_estimada > hora_inicio),
     CONSTRAINT fk_turno_especialidad FOREIGN KEY (id_especialidad) REFERENCES especialidad(id),
     CONSTRAINT fk_turno_agenda_profesional FOREIGN KEY (id_agenda_profesional) REFERENCES agenda_profesional(id),

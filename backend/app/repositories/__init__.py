@@ -9,6 +9,14 @@ from .paciente_repo import PacienteRepository
 from .grupo_sanguineo_repo import GrupoSanguineoRepository
 from .horario_atencion_repo import HorarioAtencionRepository
 from .profesional_repo import ProfesionalRepository
+from .turno_repo import TurnoRepository
+from .estado_turno_repo import EstadoTurnoRepository
+from .receta_repo import RecetaRepository
+from .detalle_receta_repo import DetalleRecetaRepository
+from .consulta_repo import ConsultaRepository
+from .agenda_profesional_repo import AgendaProfesionalRepo
+
+
 
 __all__ = [
     "BaseRepository",
@@ -22,4 +30,10 @@ __all__ = [
     "GrupoSanguineoRepository",
     "HorarioAtencionRepository",
     "ProfesionalRepository",
+    "TurnoRepository",
+    "EstadoTurnoRepository",
+    "RecetaRepository",
+    "DetalleRecetaRepository",
+    "ConsultaRepository",
+    "AgendaProfesionalRepo",
 ]

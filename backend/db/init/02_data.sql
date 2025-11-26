@@ -8,13 +8,13 @@ INSERT INTO grupo_sanguineo (nombre) VALUES
 ('AB+'), ('AB-'),
 ('0+'), ('0-');
 
-INSERT INTO estado_turno (nombre) VALUES
-('Agendado'), -- no llegó a fecha_hora_inicio
-('Cancelado'), -- cancelado antes de fecha_hora_inicio
+INSERT INTO estados_turno (nombre) VALUES
+('Disponible'), -- turno sin paciente asignado
+('Cancelado'), -- se cancelo el turno
 ('En proceso'), -- llegó a fecha_hora_inicio y se agenda como atendido 15 min antes de fecha_hora_fin
-('Ausente'), -- llegó a fecha_hora_inicio y no se agenda como atendido 15 min antes de fecha_hora_fin
-('Finalizado'), -- llegó a fecha_hora_inicio y fue atendido
-('Confirmado'); -- se acepta la generación de consulta asociada al turno
+('Ausente'), -- llegó a fecha_hora_inicio y no fue atendido
+('Finalizado'), -- finalizo el turno y fue atendido
+('Agendado'); -- se asocio un paciente al turno
 
 INSERT INTO especialidad (nombre) VALUES
 ('Cardiologia'),

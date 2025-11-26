@@ -4,6 +4,7 @@ from app.services import *
 from app.repositories import *
 from app.domain.models import *
 
+
 # SIMILAR AL CONTENEDOR DE JAVA SPRING (Manejo de Beans y Dependencias internamente)
 
 def get_especialidad_repo() -> EspecialidadRepository:
@@ -22,6 +23,8 @@ def get_medicamento_service(
             repo: MedicamentoRepository = Depends(get_medicamento_repo),
             laboratorio_service: LaboratorioService = Depends(get_laboratorio_service)) -> MedicamentoService:
     return MedicamentoService(repo, laboratorio_service)
+
+    
 
 def get_alergia_repo() -> AlergiaRepository:
     return AlergiaRepository(model=Alergia)
@@ -55,9 +58,54 @@ def get_paciente_service(
 
 def get_profesional_repo() -> ProfesionalRepository:
     return ProfesionalRepository(model=Profesional)
+
+def get_profesional_service(
+            repo: ProfesionalRepository = Depends(get_profesional_repo),
+            especialidad_service: EspecialidadService = Depends(get_especialidad_service)) -> ProfesionalService:
+    return ProfesionalService(repo, especialidad_service)
+
+
 def get_horario_atencion_repo() -> HorarioAtencionRepository:
     return HorarioAtencionRepository(model=HorarioAtencion)
 def get_horario_profesional_service(
             horario_repo: HorarioAtencionRepository = Depends(get_horario_atencion_repo),
             profesional_repo: ProfesionalRepository = Depends(get_profesional_repo)) -> HorarioProfesionalService:
     return HorarioProfesionalService(horario_repo, profesional_repo)
+
+def get_turno_repo() -> TurnoRepository:
+    return TurnoRepository(model=Turno)
+def get_turno_service(
+            repo: TurnoRepository = Depends(get_turno_repo),
+            estado_turno_service: EstadoTurnoService = Depends(get_estado_turno_service),
+            paciente_service: PacienteService = Depends(get_paciente_service),
+            consulta_service = ConsultaService) -> TurnoService:
+    return TurnoService(repo, estado_turno_service, paciente_service, consulta_service)
+
+def get_receta_repo() -> RecetaRepository:
+    return RecetaRepository(model=Receta)
+def get_receta_service(
+            repo: RecetaRepository = Depends(get_receta_repo),
+            detalle_receta_service: DetalleRecetaService = Depends(get_detalle_receta_service)) -> RecetaService:
+    return RecetaService(repo, detalle_receta_service)
+def get_detalle_receta_repo() -> DetalleRecetaRepository:
+    return DetalleRecetaRepository(model=DetalleReceta)
+def get_detalle_receta_service(
+            repo: DetalleRecetaRepository = Depends(get_detalle_receta_repo),
+            medicamento_service: MedicamentoService = Depends(get_medicamento_service)) -> DetalleRecetaService:
+    return DetalleRecetaService(repo, medicamento_service)
+
+def get_consulta_repo() -> ConsultaRepository:
+    return ConsultaRepository(model=Consulta)
+def get_consulta_service(
+            consulta_repository: ConsultaRepository = Depends(get_consulta_repo),
+            receta_service: RecetaService = Depends(get_receta_service),
+            detalle_receta_service: DetalleRecetaService = Depends(get_detalle_receta_service)) -> ConsultaService:
+    return ConsultaService(consulta_repository, receta_service, detalle_receta_service)
+
+def get_agenda_profesional_repo() -> AgendaProfesionalRepo:
+    return AgendaProfesionalRepo(model=AgendaProfesional)
+def get_agenda_profesional_service(
+            repo: AgendaProfesionalRepo = Depends(get_agenda_profesional_repo),
+            profesional_service: ProfesionalService = Depends(get_profesional_service),
+            horario_profesional_service: HorarioProfesionalService = Depends(get_horario_profesional_service)) -> AgendaProfesionalService:
+    return AgendaProfesionalService(repo, profesional_service, horario_profesional_service)

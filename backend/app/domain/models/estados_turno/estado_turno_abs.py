@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from sqlmodel import Field
+from backend.app.domain.models.turno import Turno
+
+if TYPE_CHECKING:
+    from backend.app.domain.models.turno import Turno
 
 class EstadoTurnoAbs(ABC):
 
-    id: int = Field(primary_key=True)
-    nombre: str = Field()
+    nombre: str = ""
 
     def __init__(self):
         pass
@@ -48,3 +51,65 @@ class EstadoTurnoAbs(ABC):
     def es_ausente(self) -> bool:
         return False
     
+    def get_name(self) -> str:
+        return self.nombre
+    
+
+class Ausente(EstadoTurnoAbs):
+    nombre: str = "Ausente"
+
+    def es_ausente(self) -> bool:
+        return True
+
+class Cancelado(EstadoTurnoAbs):
+    nombre: str = "Cancelado"
+
+    def es_cancelado(self) -> bool:
+        return True
+
+class Disponible(EstadoTurnoAbs):
+    nombre: str = "Disponible"
+
+    def es_disponible(self) -> bool:
+        return True
+    
+    def agendar(self, ctx: Turno, dni_paciente: int, cobertura: float):
+        # Lógica de negocio: agendar el turno
+        ctx.dni_paciente = dni_paciente
+        ctx.monto = cobertura * ctx.especialidad.precio
+        ctx.set_estado(Agendado()) # Cambia el estado del turno a Agendado
+
+    def cancelar(self, ctx: Turno):
+        ctx.set_estado(Cancelado())
+
+class EnProceso(EstadoTurnoAbs):
+    nombre: str = "En Proceso"
+
+    def es_en_proceso(self) -> bool:
+        return True
+
+class Finalizado(EstadoTurnoAbs):
+    nombre: str = "Finalizado"
+
+    def es_finalizado(self) -> bool:
+        return True
+
+class Agendado(EstadoTurnoAbs):
+    nombre: str = "Agendado"
+
+    def es_agendado(self) -> bool:
+        return True
+    
+    def liberar(self, ctx: Turno):
+        ctx.dni_paciente = None
+        ctx.monto = 0.0
+        ctx.set_estado(Disponible())
+
+    def cancelar(self, ctx: Turno):
+        ctx.set_estado(Cancelado())
+    
+    def marcar_inasistencia(self, ctx: Turno):
+        ctx.set_estado(Ausente())
+
+    def iniciarTurno(self, ctx: Turno):
+        ctx.set_estado(EnProceso())

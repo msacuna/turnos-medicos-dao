@@ -9,3 +9,4 @@ class MedicamentoRepository(BaseRepository[Medicamento]):
     def get_by_nombre(self, nombre: str) -> Optional[Medicamento]:
         statement = select(Medicamento).where(Medicamento.nombre == nombre)
         return self.session.exec(statement).first()
+    

@@ -4,7 +4,7 @@ from .antecedente import Antecedente
 from .consulta import Consulta
 from .detalle_receta import DetalleReceta
 from .especialidad import Especialidad
-from .estado_turno import EstadoTurno, EstadoTurnoEnum
+from .estados_turno.estado_turno_abs import EstadoTurnoAbs
 from .grupo_sanguineo import GrupoSanguineo
 from .horario_atencion import HorarioAtencion, DiaSemanaEnum
 from .laboratorio import Laboratorio
@@ -19,12 +19,7 @@ from .rol import Rol
 from .tipo_obra_social import TipoObraSocial
 from .turno import Turno
 from .usuario import Usuario
-from .estados_turno.agendado import Agendado
-from .estados_turno.disponible import Disponible
-from .estados_turno.cancelado import Cancelado
-from .estados_turno.en_proceso import EnProceso
-from .estados_turno.ausente import Ausente
-from .estados_turno.finalizado import Finalizado
+
 
 __all__ = [
     "AgendaProfesional",
@@ -34,6 +29,7 @@ __all__ = [
     "DetalleReceta",
     "Especialidad",
     "EstadoTurno",
+    "EstadoTurnoAbs",
     "EstadoTurnoEnum",
     "GrupoSanguineo",
     "HorarioAtencion",
@@ -54,10 +50,4 @@ __all__ = [
     "TipoObraSocialEnum",
     "Turno",
     "Usuario",
-    "Agendado",
-    "Disponible",
-    "Cancelado",
-    "EnProceso",
-    "Ausente",
-    "Finalizado"
 ]

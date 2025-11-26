@@ -1,11 +1,11 @@
 
 
 from datetime import date
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from backend.app.domain.schemas.consulta import ConsultaRead
 from backend.app.domain.schemas.detalle_receta import DetalleRecetaRead
-
+from .detalle_receta import DetalleRecetaCreate
 
 class RecetaBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -20,12 +20,28 @@ class RecetaCreate(BaseModel):
         json_schema_extra={
             "example": {
                 "fecha": "2024-07-10",
-                "dispensada": False
+                "detalles_receta": [
+                    {
+                        "nombre_medicamento": "Paracetamol",
+                        "dosis": "500mg",
+                        "frecuencia": "Cada 8 horas",
+                        "duracion_dias": 5
+                    },
+                    {
+                        "nombre_medicamento": "Ibuprofeno",
+                        "dosis": "200mg",
+                        "frecuencia": "Cada 12 horas",
+                        "duracion_dias": 3
+                    }
+                ]
+
             }
         }
     )
     fecha: date
     dispensada: bool = False
+    detalles_receta: list[DetalleRecetaCreate] = []
+    dispensada: bool = Field(exclude=True, default=False)
 
 class RecetaRead(RecetaBase):
     detalles_receta: list[DetalleRecetaRead] = []

@@ -1,12 +1,11 @@
 from sqlmodel import select
 from sqlalchemy import func
-from backend.app.domain.models.estado_turno import EstadoTurno
 from backend.app.repositories.base import BaseRepository
+from backend.app.domain.models.estados_turno.estado_turno import EstadoTurno
 
 
 class EstadoTurnoRepository(BaseRepository[EstadoTurno]):
     def get_by_nombre(self, nombre: str) -> EstadoTurno | None:
-        # Búsqueda case-insensitive usando func.lower()
         statement = select(EstadoTurno).where(
             func.lower(EstadoTurno.nombre) == func.lower(nombre)
         )

@@ -13,4 +13,4 @@ class Receta(SQLModel, table=True):
     dispensada: bool = Field(default=False)
     
     detalles_receta: list["DetalleReceta"] = Relationship(back_populates="receta")
-    consultas: list["Consulta"] = Relationship(back_populates="receta")
+    consultas: list["Consulta"] = Relationship(back_populates="receta") #por que carajo esta esto

@@ -9,6 +9,8 @@ from .grupo_sanguineo import GrupoSanguineoRead
 from .motivo_consulta import MotivoConsultaCreate, MotivoConsultaUpdate, MotivoConsultaRead
 from .horario_atencion import HorarioProfesionalCreate, HorarioProfesionalUpdate, HorarioProfesionalRead
 from .horario import HorarioDiaInput
+from .profesional import ProfesionalRead, ProfesionalCreate, ProfesionalUpdate
+from .turno import TurnoRead, TurnoCreate, TurnoUpdate
 
 __all__ = [
     "EspecialidadCreate",
@@ -40,4 +42,10 @@ __all__ = [
     "HorarioProfesionalUpdate",
     "HorarioProfesionalRead",
     "HorarioDiaInput",
+    "ProfesionalRead",
+    "ProfesionalCreate",
+    "ProfesionalUpdate",
+    "TurnoRead",
+    "TurnoCreate",
+    "TurnoUpdate"
 ]
