@@ -5,6 +5,7 @@ from .alergia import router as alergias_router
 from .antecedente import router as antecedentes_router
 from .obra_social import router as obras_sociales_router
 from .paciente import router as pacientes_router
+from .profesional import router as profesionales_router
 
 __all__ = [
     "especialidad_router",
@@ -13,5 +14,6 @@ __all__ = [
     "alergias_router",
     "antecedentes_router",
     "obras_sociales_router",
-    "pacientes_router"
+    "pacientes_router",
+    "profesionales_router",
 ]

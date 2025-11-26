@@ -106,14 +106,6 @@ CREATE TABLE especialidad (
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE horario_atencion (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    dia_semana ENUM('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado') NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    CONSTRAINT chk_hora CHECK (hora_fin > hora_inicio)
-);
-
 CREATE TABLE profesional (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     matricula VARCHAR(50) NOT NULL UNIQUE,
@@ -125,14 +117,14 @@ CREATE TABLE profesional (
     CONSTRAINT fk_profesional_especialidad FOREIGN KEY (id_especialidad) REFERENCES especialidad(id)
 );
 
--- si CURDATE() <= '15' → permitir UPDATE o INSERT en horario_profesional
-CREATE TABLE horario_profesional (
+CREATE TABLE horario_atencion (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    dia_semana ENUM('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado') NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
     id_profesional INT NOT NULL,
-    id_horario_atencion INT NOT NULL,
-    vigente BOOLEAN NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_horario_profesional PRIMARY KEY (id_profesional, id_horario_atencion),
-    CONSTRAINT fk_horario_profesional_profesional FOREIGN KEY (id_profesional) REFERENCES profesional(id) ON DELETE CASCADE,
-    CONSTRAINT fk_horario_profesional_horario FOREIGN KEY (id_horario_atencion) REFERENCES horario_atencion(id) ON DELETE CASCADE
+    CONSTRAINT chk_hora CHECK (hora_fin > hora_inicio),
+    CONSTRAINT fk_horario_atencion_profesional FOREIGN KEY (id_profesional) REFERENCES profesional(id)
 );
 
 CREATE TABLE obra_social_profesional (

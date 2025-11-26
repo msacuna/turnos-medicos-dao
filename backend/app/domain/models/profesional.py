@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
-from .links import HorarioProfesionalLink, ObraSocialProfesionalLink
+from .links import ObraSocialProfesionalLink
 
 if TYPE_CHECKING:
     from .especialidad import Especialidad
@@ -20,5 +20,5 @@ class Profesional(SQLModel, table=True):
 
     especialidad: Optional["Especialidad"] = Relationship(back_populates="profesionales")
     agendas_profesionales: list["AgendaProfesional"] = Relationship(back_populates="profesional")
-    horario_atenciones: list["HorarioAtencion"] = Relationship(back_populates="profesionales", link_model=HorarioProfesionalLink)
+    horarios_atencion: list["HorarioAtencion"] = Relationship(back_populates="profesional")
     obras_sociales: list["ObraSocial"] = Relationship(back_populates="profesionales", link_model=ObraSocialProfesionalLink)

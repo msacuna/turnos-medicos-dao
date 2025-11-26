@@ -26,6 +26,7 @@ app = FastAPI(
 
 ManejadorDeExcepciones.configurar_handlers(app)
 app.include_router(pacientes_router)
+app.include_router(profesionales_router)
 app.include_router(alergias_router)
 app.include_router(antecedentes_router)
 app.include_router(especialidad_router)

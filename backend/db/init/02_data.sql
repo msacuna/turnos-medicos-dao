@@ -63,3 +63,26 @@ INSERT INTO obra_social (nombre, cuit, porcentaje_cobertura, nombre_tipo) VALUES
 ('Galeno', '30710002911', 80.00, 'Provincial'),
 ('OSECAC', '30517890123', 80.00, 'Provincial'),
 ('PAMI', '30523467891', 100.00, 'Jubilado');
+
+-- =============================================================================
+-- Profesionales de ejemplo para testing
+-- =============================================================================
+INSERT INTO profesional (matricula, nombre, apellido, email, telefono, id_especialidad) VALUES
+('MP001', 'Ana', 'Rodriguez', 'ana.rodriguez@hospital.com', '351-1234567', 1), -- Cardiologia  
+('MP002', 'Carlos', 'Martinez', 'carlos.martinez@hospital.com', '351-2345678', 2), -- Dermatologia
+('MP003', 'Maria', 'Lopez', 'maria.lopez@hospital.com', '351-3456789', 6), -- Pediatria
+('MP004', 'Juan', 'Garcia', 'juan.garcia@hospital.com', '351-4567890', 8), -- Traumatologia
+('MP005', 'Laura', 'Fernandez', 'laura.fernandez@hospital.com', '351-5678901', 3); -- Endocrinologia
+
+-- =============================================================================
+-- Relaciones profesional-obra social (algunos ejemplos)
+-- =============================================================================
+INSERT INTO obra_social_profesional (nombre_obra_social, id_profesional, vigente) VALUES
+('OSDE', 1, TRUE),
+('Swiss Medical', 1, TRUE),
+('APROSS', 2, TRUE),
+('Galeno', 2, TRUE),
+('OSDE', 3, TRUE),
+('PAMI', 3, TRUE),
+('Swiss Medical', 4, TRUE),
+('APROSS', 5, TRUE);
