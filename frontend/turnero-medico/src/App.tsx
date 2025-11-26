@@ -8,6 +8,13 @@ import Principal from './pages/Principal';
 
 import RoleRoute from './components/layout/RoleRoute';
 import Especialidades from './pages/admin/Especialidades';
+import Alergias from './pages/admin/Alergias';
+import ObrasSociales from './pages/admin/ObrasSociales';
+import Antecedentes from './pages/admin/Antecedentes';
+import Medicamentos from './pages/admin/Medicamentos';
+
+import RegistroPacientes from './pages/admin/RegistroPacientes';
+import RegistroProfesional from './pages/admin/RegistroProfesional';
 
 function PrivateRoute({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -38,6 +45,66 @@ export default function App() {
             element={
               <RoleRoute allowed={['administrador']}>
                 <Especialidades />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → ALERGIAS */}
+          <Route
+            path="/admin/alergias"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Alergias />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → OBRAS SOCIALES */}
+          <Route
+            path="/admin/obrasSociales"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <ObrasSociales />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → ANTECEDENTES */}
+          <Route
+            path="/admin/antecedentes"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Antecedentes />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → MEDICAMENTOS */}
+          <Route
+            path="/admin/medicamentos"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Medicamentos />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → REGISTRO PACIENTES */}
+          <Route
+            path="/admin/RegistroPacientes"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <RegistroPacientes />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → REGISTRO PROFESIONAL */}
+          <Route
+            path="/admin/RegistroProfesional"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <RegistroProfesional />
               </RoleRoute>
             }
           />

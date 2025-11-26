@@ -18,7 +18,15 @@ export default function AdminMenu({ isOpen, onClose }: AdminMenuProps) {
       <div className={styles.header}>
         <h2 className={styles.title}>Menú</h2>
         <button className={styles.closeButton} onClick={onClose}>
-          ✖
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+          >
+            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+          </svg>
         </button>
       </div>
 
@@ -33,42 +41,60 @@ export default function AdminMenu({ isOpen, onClose }: AdminMenuProps) {
         </button>
 
         {openOrg && (
-          <div className={styles.sectionContent}>
-            <Link to="/admin/especialidades" className={styles.item}>
+          <div className={styles.dropdownContent}>
+            <Link
+              to="/admin/especialidades"
+              className={styles.menuButton}
+              onClick={onClose}
+            >
               Especialidades
             </Link>
-            <Link to="/abmc-laboratorios" className={styles.item}>
-              Laboratorios
-            </Link>
-            <Link to="/abmc-obras-sociales" className={styles.item}>
+            <Link
+              to="/admin/obrasSociales"
+              className={styles.menuButton}
+              onClick={onClose}
+            >
               Obras Sociales
             </Link>
-            <Link to="/abmc-alergias" className={styles.item}>
+            <Link
+              to="/admin/alergias"
+              className={styles.menuButton}
+              onClick={onClose}
+            >
               Alergias
             </Link>
-            <Link to="/abmc-antecedentes" className={styles.item}>
+            <Link
+              to="/admin/antecedentes"
+              className={styles.menuButton}
+              onClick={onClose}
+            >
               Antecedentes
+            </Link>
+            <Link
+              to="/admin/medicamentos"
+              className={styles.menuButton}
+              onClick={onClose}
+            >
+              Medicamentos
             </Link>
           </div>
         )}
       </div>
 
-      {/* Otros enlaces */}
-      <Link to="/registrar-turno" className={styles.item}>
-        Registrar turno
-      </Link>
+      <div className={styles.menuOptions}>
+        {/* Otros enlaces */}
+        <Link to="/registrar-turno" className={styles.menuButton}>
+          Registrar turno
+        </Link>
 
-      <Link to="/registrar-paciente" className={styles.item}>
-        Registrar paciente
-      </Link>
+        <Link to="/admin/RegistroPacientes" className={styles.menuButton}>
+          Registrar paciente
+        </Link>
 
-      <Link to="/registrar-profesional" className={styles.item}>
-        Registrar profesional
-      </Link>
-
-      <Link to="/abmc-medicamentos" className={styles.item}>
-        ABMC Medicamentos
-      </Link>
+        <Link to="/admin/RegistroProfesional" className={styles.menuButton}>
+          Registrar profesional
+        </Link>
+      </div>
     </div>
   );
 }
