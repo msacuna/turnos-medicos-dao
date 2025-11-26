@@ -7,6 +7,8 @@ from .obra_social import ObraSocialCreate, ObraSocialUpdate, ObraSocialRead
 from .paciente import PacienteCreate, PacienteUpdate, PacienteRead
 from .grupo_sanguineo import GrupoSanguineoRead
 from .motivo_consulta import MotivoConsultaCreate, MotivoConsultaUpdate, MotivoConsultaRead
+from .horario_atencion import HorarioProfesionalCreate, HorarioProfesionalUpdate, HorarioProfesionalRead
+from .horario import HorarioDiaInput
 
 __all__ = [
     "EspecialidadCreate",
@@ -34,4 +36,8 @@ __all__ = [
     "MotivoConsultaCreate",
     "MotivoConsultaUpdate",
     "MotivoConsultaRead",
+    "HorarioProfesionalCreate",
+    "HorarioProfesionalUpdate",
+    "HorarioProfesionalRead",
+    "HorarioDiaInput",
 ]
