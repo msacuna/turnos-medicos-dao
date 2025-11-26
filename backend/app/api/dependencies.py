@@ -52,3 +52,12 @@ def get_paciente_service(
             grupo_sanguineo_service: GrupoSanguineoService = Depends(get_grupo_sanguineo_service),
             obra_social_service: ObraSocialService = Depends(get_obra_social_service)) -> PacienteService:
     return PacienteService(repo, alergia_service, antecedente_service, grupo_sanguineo_service, obra_social_service)
+
+def get_profesional_repo() -> ProfesionalRepository:
+    return ProfesionalRepository(model=Profesional)
+def get_horario_atencion_repo() -> HorarioAtencionRepository:
+    return HorarioAtencionRepository(model=HorarioAtencion)
+def get_horario_profesional_service(
+            horario_repo: HorarioAtencionRepository = Depends(get_horario_atencion_repo),
+            profesional_repo: ProfesionalRepository = Depends(get_profesional_repo)) -> HorarioProfesionalService:
+    return HorarioProfesionalService(horario_repo, profesional_repo)
