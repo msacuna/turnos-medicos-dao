@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import pacienteService from '../../service/pacienteService';
 import { type Paciente } from '../../types/Paciente';
-import styles from '../../styles/pages/obrasSociales.module.css'; // reutilizamos estilos
+import styles from '../../styles/pages/paciente.module.css'; // reutilizamos estilos
 import { useNavigate } from 'react-router-dom';
 
 export default function Pacientes() {
@@ -74,7 +74,7 @@ export default function Pacientes() {
                 <button
                   className={styles.editButton}
                   onClick={() =>
-                    navigate(`/admin/registrar-paciente?dni=${p.dni}`)
+                    navigate(`/admin/registroPaciente?dni=${p.dni}`)
                   }
                 >
                   Editar

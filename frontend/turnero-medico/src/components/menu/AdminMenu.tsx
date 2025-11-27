@@ -91,8 +91,8 @@ export default function AdminMenu({ isOpen, onClose }: AdminMenuProps) {
           Pacientes
         </Link>
 
-        <Link to="/admin/RegistroProfesional" className={styles.menuButton}>
-          Registrar profesional
+        <Link to="/admin/profesionales" className={styles.menuButton}>
+          Profesionales
         </Link>
       </div>
     </div>

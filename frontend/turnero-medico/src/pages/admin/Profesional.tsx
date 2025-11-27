@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from '@/styles/pages/tabla.module.css';
+import styles from '@/styles/pages/profesional.module.css';
 
 import {
   type Profesional,

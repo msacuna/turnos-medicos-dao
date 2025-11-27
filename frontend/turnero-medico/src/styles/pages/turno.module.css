@@ -1,0 +1,130 @@
+/* src/styles/pages/turno.module.css */
+
+.container {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  padding: 18px;
+  align-items: start;
+  min-height: 70vh;
+  background: var(--bg, #fafafa);
+}
+
+/* calendario columna */
+.calendarColumn {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* pequeño badge en dia con turnos */
+.dotCount {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #2b8aef;
+  color: white;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* panel lateral */
+.sidePanel {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  min-height: 400px;
+}
+
+.sidePanel h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+/* lista de slots */
+.slotList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* cada slot */
+.slot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #eee;
+  transition: box-shadow 0.12s, transform 0.08s;
+}
+
+.slot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.slotTime {
+  font-weight: 600;
+  width: 120px;
+}
+
+.slotInfo {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.especialidad {
+  font-size: 14px;
+  color: #333;
+}
+
+.estado {
+  font-size: 13px;
+  color: #666;
+}
+
+/* estados */
+.available {
+  border-left: 4px solid #2b8aef;
+}
+
+.booked {
+  border-left: 4px solid #e05050;
+}
+
+.selected {
+  background: linear-gradient(
+    90deg,
+    rgba(43, 138, 239, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* detalle del turno */
+.detailBox {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background: #fff;
+}
+
+.detailBox h4 {
+  margin: 0 0 8px;
+}
+
+.detailActions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}

@@ -12,8 +12,10 @@ import type {
 
 interface Props {
   data?: Profesional | null;
-  onClose: () => void;
-  onSave: (payload: ProfesionalCreate | ProfesionalUpdate) => Promise<void>;
+  onClose?: () => void; // opcional
+  onSave?: (
+    payload: ProfesionalCreate | ProfesionalUpdate
+  ) => Promise<void> | void; // opcional
 }
 
 export default function RegistroProfesional({ data, onClose, onSave }: Props) {
@@ -70,7 +72,7 @@ export default function RegistroProfesional({ data, onClose, onSave }: Props) {
       id_especialidad: Number(id_especialidad),
     };
 
-    onSave(payload);
+    if (onSave) onSave(payload); // solo llama si existe
   };
 
   return (
@@ -148,7 +150,11 @@ export default function RegistroProfesional({ data, onClose, onSave }: Props) {
           </div>
 
           <div className={styles.buttons}>
-            <button type="button" className={styles.cancel} onClick={onClose}>
+            <button
+              type="button"
+              className={styles.cancel}
+              onClick={onClose ? onClose : undefined}
+            >
               Cancelar
             </button>
 
