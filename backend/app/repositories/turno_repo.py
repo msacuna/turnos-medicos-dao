@@ -5,6 +5,14 @@ from app.domain.models import Turno
 from .base import BaseRepository
 
 class TurnoRepository(BaseRepository[Turno]):
+    def get_by_id_with_especialidad(self, id: int) -> Optional[Turno]:
+        """Obtiene un turno por ID con la especialidad cargada para cálculo de monto"""
+        statement = select(Turno).where(Turno.id == id).options(
+            selectinload(Turno.especialidad)
+        )
+        result = self.session.exec(statement).first()
+        return result
+    
     def get_by_paciente(self, dni_paciente: int) -> list[Turno]:
         statement = select(Turno).where(Turno.dni_paciente == dni_paciente)
         return list(self.session.exec(statement).all())
@@ -16,7 +24,7 @@ class TurnoRepository(BaseRepository[Turno]):
         return list(self.session.exec(statement).all())
 
     def get_by_agenda(self, id_agenda: int) -> list[Turno]:
-        statement = select(Turno).where(Turno.id_agenda == id_agenda)
+        statement = select(Turno).where(Turno.id_agenda_profesional == id_agenda)
         return list(self.session.exec(statement).all())
     
     def get_by_agenda_and_days(self, id_agenda: int, dias: list[int]) -> list[Turno]:

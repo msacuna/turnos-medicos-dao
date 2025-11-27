@@ -78,26 +78,19 @@ def get_estado_turno_repo() -> EstadoTurnoRepository:
 def get_estado_turno_service(repo: EstadoTurnoRepository = Depends(get_estado_turno_repo)) -> EstadoTurnoService:
     return EstadoTurnoService(repo)
 
-def get_turno_repo() -> TurnoRepository:
-    return TurnoRepository(model=Turno)
-def get_turno_service(
-            repo: TurnoRepository = Depends(get_turno_repo),
-            estado_turno_service: EstadoTurnoService = Depends(get_estado_turno_service),
-            paciente_service: PacienteService = Depends(get_paciente_service),
-            consulta_service = ConsultaService) -> TurnoService:
-    return TurnoService(repo, estado_turno_service, paciente_service, consulta_service)
-
-def get_receta_repo() -> RecetaRepository:
-    return RecetaRepository(model=Receta)
-def get_receta_service(
-            repo: RecetaRepository = Depends(get_receta_repo)) -> RecetaService:
-    return RecetaService(repo)
 def get_detalle_receta_repo() -> DetalleRecetaRepository:
     return DetalleRecetaRepository(model=DetalleReceta)
 def get_detalle_receta_service(
             repo: DetalleRecetaRepository = Depends(get_detalle_receta_repo),
             medicamento_service: MedicamentoService = Depends(get_medicamento_service)) -> DetalleRecetaService:
     return DetalleRecetaService(repo, medicamento_service)
+
+def get_receta_repo() -> RecetaRepository:
+    return RecetaRepository(model=Receta)
+def get_receta_service(
+            repo: RecetaRepository = Depends(get_receta_repo),
+            detalle_receta_service: DetalleRecetaService = Depends(get_detalle_receta_service)) -> RecetaService:
+    return RecetaService(repo, detalle_receta_service)
 
 def get_consulta_repo() -> ConsultaRepository:
     return ConsultaRepository(model=Consulta)
@@ -107,10 +100,20 @@ def get_consulta_service(
             detalle_receta_service: DetalleRecetaService = Depends(get_detalle_receta_service)) -> ConsultaService:
     return ConsultaService(consulta_repository, receta_service, detalle_receta_service)
 
+def get_turno_repo() -> TurnoRepository:
+    return TurnoRepository(model=Turno)
+def get_turno_service(
+            repo: TurnoRepository = Depends(get_turno_repo),
+            estado_turno_service: EstadoTurnoService = Depends(get_estado_turno_service),
+            paciente_service: PacienteService = Depends(get_paciente_service),
+            consulta_service: ConsultaService = Depends(get_consulta_service)) -> TurnoService:
+    return TurnoService(repo, estado_turno_service, paciente_service, consulta_service)
+
 def get_agenda_profesional_repo() -> AgendaProfesionalRepo:
     return AgendaProfesionalRepo(model=AgendaProfesional)
 def get_agenda_profesional_service(
             repo: AgendaProfesionalRepo = Depends(get_agenda_profesional_repo),
+            horario_profesional_service: HorarioProfesionalService = Depends(get_horario_profesional_service),
             profesional_service: ProfesionalService = Depends(get_profesional_service),
-            horario_profesional_service: HorarioProfesionalService = Depends(get_horario_profesional_service)) -> AgendaProfesionalService:
-    return AgendaProfesionalService(repo, profesional_service, horario_profesional_service)
+            turno_service: TurnoService = Depends(get_turno_service)) -> AgendaProfesionalService:
+    return AgendaProfesionalService(repo, horario_profesional_service, profesional_service, turno_service)

@@ -53,3 +53,12 @@ class MedicamentoService:
             medicamento_actual.laboratorios = nuevos_laboratorios
         
         return self.repo.update(medicamento_actual)
+    
+    def obtener_por_nombre(self, nombre: str) -> Medicamento | None:
+        """Obtiene un medicamento por su nombre"""
+        return self.repo.get_by_nombre(nombre)
+    
+    def existe_medicamento(self, nombre: str) -> bool:
+        """Verifica si existe un medicamento con el nombre dado"""
+        medicamento = self.obtener_por_nombre(nombre)
+        return medicamento is not None

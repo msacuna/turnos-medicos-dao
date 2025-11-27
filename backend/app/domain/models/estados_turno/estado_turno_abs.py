@@ -59,12 +59,58 @@ class Ausente(EstadoTurnoAbs):
 
     def es_ausente(self) -> bool:
         return True
+    
+    def es_cancelado(self) -> bool:
+        return False
+    def es_disponible(self) -> bool:
+        return False
+    def es_agendado(self) -> bool:
+        return False
+    def es_en_proceso(self) -> bool:
+        return False
+    def es_finalizado(self) -> bool:
+        return False
+    def cancelar(self, ctx) -> None:
+        pass
+    def liberar(self, ctx) -> None:
+        pass
+    def agendar(self, ctx) -> None:
+        pass
+    def iniciarTurno(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        pass
+    def marcarInasistencia(self, ctx) -> None:
+        pass
 
 class Cancelado(EstadoTurnoAbs):
     nombre: str = "Cancelado"
 
     def es_cancelado(self) -> bool:
         return True
+    
+    def es_ausente(self) -> bool:
+        return False
+    def es_disponible(self) -> bool:
+        return False
+    def es_agendado(self) -> bool:
+        return False
+    def es_en_proceso(self) -> bool:
+        return False
+    def es_finalizado(self) -> bool:
+        return False
+    def cancelar(self, ctx) -> None:
+        pass
+    def liberar(self, ctx) -> None:
+        pass
+    def agendar(self, ctx) -> None:
+        pass
+    def iniciarTurno(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        pass
+    def marcarInasistencia(self, ctx) -> None:
+        pass
 
 class Disponible(EstadoTurnoAbs):
     nombre: str = "Disponible"
@@ -72,32 +118,109 @@ class Disponible(EstadoTurnoAbs):
     def es_disponible(self) -> bool:
         return True
     
+    def es_ausente(self) -> bool:
+        return False
+    def es_cancelado(self) -> bool:
+        return False
+    def es_agendado(self) -> bool:
+        return False
+    def es_en_proceso(self) -> bool:
+        return False
+    def es_finalizado(self) -> bool:
+        return False
+    
     def agendar(self, ctx: "Turno", dni_paciente: int, cobertura: float):
         # Lógica de negocio: agendar el turno
         ctx.dni_paciente = dni_paciente
-        ctx.monto = cobertura * ctx.especialidad.precio
+        ctx.monto = (1-(cobertura/100)) * ctx.especialidad.precio
         ctx.set_estado(Agendado()) # Cambia el estado del turno a Agendado
 
     def cancelar(self, ctx: "Turno"):
         ctx.set_estado(Cancelado())
+    
+    def liberar(self, ctx) -> None:
+        pass
+    def iniciarTurno(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        pass
+    def marcarInasistencia(self, ctx) -> None:
+        pass
 
 class EnProceso(EstadoTurnoAbs):
     nombre: str = "En Proceso"
 
     def es_en_proceso(self) -> bool:
         return True
+    
+    def es_ausente(self) -> bool:
+        return False
+    def es_cancelado(self) -> bool:
+        return False
+    def es_agendado(self) -> bool:
+        return False
+    def es_disponible(self) -> bool:
+        return False
+    def es_finalizado(self) -> bool:
+        return False
+    def cancelar(self, ctx) -> None:
+        pass
+    def liberar(self, ctx) -> None:
+        pass
+    def agendar(self, ctx) -> None:
+        pass
+    def iniciarTurno(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        ctx.set_estado(Finalizado())
+    def marcarInasistencia(self, ctx) -> None:
+        pass
 
 class Finalizado(EstadoTurnoAbs):
     nombre: str = "Finalizado"
 
     def es_finalizado(self) -> bool:
         return True
+    
+    def es_ausente(self) -> bool:
+        return False
+    def es_cancelado(self) -> bool:
+        return False
+    def es_agendado(self) -> bool:
+        return False
+    def es_en_proceso(self) -> bool:
+        return False
+    def es_disponible(self) -> bool:
+        return False
+    def cancelar(self, ctx) -> None:
+        pass
+    def liberar(self, ctx) -> None:
+        pass
+    def agendar(self, ctx) -> None:
+        pass
+    def iniciarTurno(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        pass
+    def marcarInasistencia(self, ctx) -> None:
+        pass
 
 class Agendado(EstadoTurnoAbs):
     nombre: str = "Agendado"
 
     def es_agendado(self) -> bool:
         return True
+    
+    def es_ausente(self) -> bool:
+        return False
+    def es_cancelado(self) -> bool:
+        return False
+    def es_disponible(self) -> bool:
+        return False
+    def es_en_proceso(self) -> bool:
+        return False
+    def es_finalizado(self) -> bool:
+        return False
     
     def liberar(self, ctx: "Turno"):
         ctx.dni_paciente = None
@@ -107,8 +230,13 @@ class Agendado(EstadoTurnoAbs):
     def cancelar(self, ctx: "Turno"):
         ctx.set_estado(Cancelado())
     
-    def marcar_inasistencia(self, ctx: "Turno"):
+    def marcarInasistencia(self, ctx: "Turno"):
         ctx.set_estado(Ausente())
 
     def iniciarTurno(self, ctx: "Turno"):
         ctx.set_estado(EnProceso())
+    
+    def agendar(self, ctx) -> None:
+        pass
+    def finalizarTurno(self, ctx) -> None:
+        pass

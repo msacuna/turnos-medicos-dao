@@ -22,7 +22,7 @@ class ProfesionalService:
         nuevo_profesional = Profesional.model_validate(datos_profesional)
         
         # 3. Crear en base de datos
-        profesional_creado = self.profesional_repo.create(nuevo_profesional)
+        profesional_creado = self.profesional_repo.add(nuevo_profesional)
         
         # 4. Retornar schema de lectura
         return ProfesionalRead.model_validate(profesional_creado)

@@ -32,11 +32,13 @@ class ManejadorDeExcepciones:
     @staticmethod
     async def general_handler(request: Request, exc: Exception):
         # Captura cualquier error no controlado (NullPointer, etc.)
+        import traceback
         return JSONResponse(
             status_code=500,
             content={
                 "error": "Error Interno del Servidor",
-                "mensaje": "Ocurrió un error inesperado. Contacte a soporte."
+                "mensaje": f"Error: {str(exc)}",
+                "traceback": traceback.format_exc()
             }
         )
 

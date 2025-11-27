@@ -2,6 +2,7 @@ from app.domain.models import Paciente, GrupoSanguineo
 from app.domain.schemas import PacienteCreate, PacienteUpdate, PacienteRead
 from app.repositories import PacienteRepository
 from app.services import AlergiaService, AntecedenteService, GrupoSanguineoService, ObraSocialService
+from app.core.exceptions import ReglaDeNegocioException, RecursoNoEncontradoException
 
 class PacienteService:
     def __init__(self, repository: PacienteRepository,
@@ -21,7 +22,7 @@ class PacienteService:
     def obtener_por_id(self, id: int) -> PacienteRead | None:
         paciente = self.repository.get_by_id(id)
         if not paciente:
-            raise ValueError(f"No se encontró el paciente con ID {id}.")
+            raise RecursoNoEncontradoException(f"No se encontró el paciente con ID {id}.")
         return PacienteRead.model_validate(paciente)
     
     def crear_paciente(self, paciente_in: PacienteCreate) -> PacienteRead:
@@ -29,23 +30,23 @@ class PacienteService:
         paciente = Paciente.model_validate(datos_paciente)
 
         if self.repository.get_by_dni(paciente.dni):
-            raise ValueError(f"Ya existe un paciente con DNI {paciente.dni}.")
+            raise ReglaDeNegocioException(f"Ya existe un paciente con DNI {paciente.dni}.")
         
         if self.repository.get_by_email(paciente.email):
-            raise ValueError(f"Ya existe un paciente con email {paciente.email}.")
+            raise ReglaDeNegocioException(f"Ya existe un paciente con email {paciente.email}.")
         
         # Validar obra social
         if paciente_in.nombre_obra_social:
             obra_social = self.obra_social_service.obtener_modelo_por_nombre(paciente_in.nombre_obra_social)
             if not obra_social:
-                raise ValueError(f"No se encontró la obra social con nombre {paciente_in.nombre_obra_social}.")
+                raise RecursoNoEncontradoException(f"No se encontró la obra social con nombre {paciente_in.nombre_obra_social}.")
             paciente.obra_social = obra_social
         
         # validar grupo sanguineo
         if paciente_in.nombre_grupo_sanguineo:
             grupo_sanguineo = self.grupo_sanguineo_service.obtener_por_nombre(paciente_in.nombre_grupo_sanguineo)
             if not grupo_sanguineo:
-                raise ValueError(f"No se encontró el grupo sanguíneo con nombre {paciente_in.nombre_grupo_sanguineo}.")
+                raise RecursoNoEncontradoException(f"No se encontró el grupo sanguíneo con nombre {paciente_in.nombre_grupo_sanguineo}.")
             paciente.grupo_sanguineo = grupo_sanguineo
 
         # Validamos y asignamos alergias
@@ -54,7 +55,7 @@ class PacienteService:
             for alergia_id in paciente_in.ids_alergias:
                 alergia = self.alergia_service.obtener_modelo_por_id(alergia_id)
                 if not alergia:
-                    raise ValueError(f"No se encontró la alergia con ID {alergia_id}.")
+                    raise RecursoNoEncontradoException(f"No se encontró la alergia con ID {alergia_id}.")
                 alergias.append(alergia)
             paciente.alergias = alergias
 
@@ -64,7 +65,7 @@ class PacienteService:
             for antecedente_id in paciente_in.ids_antecedentes:
                 antecedente = self.antecedente_service.obtener_modelo_por_id(antecedente_id)
                 if not antecedente:
-                    raise ValueError(f"No se encontró el antecedente con ID {antecedente_id}.")
+                    raise RecursoNoEncontradoException(f"No se encontró el antecedente con ID {antecedente_id}.")
                 antecedentes.append(antecedente)
             paciente.antecedentes = antecedentes
 
@@ -73,11 +74,11 @@ class PacienteService:
     def actualizar(self, id: int, data: PacienteUpdate) -> Paciente | None:
         paciente_actual = self.repository.get_by_id(id)
         if not paciente_actual:
-            raise ValueError(f"No se encontró el paciente con ID {id}.")
+            raise RecursoNoEncontradoException(f"No se encontró el paciente con ID {id}.")
         
         if data.email and data.email != paciente_actual.email:
             if self.repository.get_by_email(data.email):
-                raise ValueError(f"Ya existe un paciente con email {data.email}.")
+                raise ReglaDeNegocioException(f"Ya existe un paciente con email {data.email}.")
 
         datos_simples = data.model_dump(
             exclude={"ids_alergias", "ids_antecedentes", "nombre_grupo_sanguineo", "nombre_obra_social"}, 
@@ -85,19 +86,19 @@ class PacienteService:
         )
         for key, value in datos_simples.items():
             if not hasattr(paciente_actual, key):
-                raise ValueError(f"El atributo {key} no existe en Paciente.")
+                raise ReglaDeNegocioException(f"El atributo {key} no existe en Paciente.")
             setattr(paciente_actual, key, value)
 
         if data.nombre_obra_social is not None:
             obra_social = self.obra_social_service.obtener_modelo_por_nombre(data.nombre_obra_social)
             if not obra_social:
-                raise ValueError(f"No se encontró la obra social con nombre {data.nombre_obra_social}.")
+                raise RecursoNoEncontradoException(f"No se encontró la obra social con nombre {data.nombre_obra_social}.")
             paciente_actual.obra_social = obra_social
         
         if data.nombre_grupo_sanguineo is not None:
             grupo_sanguineo = self.grupo_sanguineo_service.obtener_por_nombre(data.nombre_grupo_sanguineo)
             if not grupo_sanguineo:
-                raise ValueError(f"No se encontró el grupo sanguíneo con nombre {data.nombre_grupo_sanguineo}.")
+                raise RecursoNoEncontradoException(f"No se encontró el grupo sanguíneo con nombre {data.nombre_grupo_sanguineo}.")
             paciente_actual.grupo_sanguineo = grupo_sanguineo
         
         if data.ids_alergias is not None:
@@ -105,7 +106,7 @@ class PacienteService:
             for alergia_id in data.ids_alergias:
                 alergia = self.alergia_service.obtener_modelo_por_id(alergia_id)
                 if not alergia:
-                    raise ValueError(f"No se encontró la alergia con ID {alergia_id}.")
+                    raise RecursoNoEncontradoException(f"No se encontró la alergia con ID {alergia_id}.")
                 nuevas_alergias.append(alergia)
             paciente_actual.alergias = nuevas_alergias
         
@@ -114,7 +115,7 @@ class PacienteService:
             for antecedente_id in data.ids_antecedentes:
                 antecedente = self.antecedente_service.obtener_modelo_por_id(antecedente_id)
                 if not antecedente:
-                    raise ValueError(f"No se encontró el antecedente con ID {antecedente_id}.")
+                    raise RecursoNoEncontradoException(f"No se encontró el antecedente con ID {antecedente_id}.")
                 nuevos_antecedentes.append(antecedente)
             paciente_actual.antecedentes = nuevos_antecedentes
         

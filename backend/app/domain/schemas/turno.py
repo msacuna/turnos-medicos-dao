@@ -1,9 +1,13 @@
 
-from .especialidad import EspecialidadRead
-from .consulta import ConsultaRead
+from __future__ import annotations
+
 from datetime import date, time
-from typing import Literal, Optional
+from typing import Literal, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from .especialidad import EspecialidadRead
+    from .consulta import ConsultaRead
 
 EstadosTurno = Literal["Agendado", "Cancelado", "Finalizado", "Ausente", "Disponible", "En Proceso"]
 
@@ -14,7 +18,7 @@ class TurnoBase(BaseModel):
     hora_inicio: time
     hora_fin_estimada: time
     dni_paciente: Optional[int] = None
-    estado_nombre: EstadosTurno
+    nombre_estado: EstadosTurno
     id_especialidad: int
     id_agenda_profesional: int
     monto: float
@@ -29,14 +33,15 @@ class TurnoCreate(TurnoBase):
                 "hora_fin_estimada": "15:00:00",
                 "dni_paciente": 12345678,
                 "id_especialidad": 1,
-                "id_agenda_profesional": 2
+                "id_agenda_profesional": 2,
+                "nombre_estado": "Disponible"
             }
         }
     )
 
     hora_fin_estimada: Optional[time] = None
     dni_paciente: Optional[int] = None
-    estado_nombre: EstadosTurno = Field(default="Disponible", exclude=True)
+    nombre_estado: EstadosTurno = Field(default="Disponible", exclude=True)
     monto: float = Field(default=0.0, exclude=True)
 
 class TurnoUpdate(BaseModel):
@@ -47,7 +52,7 @@ class TurnoUpdate(BaseModel):
                 "hora_inicio": "15:00:00",
                 "hora_fin_estimada": "15:30:00",
                 "dni_paciente": 87654321,
-                "estado_nombre": "Cancelado",
+                "nombre_estado": "Cancelado",
                 "id_especialidad": 2,
                 "id_agenda_profesional": 3
             }
@@ -57,15 +62,15 @@ class TurnoUpdate(BaseModel):
     hora_inicio: Optional[time] = None
     hora_fin_estimada: Optional[time] = None
     dni_paciente: Optional[int] = None
-    estado_nombre: Optional[EstadosTurno] = None
+    nombre_estado: Optional[EstadosTurno] = None
     id_especialidad: Optional[int] = None
     id_agenda_profesional: Optional[int] = None
     monto: float = Field(default=0.0, exclude=True)
 
 class TurnoRead(TurnoBase):
     id: int
-    estado_nombre: EstadosTurno
-    especialidad: Optional[EspecialidadRead] = None
-    consultas: list[Optional[ConsultaRead]] = []
+    nombre_estado: EstadosTurno
+    especialidad: Optional['EspecialidadRead'] = None
+    consultas: list[Optional['ConsultaRead']] = []
     dni_paciente: Optional[int] = None
 

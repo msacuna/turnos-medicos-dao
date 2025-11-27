@@ -5,6 +5,8 @@ from app.services import HorarioProfesionalService, ProfesionalService
 from app.domain.schemas import HorarioProfesionalRead, HorarioDiaInput, ProfesionalRead, ProfesionalCreate
 from app.domain.models import DiaSemanaEnum
 from app.services.agenda_profesional_service import AgendaProfesionalService
+from app.domain.schemas.agenda_profesional import AgendaProfesionalRead
+from app.domain.schemas.turno import TurnoRead
 
 
 router = APIRouter(prefix="/profesionales", tags=["Profesionales"])
@@ -84,3 +86,62 @@ def cancelar_turnos_profesional(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.get("/", response_model=list[ProfesionalRead])
+def obtener_profesionales(
+    service: ProfesionalService = Depends(get_profesional_service)
+):
+    try:
+        return service.profesional_repo.get_all()
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+    
+@router.post("/{profesional_id}/agenda/{mes}", response_model=AgendaProfesionalRead)
+def crear_agenda_profesional(
+    profesional_id: int,
+    mes: int,
+    service: AgendaProfesionalService = Depends(get_agenda_profesional_service)
+):
+    """
+    Crear agenda para un profesional en un mes específico.
+    
+    Parámetros:
+    - profesional_id: ID del profesional
+    - mes: Número del mes (1-12) para crear la agenda
+    
+    Validaciones:
+    - El mes debe estar entre 1 y 12
+    - El mes no puede ser anterior al mes actual
+    - El profesional debe existir y tener horarios configurados
+    - No debe existir una agenda para ese profesional en el mes especificado
+    """
+
+    agenda_creada = service.crear_agenda(profesional_id, mes)
+    return agenda_creada
+    
+
+
+@router.get("/{profesional_id}/agenda/{mes}", response_model=AgendaProfesionalRead)
+def obtener_agenda_profesional_por_mes(
+    profesional_id: int,
+    mes: int,
+    service: AgendaProfesionalService = Depends(get_agenda_profesional_service)
+):
+    try:
+        agenda = service.get_agenda_por_profesional_y_mes(profesional_id, mes)
+        if not agenda:
+            raise ValueError(f"No se encontró la agenda para el profesional {profesional_id} en el mes {mes}")
+        return agenda
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+
+@router.get("/{profesional_id}/agenda/{agenda_id}/turnos", response_model=list[TurnoRead])
+def obtener_turnos_de_agenda_profesional(
+    profesional_id: int,
+    agenda_id: int,
+    service: AgendaProfesionalService = Depends(get_agenda_profesional_service)
+):
+    turnos =  service.get_turnos_de_agenda(profesional_id, agenda_id)
+    return turnos
+    

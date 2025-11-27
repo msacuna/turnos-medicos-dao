@@ -158,7 +158,7 @@ CREATE TABLE turno (
     fecha DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fin_estimada TIME NOT NULL,
-    dni_paciente INT NOT NULL,
+    dni_paciente INT DEFAULT NULL,
     nombre_estado VARCHAR(30) NOT NULL,
     id_especialidad INT NOT NULL,
     id_agenda_profesional INT NOT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE turno (
     CONSTRAINT chk_hora_turno CHECK (hora_fin_estimada > hora_inicio),
     CONSTRAINT fk_turno_especialidad FOREIGN KEY (id_especialidad) REFERENCES especialidad(id),
     CONSTRAINT fk_turno_agenda_profesional FOREIGN KEY (id_agenda_profesional) REFERENCES agenda_profesional(id),
-    CONSTRAINT fk_turno_paciente FOREIGN KEY (dni_paciente) REFERENCES paciente(dni),
+    CONSTRAINT fk_turno_paciente FOREIGN KEY (dni_paciente) REFERENCES paciente(dni) ON DELETE SET NULL,
     CONSTRAINT fk_turno_estado FOREIGN KEY (nombre_estado) REFERENCES estados_turno(nombre)
 );
 

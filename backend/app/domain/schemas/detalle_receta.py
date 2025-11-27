@@ -19,17 +19,22 @@ class DetalleRecetaCreate(BaseModel):
         from_attributes=True,
         json_schema_extra={
             "example": {
-                "id_receta": 1,
-                "id_medicamento": 2,
+                "id_medicamento": 1,
+                "dosis": "500mg",
+                "frecuencia": "Cada 8 horas",
+                "duracion_dias": 5,
                 "cantidad": 30,
                 "indicaciones": "Tomar una cápsula cada 8 horas después de las comidas."
             }
         }
     )
-    id_receta: int
     id_medicamento: int
-    cantidad: int
+    dosis: str
+    frecuencia: str
+    duracion_dias: int
+    cantidad: int = 1  # Valor por defecto
     indicaciones: Optional[str] = None
+    id_receta: Optional[int] = None  # Se asignará internamente
 
 class DetalleRecetaRead(DetalleRecetaBase):
     medicamento: Optional[MedicamentoRead] = None

@@ -23,8 +23,8 @@ class Turno(SQLModel, table=True):
     id_agenda_profesional: int = Field(foreign_key="agenda_profesional.id")
     monto: float = Field(default=0.0)
 
-    # Relación con el estado (State Pattern)
-    estado_nombre: str = Field(
+    # Relación con el estado (State Pattern)  
+    nombre_estado: str = Field(
         foreign_key="estados_turno.nombre",
         default="Disponible")
 
@@ -40,11 +40,11 @@ class Turno(SQLModel, table=True):
         return self
 
     def set_estado(self, nuevo_estado):
-        self.estado_nombre = nuevo_estado.nombre
+        self.nombre_estado = nuevo_estado.nombre
 
     @property
     def estado(self) -> "EstadoTurnoAbs":
-        return build_estado_turno(self.estado_nombre)
+        return build_estado_turno(self.nombre_estado)
     
     def agendar(self, dni_paciente: int, cobertura: float):
         self.estado.agendar(self, dni_paciente, cobertura)
@@ -56,13 +56,16 @@ class Turno(SQLModel, table=True):
         self.estado.liberar(self)
     
     def iniciar(self):
-        self.estado.iniciar(self)
+        self.estado.iniciarTurno(self)
     
     def finalizar(self):
-        self.estado.finalizar(self)
+        self.estado.finalizarTurno(self)
     
     def marcar_ausente(self):
-        self.estado.marcar_inasistencia(self)
+        self.estado.marcarInasistencia(self)
+    
+    def cancelar(self):
+        self.estado.cancelar(self)
     
     def es_disponible(self) -> bool:
         return self.estado.es_disponible()

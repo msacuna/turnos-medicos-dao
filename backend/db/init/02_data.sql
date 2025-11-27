@@ -16,23 +16,22 @@ INSERT INTO estados_turno (nombre) VALUES
 ('Finalizado'), -- finalizo el turno y fue atendido
 ('Agendado'); -- se asocio un paciente al turno
 
-INSERT INTO especialidad (nombre) VALUES
-('Cardiologia'),
-('Dermatologia'),
-('Endocrinologia'),
-('Gastroenterologia'),
-('Neurologia'),
-('Pediatria'),
-('Psiquiatria'),
-('Traumatologia'),
-('Urologia');
-
-INSERT INTO motivo_consulta (nombre) VALUES
-('Chequeo General'),
-('Seguimiento de tratamiento'),
-('Control'),
-('Dolor'),
-('Urgencia');
+INSERT INTO especialidad (nombre, precio) VALUES
+('Cardiologia', 1500.00),
+('Dermatologia', 1325.00),
+('Endocrinologia', 1420.00),
+('Gastroenterologia', 1180.00),
+('Neurologia', 2050.00),
+('Pediatria', 950.00),
+('Psiquiatria', 1105.00),
+('Traumatologia', 1600.00),
+('Urologia', 1250.00);
+INSERT INTO especialidad (nombre, precio) VALUES
+('Chequeo General', 800.00),
+('Seguimiento de tratamiento', 950.50),
+('Control', 700.25),
+('Dolor', 1200.75),
+('Urgencia', 1600.00);
 
 INSERT INTO alergia (nombre) VALUES
 ('Penicilina'),
@@ -50,6 +49,12 @@ INSERT INTO antecedente (nombre) VALUES
 ('Colesterol alto'),
 ('Tabaquismo'),
 ('Obesidad');
+
+INSERT INTO motivo_consulta (nombre) VALUES
+('Consulta General'),
+('Control'),
+('Urgencia'),
+('Seguimiento');
 
 INSERT INTO tipo_obra_social (nombre) VALUES
 ('Nacional'),
@@ -86,3 +91,25 @@ INSERT INTO obra_social_profesional (nombre_obra_social, id_profesional, vigente
 ('PAMI', 3, TRUE),
 ('Swiss Medical', 4, TRUE),
 ('APROSS', 5, TRUE);
+
+-- =============================================================================
+-- Pacientes de ejemplo para testing
+-- =============================================================================
+INSERT INTO paciente (dni, nombre, apellido, fecha_nacimiento, email, telefono, nombre_grupo_sanguineo, nombre_obra_social) VALUES
+(11111111, 'Juan', 'Perez', '1985-03-15', 'juan.perez.script@email.com', '351-1111111', 'A+', 'OSDE'),
+(23456789, 'Maria', 'Gonzalez', '1990-07-22', 'maria.gonzalez@email.com', '351-2222222', 'B+', 'Swiss Medical'),
+(34567890, 'Carlos', 'Rodriguez', '1978-11-08', 'carlos.rodriguez@email.com', '351-3333333', '0+', 'APROSS'),
+(45678901, 'Ana', 'Martinez', '1995-01-30', 'ana.martinez@email.com', '351-4444444', 'AB+', 'Galeno'),
+(56789012, 'Luis', 'Lopez', '1982-09-12', 'luis.lopez@email.com', '351-5555555', 'A-', 'OSECAC'),
+(67890123, 'Laura', 'Silva', '1988-04-18', 'laura.silva@email.com', '351-6666666', 'B-', 'PAMI'),
+(78901234, 'Pedro', 'Morales', '1975-12-03', 'pedro.morales@email.com', '351-7777777', '0-', 'OSDE'),
+(89012345, 'Sofia', 'Gutierrez', '1992-06-25', 'sofia.gutierrez@email.com', '351-8888888', 'AB-', 'Swiss Medical');
+
+-- =============================================================================
+-- Ejemplo de turno
+-- =============================================================================
+INSERT INTO turno (fecha, hora_inicio, hora_fin_estimada, dni_paciente, nombre_estado, id_especialidad, id_agenda_profesional, monto) VALUES
+('2025-12-15', '09:00:00', '09:30:00', 11111111, 'Agendado', 1, 1, 1500.00);
+
+
+

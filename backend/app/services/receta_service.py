@@ -18,15 +18,16 @@ class RecetaService:
         receta_sin_detalles = Receta.model_validate({
             **receta.model_dump(exclude={"detalles_receta"})
         })
-        receta_creada = self.receta_repository.create(receta_sin_detalles)
+        receta_creada = self.receta_repository.add(receta_sin_detalles)
 
         # 2. Crear cada detalle de receta asociado a la receta creada
         for detalle_data in receta.detalles_receta:
-            # Crear el objeto DetalleRecetaCreate con el id_receta
-            detalle_create = type(detalle_data)(
-                **detalle_data.model_dump(),
-                id_receta=receta_creada.id
-            )
+            # Obtener los datos del detalle y actualizar el id_receta
+            detalle_dict = detalle_data.model_dump()
+            detalle_dict['id_receta'] = receta_creada.id
+            
+            # Crear el objeto DetalleRecetaCreate con el id_receta correcto
+            detalle_create = type(detalle_data)(**detalle_dict)
             self.detalle_receta_service.crear_detalle_receta(detalle_create)
 
         return receta_creada

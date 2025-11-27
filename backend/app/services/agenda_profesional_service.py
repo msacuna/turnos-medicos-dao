@@ -2,18 +2,19 @@
 
 from typing import TYPE_CHECKING
 
+from app.core.exceptions import ReglaDeNegocioException, RecursoNoEncontradoException
 from app.repositories.agenda_profesional_repo import AgendaProfesionalRepo
 from app.services.horario_profesional_service import HorarioProfesionalService
 from app.domain.models import Profesional
 from app.services.interfaces.sujeto_turno import SujetoTurno
 from app.services.notificador_email import NotificadorEmail
 from app.services.notificador_sms import NotificadorSMS
-
+from app.domain.schemas.agenda_profesional import AgendaProfesionalRead
 if TYPE_CHECKING:
     from app.services.profesional_service import ProfesionalService
 from app.domain.models.agenda_profesional import AgendaProfesional
 from app.services.turno_service import TurnoService
-from app.domain.schemas.turno import TurnoCreate
+from app.domain.schemas.turno import TurnoCreate, TurnoRead
 from datetime import date, time, timedelta, datetime
 from app.domain.models.horario_atencion import DiaSemanaEnum
 import calendar
@@ -41,46 +42,46 @@ class AgendaProfesionalService(SujetoTurno):
         for suscriptor in self.suscriptores:
             suscriptor.actualizar(pacientes)
 
-    def crear_agenda(self, id_profesional: int):
-        # 1. Validar que el profesional existe
+    def crear_agenda(self, id_profesional: int, mes: int ):
+        # 1. Validar que el mes está en el rango correcto (1-12)
+        if mes < 1 or mes > 12:
+            raise ReglaDeNegocioException(f"El mes debe estar entre 1 y 12. Valor recibido: {mes}")
+        
+        # 2. Validar que el mes no sea menor al mes actual
+        fecha_actual = date.today()
+        if mes < fecha_actual.month:
+            raise ReglaDeNegocioException(f"No se puede crear una agenda para un mes anterior al actual. Mes actual: {fecha_actual.month}, mes solicitado: {mes}")
+        
+        # 3. Validar que el profesional existe
         profesional = self.profesional_service.profesional_repo.get_by_id(id_profesional)
         if not profesional:
-            raise ValueError(f"No se encontró el profesional con ID {id_profesional}")
+            raise RecursoNoEncontradoException(f"No se encontró el profesional con ID {id_profesional}")
         
-        # 2. Obtener horarios del profesional
+        # 4. Obtener horarios del profesional
         horarios = self.horarios_profesional_service.get_by_profesional(id_profesional)
         if not horarios:
-            raise ValueError(f"El profesional con ID {id_profesional} no tiene horarios asignados.")
-        
+            raise ReglaDeNegocioException(f"El profesional con ID {id_profesional} no tiene horarios asignados.")
 
-
-        # 3. Calcular el mes siguiente
-        fecha_actual = date.today()
-        anio_siguiente = fecha_actual.year
-        mes_siguiente = fecha_actual.month + 1
+        # 5. Calcular el año correspondiente (siempre el año actual para meses >= mes actual)
+        anio_agenda = fecha_actual.year
         
-        # Si es diciembre, pasar al siguiente año
-        if mes_siguiente > 12:
-            mes_siguiente = 1
-            anio_siguiente += 1
-        
-        # 4. Verificar que no exista una agenda para ese profesional, año y mes
+        # 6. Verificar que no exista una agenda para ese profesional, año y mes
         agenda_existente = self.agenda_repo.get_agenda_by_profesional_anio_mes(
-            id_profesional, anio_siguiente, mes_siguiente
+            id_profesional, anio_agenda, mes
         )
         if agenda_existente:
-            raise ValueError(f"Ya existe una agenda para el profesional {id_profesional} en {mes_siguiente}/{anio_siguiente}")
+            raise ReglaDeNegocioException(f"Ya existe una agenda para el profesional {id_profesional} en {mes}/{anio_agenda}")
         
-        # 5. Crear la agenda para el mes siguiente
+        # 7. Crear la agenda para el mes solicitado
         nueva_agenda = AgendaProfesional(
             id_profesional=id_profesional,
-            anio=anio_siguiente,
-            mes=mes_siguiente
+            anio=anio_agenda,
+            mes=mes
         )
-        agenda_creada = self.agenda_repo.create(nueva_agenda)
+        agenda_creada = self.agenda_repo.add(nueva_agenda)
         
-        # 5. Generar turnos para cada día del mes según horarios
-        self._generar_turnos_del_mes(agenda_creada.id, profesional.id_especialidad, horarios, anio_siguiente, mes_siguiente)
+        # 8. Generar turnos para cada día del mes según horarios
+        self._generar_turnos_del_mes(agenda_creada.id, profesional.id_especialidad, horarios, anio_agenda, mes)
         
         return agenda_creada
     
@@ -205,4 +206,64 @@ class AgendaProfesionalService(SujetoTurno):
         self.eliminar_suscriptor(NotificadorEmail())
         self.eliminar_suscriptor(NotificadorSMS())
         
+    # def get_agenda_actual_por_profesional(self, id_profesional: int) -> AgendaProfesionalRead:
+    #     """Obtiene la agenda del mes actual para un profesional dado"""
+    #     fecha_actual = date.today()
+    #     anio_actual = fecha_actual.year
+    #     mes_actual = fecha_actual.month
         
+    #     agenda = self.agenda_repo.get_agenda_by_profesional_anio_mes(
+    #         id_profesional, anio_actual, mes_actual
+    #     )
+
+    #     if not agenda:
+    #         raise ValueError(f"No se encontró una agenda para el profesional {id_profesional} en {mes_actual}/{anio_actual}")
+        
+    #     return AgendaProfesionalRead.model_validate(agenda)
+    
+    # def get_agenda_siguiente_por_profesional(self, id_profesional: int) -> AgendaProfesionalRead:
+    #     """Obtiene la agenda del mes siguiente para un profesional dado"""
+    #     fecha_actual = date.today()
+    #     anio_siguiente = fecha_actual.year
+    #     mes_siguiente = fecha_actual.month + 1
+        
+    #     # Si es diciembre, pasar al siguiente año
+    #     if mes_siguiente > 12:
+    #         mes_siguiente = 1
+    #         anio_siguiente += 1
+        
+    #     agenda = self.agenda_repo.get_agenda_by_profesional_anio_mes(
+    #         id_profesional, anio_siguiente, mes_siguiente
+    #     )
+
+    #     if not agenda:
+    #         raise ValueError(f"No se encontró una agenda para el profesional {id_profesional} en {mes_siguiente}/{anio_siguiente}")
+        
+    #     return AgendaProfesionalRead.model_validate(agenda)
+    
+    
+    def get_turnos_de_agenda(self, id_profesional:int, id_agenda: int) -> list[TurnoRead]:
+        """Obtiene todos los turnos asociados a una agenda profesional"""
+        agenda = self.agenda_repo.get_by_id(id_agenda)
+
+        if not agenda:
+            raise RecursoNoEncontradoException(f"No se encontró la agenda profesional con ID {id_agenda}")
+        if agenda.id_profesional != id_profesional:
+            raise ValueError(f"La agenda con ID {id_agenda} no pertenece al profesional con ID {id_profesional}")
+        
+        turnos = self.turno_service.obtener_turnos_by_agenda(id_agenda)
+        return [TurnoRead.model_validate(turno) for turno in turnos]
+
+    def get_agenda_por_profesional_y_mes(self, id_profesional: int, mes: int) -> AgendaProfesionalRead: 
+        """Obtiene la agenda de un profesional para un mes específico del año actual"""
+        fecha_actual = date.today()
+        anio_actual = fecha_actual.year
+        
+        agenda = self.agenda_repo.get_agenda_by_profesional_anio_mes(
+            id_profesional, anio_actual, mes
+        )
+
+        if not agenda:  
+            raise RecursoNoEncontradoException(f"No se encontró una agenda para el profesional {id_profesional} en {mes}/{anio_actual}")
+        
+        return AgendaProfesionalRead.model_validate(agenda)

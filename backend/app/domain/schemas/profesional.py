@@ -9,7 +9,6 @@ class ProfesionalBase(BaseModel):
     nombre: str
     apellido: str
     matricula: str
-    especialidad_id: int
     email: str
     telefono: str
     id_especialidad: int
@@ -23,7 +22,6 @@ class ProfesionalRead(ProfesionalBase):
                                      "nombre": "Juan",
                                      "apellido": "Pérez",
                                      "matricula": "12345",
-                                     "especialidad_id": 2,
                                      "email": "juan.perez@example.com",
                                      "telefono": "123-456-7890",
                                      "id_especialidad": 2
@@ -38,7 +36,6 @@ class ProfesionalCreate(ProfesionalBase):
                 "nombre": "Juan",
                 "apellido": "Pérez",
                 "matricula": "12345",
-                "especialidad_id": 2,
                 "email": "juan.perez@example.com",
                 "telefono": "123-456-7890",
                 "id_especialidad": 2
@@ -54,7 +51,6 @@ class ProfesionalUpdate(ProfesionalBase):
                 "nombre": "Juan",
                 "apellido": "Pérez",
                 "matricula": "12345",
-                "especialidad_id": 2,
                 "email": "juan.perez@example.com",
                 "telefono": "123-456-7890",
                 "id_especialidad": 2

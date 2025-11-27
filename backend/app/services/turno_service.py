@@ -32,7 +32,7 @@ class TurnoService:
         return TurnoRead.model_validate(turno)
 
     def obtener_turno(self, id: int) -> Turno | None:
-        turno = self.repository.get_by_id(id)
+        turno = self.repository.get_by_id_with_especialidad(id)
         if not turno:
             raise ValueError(f"No se encontró el turno con ID {id}.")
         return turno
@@ -40,7 +40,7 @@ class TurnoService:
     def crear_turno(self, turno_in: TurnoCreate) -> TurnoRead:
         datos_turno = turno_in.model_dump()
         turno = Turno.model_validate(datos_turno)
-        turno_creado = self.repository.create(turno)
+        turno_creado = self.repository.add(turno)
         return TurnoRead.model_validate(turno_creado)
     
     def obtener_turnos_por_paciente(self, dni_paciente: int) -> list[TurnoRead]:
@@ -65,7 +65,7 @@ class TurnoService:
             raise ValueError(f"No se encontró el paciente con DNI {dni_paciente}.")
         
         paciente = self.paciente_service.obtener_por_id(dni_paciente)
-        cobertura = paciente.cobertura if paciente and paciente.cobertura else 0.0
+        cobertura = paciente.obra_social.porcentaje_cobertura if paciente and paciente.obra_social else 0.0
 
         turno.agendar(dni_paciente, cobertura)
         turno_actualizado = self.repository.update(turno)
@@ -79,6 +79,8 @@ class TurnoService:
     
     def finalizar_turno(self, id: int, consulta: ConsultaCreate) -> TurnoRead:
         turno = self.obtener_turno(id)
+        # Asignar el id_turno a la consulta
+        consulta.id_turno = id
         self.consulta_service.crear_consulta(consulta)
         turno.finalizar()
         turno_actualizado = self.repository.update(turno)

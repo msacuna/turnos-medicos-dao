@@ -6,7 +6,9 @@ from typing import Literal, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict
 
 if TYPE_CHECKING:
-    from .receta import RecetaCreate, RecetaRead
+    from .receta import RecetaRead
+
+from .receta import RecetaCreate
 
 
 TipoConsulta = Literal["Consulta General", "Control", "Urgencia", "Seguimiento"]
@@ -15,7 +17,7 @@ class ConsultaBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: Optional[int] = None
     observaciones: Optional[str] = None
-    id_turno: int
+    id_turno: Optional[int] = None
     nombre_motivo_consulta: TipoConsulta
     id_receta: Optional[int] = None
 
@@ -25,23 +27,26 @@ class ConsultaCreate(ConsultaBase):
         json_schema_extra={
             "example": {
                 "observaciones": "Paciente presenta síntomas leves.",
-                "id_turno": 1,
                 "nombre_motivo_consulta": "Consulta General",
-                "id_receta": 2,
                 "receta": {
                     "fecha": "2024-07-10",
                     "detalles_receta": [
                         {
-                            "nombre_medicamento": "Paracetamol",
+                            "id_medicamento": 1,
+                            "id_medicamento": 1,
                             "dosis": "500mg",
                             "frecuencia": "Cada 8 horas",
-                            "duracion_dias": 5
+                            "duracion_dias": 5,
+                            "cantidad": 30,
+                            "indicaciones": "Tomar una cápsula cada 8 horas después de las comidas."
                         },
                         {
-                            "nombre_medicamento": "Ibuprofeno",
-                            "dosis": "200mg",
-                            "frecuencia": "Cada 12 horas",
-                            "duracion_dias": 3
+                            "id_medicamento": 1,
+                            "dosis": "500mg",
+                            "frecuencia": "Cada 8 horas",
+                            "duracion_dias": 5,
+                            "cantidad": 30,
+                            "indicaciones": "Tomar una cápsula cada 8 horas después de las comidas."
                         }
                     ]
                 }
@@ -70,4 +75,4 @@ class ConsultaUpdate(BaseModel):
     id_receta: Optional[int] = None
 
 class ConsultaRead(ConsultaBase):
-    receta: Optional[RecetaRead] = None
+    receta: Optional['RecetaRead'] = None

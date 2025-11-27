@@ -21,7 +21,7 @@ class ConsultaService:
         datos_consulta = consulta.model_dump(exclude={"receta"})
         datos_consulta["id_receta"] = id_receta_creada
         nueva_consulta = Consulta.model_validate(datos_consulta)
-        consulta_creada = self.consulta_repository.create(nueva_consulta)
+        consulta_creada = self.consulta_repository.add(nueva_consulta)
         return ConsultaRead.model_validate(consulta_creada)
         
       
