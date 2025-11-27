@@ -6,20 +6,34 @@ from datetime import date
 
 router = APIRouter(prefix="/reportes", tags=["Reportes"])
 
-@router.get("/turnos-por-especialidad", response_model=list[ReporteCantidadTurnoPorEspecialidad])
-def reporte_turnos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
-    return service.reporte_cantidad_turnos_especialidad()
+@router.get("/turnos-por-especialidad", response_model=None)
+def reporte_cantidad_turnos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
+    """
+    Genera un PDF con el reporte de cantidad de turnos por especialidad
+    """
+    try:
+        ruta_pdf = service.reporte_cantidad_turnos_especialidad()
+        return {"mensaje": "PDF generado exitosamente", "ruta": ruta_pdf}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al generar el PDF: {str(e)}")
 
 
 @router.get("/pacientes-por-obra-social", response_model=None)
 def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
     return service.reporte_pacientes_por_obra_social()
 
-@router.get("/montos-por-especialidad", response_model=list[ReporteMontoTurnoPorEspecialidad])
+@router.get("/montos-por-especialidad", response_model=None)
 def reporte_montos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
-    return service.reporte_montos_especialidad()
+    """
+    Genera un PDF con el reporte de montos por especialidad
+    """
+    try:
+        ruta_pdf = service.reporte_montos_especialidad()
+        return {"mensaje": "PDF generado exitosamente", "ruta": ruta_pdf}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al generar el PDF: {str(e)}")
 
-@router.get("/turnos-por-periodo", response_model=ReporteTurnosPeriodo)
+@router.get("/turnos-por-periodo", response_model=None)
 def obtener_reporte_turnos_periodo(
     anio: int = Query(default=None, description="Año del reporte"),
     mes_inicio: int = Query(default=1, ge=1, le=12),
@@ -33,4 +47,8 @@ def obtener_reporte_turnos_periodo(
     if mes_inicio > mes_fin:
         raise HTTPException(status_code=400, detail="El mes de inicio no puede ser mayor al mes de fin")
 
-    return service.generar_reporte_periodo(mes_inicio, mes_fin, anio)
+    try:
+        ruta_pdf = service.generar_reporte_periodo(mes_inicio, mes_fin, anio)
+        return {"mensaje": "PDF generado exitosamente", "ruta": ruta_pdf}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al generar el PDF: {str(e)}")
