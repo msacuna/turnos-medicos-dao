@@ -15,6 +15,8 @@ import Medicamentos from './pages/admin/Medicamentos';
 
 import RegistroPacientes from './pages/admin/RegistroPacientes';
 import RegistroProfesional from './pages/admin/RegistroProfesional';
+import Paciente from './pages/admin/Pacientes';
+import Profesional from './pages/admin/Profesional';
 
 function PrivateRoute({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -105,6 +107,26 @@ export default function App() {
             element={
               <RoleRoute allowed={['administrador']}>
                 <RegistroProfesional />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → PACIENTES */}
+          <Route
+            path="/admin/pacientes"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Paciente />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → PROFESIONAL */}
+          <Route
+            path="/admin/profesionales"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Profesional />
               </RoleRoute>
             }
           />

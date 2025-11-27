@@ -1,28 +1,30 @@
+// src/pages/medicamentos/Medicamentos.tsx
+
 import { useEffect, useState } from 'react';
 import styles from '../../styles/pages/medicamentos.module.css';
 import MedicamentosModal from '../../components/medicamentos/MedicamentosModal';
 
-type Medicamento = {
-  id?: number;
-  nombre: string;
-  descripcion: string;
-};
+import { type Medicamento, type MedicamentoPayload } from '@/types/Medicamento';
+
+import { MedicamentoService } from '@/service/medicamentoService';
 
 export default function Medicamentos() {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [selected, setSelected] = useState<Medicamento | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Simulación de carga inicial — luego reemplazar con API real
+  // 🔹 Obtener lista inicial
   useEffect(() => {
-    setMedicamentos([
-      { id: 1, nombre: 'Ibuprofeno', descripcion: 'Antiinflamatorio' },
-      {
-        id: 2,
-        nombre: 'Paracetamol',
-        descripcion: 'Analgésico y antipirético',
-      },
-    ]);
+    const fetchData = async () => {
+      try {
+        const data = await MedicamentoService.getAll();
+        setMedicamentos(data);
+      } catch (error) {
+        console.error('Error cargando medicamentos:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleCreate = () => {
@@ -35,20 +37,42 @@ export default function Medicamentos() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setMedicamentos((prev) => prev.filter((m) => m.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      await MedicamentoService.delete(id);
+      setMedicamentos((prev) => prev.filter((m) => m.id !== id));
+    } catch (error) {
+      console.error('Error eliminando medicamento:', error);
+    }
   };
 
-  const handleSave = (item: Medicamento) => {
-    if (item.id !== undefined) {
-      // Editar
-      setMedicamentos((prev) => prev.map((m) => (m.id === item.id ? item : m)));
-    } else {
-      // Crear
-      const newId = Math.max(...medicamentos.map((m) => m.id ?? 0), 0) + 1;
+  const handleSave = async (item: MedicamentoPayload) => {
+    try {
+      if (item.id !== undefined) {
+        // 🔹 EDITAR
+        const updated = await MedicamentoService.update(item.id, {
+          nombre: item.nombre,
+          descripcion: item.descripcion,
+          ids_laboratorios: item.ids_laboratorios,
+        });
 
-      setMedicamentos((prev) => [...prev, { ...item, id: newId }]);
+        setMedicamentos((prev) =>
+          prev.map((m) => (m.id === updated.id ? updated : m))
+        );
+      } else {
+        // 🔹 CREAR
+        const created = await MedicamentoService.create({
+          nombre: item.nombre,
+          descripcion: item.descripcion,
+          ids_laboratorios: item.ids_laboratorios ?? [],
+        });
+
+        setMedicamentos((prev) => [...prev, created]);
+      }
+    } catch (error) {
+      console.error('Error guardando medicamento:', error);
     }
+
     setIsModalOpen(false);
   };
 
@@ -70,7 +94,7 @@ export default function Medicamentos() {
         </thead>
         <tbody>
           {medicamentos.map((item) => (
-            <tr key={item.id ?? item.nombre}>
+            <tr key={item.id}>
               <td>{item.nombre}</td>
               <td>{item.descripcion}</td>
               <td className={styles.actions}>
@@ -80,9 +104,10 @@ export default function Medicamentos() {
                 >
                   Editar
                 </button>
+
                 <button
                   className={styles.deleteButton}
-                  onClick={() => item.id !== undefined && handleDelete(item.id)}
+                  onClick={() => handleDelete(item.id)}
                 >
                   Eliminar
                 </button>
@@ -96,7 +121,16 @@ export default function Medicamentos() {
         <MedicamentosModal
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          data={selected}
+          data={
+            selected
+              ? {
+                  ...selected,
+                  descripcion: selected.descripcion || '',
+                  ids_laboratorios:
+                    selected.laboratorios?.map((l) => l.id) ?? [],
+                }
+              : null
+          }
         />
       )}
     </div>

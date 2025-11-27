@@ -1,47 +1,67 @@
-import { useState, useEffect } from 'react';
-import type { FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import Modal from '../ui/Modal';
 import inputStyles from '../../styles/components/input.module.css';
 import buttonStyles from '../../styles/components/button.module.css';
 
-interface ObraSocialData {
-  cuit: string;
-  nombre: string;
-}
+import {
+  type ObraSocialCreate,
+  type ObraSocialUpdate,
+  type ObraSocialPayload,
+  type ObraSocial,
+} from '../../types/ObraSocial';
 
-interface ObrasSocialesModalProps {
+interface Props {
   onClose: () => void;
-  onSave: (data: ObraSocialData) => void;
-  initialData: ObraSocialData | null;
+  onSave: (data: ObraSocialPayload) => Promise<void>;
+
+  initialData: ObraSocial | null;
 }
 
 export default function ObrasSocialesModal({
   onClose,
   onSave,
   initialData,
-}: ObrasSocialesModalProps) {
-  const [cuit, setCuit] = useState<string>('');
-  const [nombre, setNombre] = useState<string>('');
+}: Props) {
+  const [cuit, setCuit] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [porcentajeCobertura, setPorcentajeCobertura] = useState<number>(0);
+  const [nombreTipo, setNombreTipo] = useState<string>('GENERAL');
+
+  const ES_EDIT = Boolean(initialData);
 
   useEffect(() => {
     if (initialData) {
       setCuit(initialData.cuit);
       setNombre(initialData.nombre);
+      setPorcentajeCobertura(initialData.porcentaje_cobertura);
+      setNombreTipo(initialData.nombre_tipo);
     }
   }, [initialData]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    onSave({ cuit, nombre });
+
+    const payload: ObraSocialCreate | ObraSocialUpdate = {
+      cuit,
+      nombre,
+      porcentaje_cobertura: porcentajeCobertura,
+      nombre_tipo: nombreTipo,
+    };
+
+    try {
+      await onSave(payload); // el padre decide cuándo cerrar
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <Modal
       open={true}
-      title={initialData ? 'Editar Obra social' : 'Nueva Obra Social'}
+      title={ES_EDIT ? 'Editar Obra Social' : 'Nueva Obra Social'}
       onClose={onClose}
     >
-      <h2>{initialData ? 'Editar Obra Social' : 'Nueva Obra Social'}</h2>
+      <h2>{ES_EDIT ? 'Editar Obra Social' : 'Nueva Obra Social'}</h2>
 
       <form onSubmit={handleSubmit}>
         <label>CUIT</label>
@@ -61,6 +81,30 @@ export default function ObrasSocialesModal({
           onChange={(e) => setNombre(e.target.value)}
           required
         />
+
+        <label>Porcentaje de cobertura (%)</label>
+        <input
+          type="number"
+          className={inputStyles.input}
+          value={porcentajeCobertura}
+          onChange={(e) => setPorcentajeCobertura(Number(e.target.value))}
+          min={0}
+          max={100}
+          required
+        />
+
+        <label>Tipo de Obra Social</label>
+        <select
+          className={inputStyles.input}
+          value={nombreTipo}
+          onChange={(e) => setNombreTipo(e.target.value)}
+          required
+        >
+          <option value="GENERAL">GENERAL</option>
+          <option value="SINDICAL">SINDICAL</option>
+          <option value="PREPAGA">PREPAGA</option>
+          <option value="PARTICULAR">PARTICULAR</option>
+        </select>
 
         <div className={buttonStyles.modalButtons}>
           <button

@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import styles from '../../styles/pages/registroPacientes.module.css';
 
-import {
-  obrasSocialesData,
-  type ObraSocial,
-} from '../../data/ObrasSocialesData';
+import obraSocialService from '../../service/obraSocialService';
+import { AntecedenteService } from '../../service/antecedenteService';
+import pacienteService from '../../service/pacienteService';
 
+import { type ObraSocial } from '../../types/ObraSocial';
+import { type Antecedente } from '../../types/Antecedente';
 import {
-  antecedentesData,
-  type Antecedente,
-} from '../../data/antecedentesData';
+  type PacienteCreate,
+  type PacienteUpdate,
+  type Paciente,
+} from '../../types/Paciente';
 
 export default function RegistroPacientes() {
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const dniParam = params.get('dni'); // si existe → modo edición
+
   const [obrasSociales, setObrasSociales] = useState<ObraSocial[]>([]);
   const [antecedentes, setAntecedentes] = useState<Antecedente[]>([]);
 
@@ -26,33 +33,87 @@ export default function RegistroPacientes() {
   const [grupoSanguineo, setGrupoSanguineo] = useState('');
   const [antecedente, setAntecedente] = useState<number | ''>('');
 
+  const isEdit = Boolean(dniParam);
+
+  // Cargar obras sociales y antecedentes
   useEffect(() => {
-    // Cargar datos desde los módulos
-    setObrasSociales(obrasSocialesData);
-    setAntecedentes(antecedentesData);
-  }, []);
+    const fetchData = async () => {
+      const os = await obraSocialService.listar();
+      const ant = await AntecedenteService.getAll();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const paciente = {
-      nombre,
-      apellido,
-      fechaNacimiento,
-      dni,
-      email,
-      telefono,
-      obraSocial,
-      grupoSanguineo,
-      antecedente,
+      setObrasSociales(os);
+      setAntecedentes(ant);
     };
 
-    console.log('Paciente registrado:', paciente);
+    fetchData();
+  }, []);
+
+  // Si estamos en modo editar → cargar paciente
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const fetchPaciente = async () => {
+      try {
+        const paciente: Paciente = await pacienteService.obtener(
+          Number(dniParam)
+        );
+
+        setNombre(paciente.nombre);
+        setApellido(paciente.apellido);
+        setFechaNacimiento(paciente.fecha_nacimiento);
+        setDni(String(paciente.dni));
+        setEmail(paciente.email);
+        setTelefono(paciente.telefono);
+        setObraSocial(paciente.obra_social ? Number(paciente.obra_social) : '');
+        setGrupoSanguineo(String(paciente.grupo_sanguineo));
+        setAntecedente(paciente.antecedentes?.[0]?.id ?? '');
+      } catch (error) {
+        console.error('Error cargando paciente', error);
+        alert('No se pudo cargar el paciente.');
+      }
+    };
+
+    fetchPaciente();
+  }, [dniParam, isEdit]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const data: PacienteCreate | PacienteUpdate = {
+      nombre,
+      apellido,
+      fecha_nacimiento: fechaNacimiento,
+      dni: Number(dni),
+      email,
+      telefono,
+      nombre_grupo_sanguineo: grupoSanguineo,
+      nombre_obra_social: obraSocial
+        ? obrasSociales.find((os) => os.id === obraSocial)?.nombre ?? null
+        : null,
+      ids_antecedentes: antecedente !== '' ? [Number(antecedente)] : [],
+    };
+
+    try {
+      if (isEdit) {
+        // EDITAR
+        await pacienteService.actualizar(Number(dniParam), data);
+      } else {
+        // CREAR
+        await pacienteService.crear(data as PacienteCreate);
+      }
+
+      navigate('/admin/pacientes');
+    } catch (error) {
+      console.error(error);
+      alert('Error al guardar el paciente');
+    }
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Registrar paciente</h1>
+      <h1 className={styles.title}>
+        {isEdit ? 'Editar paciente' : 'Registrar paciente'}
+      </h1>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.row}>
@@ -92,6 +153,7 @@ export default function RegistroPacientes() {
             value={dni}
             onChange={(e) => setDni(e.target.value)}
             required
+            disabled={isEdit} // no se puede editar el DNI si ya existe
           />
         </div>
 
@@ -170,7 +232,7 @@ export default function RegistroPacientes() {
           <button
             type="button"
             className={styles.cancel}
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/admin/pacientes')}
           >
             Cancelar
           </button>

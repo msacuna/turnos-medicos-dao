@@ -3,63 +3,98 @@ import Navbar from '@/components/ui/Navbar';
 import AdminMenu from '@/components/menu/AdminMenu';
 import EspecialidadesModal from '@/components/especialidades/EspecialidadesModal';
 import ConfirmDeleteModal from '@/components/common/ConfirmDeleteModal';
+
 import styles from '@/styles/pages/especialidades.module.css';
 import pageStyles from '@/styles/pages/principal.module.css';
 
-type Especialidad = {
-  id: number;
-  nombre: string;
-};
+import { EspecialidadService } from '@/service/especialidadService';
+import type {
+  Especialidad,
+  EspecialidadCreate,
+  EspecialidadUpdate,
+} from '@/types/Especialidad';
 
 export default function Especialidades() {
   const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [editing, setEditing] = useState<Especialidad | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const openMenu = () => setMenuOpen(true);
   const closeMenu = () => setMenuOpen(false);
 
-  /** Obtener lista inicial */
-  useEffect(() => {
-    fetchEspecialidades();
-  }, []);
-
-  const fetchEspecialidades = async () => {
-    // 🚨 Cuando tengas los endpoints, reemplazo esto por fetch real
-    setEspecialidades([
-      { id: 1, nombre: 'Cardiología' },
-      { id: 2, nombre: 'Dermatología' },
-    ]);
+  /** 🔹 Cargar desde backend */
+  const loadEspecialidades = async () => {
+    try {
+      setLoading(true);
+      const data = await EspecialidadService.getAll();
+      setEspecialidades(data);
+    } catch (e) {
+      console.error('Error cargando especialidades:', e);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /** Abrir modal para crear */
+  useEffect(() => {
+    loadEspecialidades();
+  }, []);
+
+  /** 🔹 Abrir modal para crear */
   const handleCreate = () => {
     setEditing(null);
     setShowModal(true);
   };
 
-  /** Abrir modal para editar */
+  /** 🔹 Abrir modal para editar */
   const handleEdit = (esp: Especialidad) => {
     setEditing(esp);
     setShowModal(true);
   };
 
-  /** Abrir confirmación de eliminar */
-  const handleDelete = (id: number) => {
-    setDeletingId(id);
-    setShowConfirm(true);
+  /** 🔹 Guardar en backend (crear o editar) */
+  const handleSave = async (nombre: string, precio: number) => {
+    try {
+      if (editing) {
+        const updated = await EspecialidadService.update(editing.id, {
+          nombre,
+          precio,
+        } as EspecialidadUpdate);
+
+        setEspecialidades((prev) =>
+          prev.map((e) => (e.id === editing.id ? updated : e))
+        );
+      } else {
+        const created = await EspecialidadService.create({
+          nombre,
+          precio,
+        } as EspecialidadCreate);
+
+        setEspecialidades((prev) => [...prev, created]);
+      }
+
+      setShowModal(false);
+    } catch (e) {
+      console.error('Error guardando especialidad:', e);
+    }
   };
 
-  /** Confirmar eliminación */
-  const confirmDelete = () => {
-    if (deletingId !== null) {
+  /** 🔹 Confirmación de eliminar */
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+
+    try {
+      await EspecialidadService.delete(deletingId);
+
       setEspecialidades((prev) => prev.filter((e) => e.id !== deletingId));
+
+      setDeletingId(null);
+    } catch (e) {
+      console.error('Error eliminando especialidad:', e);
     }
-    setShowConfirm(false);
   };
 
   return (
@@ -72,7 +107,7 @@ export default function Especialidades() {
       <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
 
       <div className={styles.container}>
-        {/* Buscador + botón agregar */}
+        {/* 🔎 Buscador + botón agregar */}
         <div className={styles.headerRow}>
           <input
             type="text"
@@ -99,7 +134,8 @@ export default function Especialidades() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Especialidades</th>
+              <th>Nombre</th>
+              <th>Precio</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -112,12 +148,13 @@ export default function Especialidades() {
               .map((esp) => (
                 <tr key={esp.id}>
                   <td>{esp.nombre}</td>
+                  <td>${esp.precio}</td>
                   <td className={styles.actions}>
+                    {/* Editar */}
                     <button
                       className={styles.actionButton}
                       onClick={() => handleEdit(esp)}
                     >
-                      {/* Editar */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24px"
@@ -125,15 +162,15 @@ export default function Especialidades() {
                         width="24px"
                         fill="#e3e3e3"
                       >
-                        <path d="M200-200h57l391-391-57-57-391 391v57Z..." />
+                        <path d="M200-200h57l391-391-57-57-391 391v57Z" />
                       </svg>
                     </button>
 
+                    {/* Eliminar */}
                     <button
                       className={styles.actionButton}
-                      onClick={() => handleDelete(esp.id)}
+                      onClick={() => setDeletingId(esp.id)}
                     >
-                      {/* Eliminar */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24px"
@@ -141,7 +178,7 @@ export default function Especialidades() {
                         width="24px"
                         fill="#e3e3e3"
                       >
-                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Z" />
                       </svg>
                     </button>
                   </td>
@@ -149,6 +186,8 @@ export default function Especialidades() {
               ))}
           </tbody>
         </table>
+
+        {loading && <p>Cargando...</p>}
       </div>
 
       {/* Modal Crear/Editar */}
@@ -156,27 +195,15 @@ export default function Especialidades() {
         <EspecialidadesModal
           especialidad={editing}
           onClose={() => setShowModal(false)}
-          onSave={(nombre) => {
-            if (editing) {
-              setEspecialidades((prev) =>
-                prev.map((e) => (e.id === editing.id ? { ...e, nombre } : e))
-              );
-            } else {
-              setEspecialidades((prev) => [
-                ...prev,
-                { id: prev.length + 1, nombre },
-              ]);
-            }
-            setShowModal(false);
-          }}
+          onSave={handleSave}
         />
       )}
 
       {/* Confirmación de eliminar */}
-      {showConfirm && (
+      {deletingId !== null && (
         <ConfirmDeleteModal
-          message="¿Estás seguro que deseas dar de baja esta especialidad?"
-          onCancel={() => setShowConfirm(false)}
+          message="¿Estás seguro que deseas eliminar esta especialidad?"
+          onCancel={() => setDeletingId(null)}
           onConfirm={confirmDelete}
         />
       )}

@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import styles from '../../styles/pages/obrasSociales.module.css';
+
 import ObrasSocialesModal from '../../components/obrasSociales/ObrasSocialesModal';
 import ConfirmDeleteModal from '../../components/common/ConfirmDeleteModal';
 
-interface ObraSocial {
-  id: number;
-  cuit: string;
-  nombre: string;
-}
+import obraSocialService from '../../service/obraSocialService';
+import {
+  type ObraSocial,
+  type ObraSocialPayload,
+} from '../../types/ObraSocial';
 
 export default function ObrasSociales() {
   const [obras, setObras] = useState<ObraSocial[]>([]);
@@ -15,13 +16,25 @@ export default function ObrasSociales() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  // Simulación — reemplazar por fetch a la API
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 🔹 Cargar desde el backend
+  const fetchObras = async () => {
+    try {
+      setLoading(true);
+      const data = await obraSocialService.listar();
+      setObras(data);
+    } catch (err: unknown) {
+      setError('Error al cargar obras sociales');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setObras([
-      { id: 1, cuit: '30-12345678-9', nombre: 'OSDE' },
-      { id: 2, cuit: '30-87654321-2', nombre: 'Swiss Medical' },
-      { id: 3, cuit: '30-11112222-3', nombre: 'PAMI' },
-    ]);
+    fetchObras();
   }, []);
 
   const openCreate = () => {
@@ -34,28 +47,54 @@ export default function ObrasSociales() {
     setIsModalOpen(true);
   };
 
-  const handleSave = (data: { cuit: string; nombre: string }) => {
-    if (selected) {
-      // Editar
-      setObras((prev) =>
-        prev.map((o) => (o.id === selected.id ? { ...o, ...data } : o))
-      );
-    } else {
-      // Crear
-      const newItem: ObraSocial = {
-        id: Date.now(),
-        ...data,
-      };
-      setObras((prev) => [...prev, newItem]);
-    }
+  // 🔹 Crear o actualizar con backend
+  const handleSave = async (data: ObraSocialPayload) => {
+    try {
+      if (selected) {
+        // EDITAR
+        const updated = await obraSocialService.actualizar(selected.id!, {
+          id: selected.id,
+          nombre: data.nombre,
+          cuit: data.cuit,
+          porcentaje_cobertura: data.porcentaje_cobertura,
+          nombre_tipo: data.nombre_tipo,
+        });
 
-    setIsModalOpen(false);
+        setObras((prev) =>
+          prev.map((o) => (o.id === updated.id ? updated : o))
+        );
+      } else {
+        // CREAR
+        const created = await obraSocialService.crear({
+          nombre: data.nombre,
+          cuit: data.cuit,
+          porcentaje_cobertura: data.porcentaje_cobertura,
+          nombre_tipo: data.nombre_tipo,
+        });
+
+        setObras((prev) => [...prev, created]);
+      }
+
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      alert('Error al guardar la obra social');
+    }
   };
 
-  const handleDelete = () => {
+  // 🔹 Eliminar — tu backend NO tiene DELETE, así que esto se deja listo
+  const handleDelete = async () => {
+    // ❌ si no tienes DELETE en backend, eliminamos solo del estado
     setObras((prev) => prev.filter((o) => o.id !== deleteId));
     setDeleteId(null);
+
+    // Si en el futuro agregás DELETE:
+    // await obraSocialService.eliminar(deleteId!)
+    // fetchObras()
   };
+
+  if (loading) return <p>Cargando obras sociales...</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
 
   return (
     <div className={styles.container}>
@@ -70,6 +109,8 @@ export default function ObrasSociales() {
           <tr>
             <th>CUIT</th>
             <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Cobertura (%)</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -79,6 +120,8 @@ export default function ObrasSociales() {
             <tr key={obra.id}>
               <td>{obra.cuit}</td>
               <td>{obra.nombre}</td>
+              <td>{obra.nombre_tipo}</td>
+              <td>{obra.porcentaje_cobertura}%</td>
 
               <td>
                 <button

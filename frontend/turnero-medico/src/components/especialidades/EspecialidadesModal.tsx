@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styles from '@/styles/components/modal.module.css';
 
 type Props = {
-  especialidad: { id: number; nombre: string } | null;
+  especialidad: { id: number; nombre: string; precio: number } | null;
   onClose: () => void;
-  onSave: (nombre: string) => void;
+  onSave: (nombre: string, precio: number) => void;
 };
 
 export default function EspecialidadesModal({
@@ -13,17 +13,24 @@ export default function EspecialidadesModal({
   onSave,
 }: Props) {
   const [nombre, setNombre] = useState('');
+  const [precio, setPrecio] = useState<number | ''>('');
 
   useEffect(() => {
-    if (especialidad) setNombre(especialidad.nombre);
+    if (especialidad) {
+      setNombre(especialidad.nombre);
+      setPrecio(especialidad.precio);
+    }
   }, [especialidad]);
+
+  const handleAccept = () => {
+    if (!nombre.trim()) return;
+    if (precio === '' || isNaN(Number(precio))) return;
+    onSave(nombre, Number(precio));
+  };
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()} // evita cerrar si hacés click dentro
-      >
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h3 className={styles.title}>
             {especialidad ? 'Editar Especialidad' : 'Nueva Especialidad'}
@@ -49,13 +56,25 @@ export default function EspecialidadesModal({
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
           />
+
+          <label className={styles.label} style={{ marginTop: '12px' }}>
+            Precio
+          </label>
+          <input
+            type="number"
+            className={styles.input}
+            value={precio}
+            onChange={(e) =>
+              setPrecio(e.target.value === '' ? '' : Number(e.target.value))
+            }
+          />
         </div>
 
         <div className={styles.buttonsRow}>
           <button className={styles.danger} onClick={onClose}>
             Cancelar
           </button>
-          <button className={styles.primary} onClick={() => onSave(nombre)}>
+          <button className={styles.primary} onClick={handleAccept}>
             Aceptar
           </button>
         </div>

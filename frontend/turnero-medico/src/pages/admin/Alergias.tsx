@@ -4,10 +4,12 @@ import styles from '../../styles/pages/alergias.module.css';
 import AlergiasModal from '../../components/alergias/AlergiasModal';
 import ConfirmDeleteModal from '../../components/common/ConfirmDeleteModal';
 
-interface Alergia {
-  id: number;
-  nombre: string;
-}
+import { AlergiaService } from '../../service/alergiaService';
+import type {
+  Alergia,
+  AlergiaCreate,
+  AlergiaUpdate,
+} from '../../types/Alergia';
 
 export default function Alergias() {
   const [alergias, setAlergias] = useState<Alergia[]>([]);
@@ -15,42 +17,63 @@ export default function Alergias() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
+  // 🔹 Cargar alergias del backend
+  const loadAlergias = async () => {
+    try {
+      const data = await AlergiaService.getAll();
+      setAlergias(data);
+    } catch (error) {
+      console.error('Error cargando alergias:', error);
+    }
+  };
+
   useEffect(() => {
-    // Datos simulados – reemplazar con API real
-    setAlergias([
-      { id: 1, nombre: 'Polen' },
-      { id: 2, nombre: 'Ácaros' },
-      { id: 3, nombre: 'Penicilina' },
-    ]);
+    loadAlergias();
   }, []);
 
+  // 🔹 Abrir modal para crear
   const openCreate = () => {
     setSelected(null);
     setIsModalOpen(true);
   };
 
+  // 🔹 Abrir modal para editar
   const openEdit = (item: Alergia) => {
     setSelected(item);
     setIsModalOpen(true);
   };
 
-  const handleSave = (data: { nombre: string }) => {
-    if (selected) {
-      // Editar
-      setAlergias((prev) =>
-        prev.map((e) => (e.id === selected.id ? { ...e, ...data } : e))
-      );
-    } else {
-      // Crear
-      const newItem: Alergia = { id: Date.now(), ...data };
-      setAlergias((prev) => [...prev, newItem]);
+  // 🔹 Guardar (Crear o Editar)
+
+  const handleSave = async (data: AlergiaCreate | AlergiaUpdate) => {
+    try {
+      if (selected) {
+        // EDITAR
+        await AlergiaService.update(selected.id, data);
+      } else {
+        // CREAR
+        await AlergiaService.create(data);
+      }
+
+      await loadAlergias(); // Recargar lista
+      setIsModalOpen(false); // Cerrar modal
+      setSelected(null); // Resetear seleccionado
+    } catch (error) {
+      console.error('Error guardando alergia:', error);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDelete = () => {
-    setAlergias((prev) => prev.filter((e) => e.id !== deleteId));
-    setDeleteId(null);
+  const handleDelete = async () => {
+    try {
+      if (!deleteId) return;
+
+      await AlergiaService.delete(deleteId);
+
+      setAlergias((prev) => prev.filter((e) => e.id !== deleteId));
+      setDeleteId(null);
+    } catch (error) {
+      console.error('Error eliminando alergia:', error);
+    }
   };
 
   return (
@@ -98,7 +121,10 @@ export default function Alergias() {
         <AlergiasModal
           initialData={selected}
           onSave={handleSave}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelected(null);
+          }}
         />
       )}
 

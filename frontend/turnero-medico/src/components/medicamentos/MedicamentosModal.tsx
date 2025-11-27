@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
 import styles from '../../styles/pages/medicamentos.module.css';
 
-type Medicamento = {
-  id?: number;
-  nombre: string;
-  descripcion: string;
-};
+import { type MedicamentoPayload } from '@/types/Medicamento';
 
 type Props = {
-  data: Medicamento | null;
+  data: MedicamentoPayload | null;
   onClose: () => void;
-  onSave: (item: Medicamento) => void;
+  onSave: (item: MedicamentoPayload) => void;
 };
 
 export default function MedicamentosModal({ data, onClose, onSave }: Props) {
@@ -20,18 +16,17 @@ export default function MedicamentosModal({ data, onClose, onSave }: Props) {
   useEffect(() => {
     if (data) {
       setNombre(data.nombre);
-      setDescripcion(data.descripcion);
+      setDescripcion(data.descripcion ?? '');
     }
   }, [data]);
 
   const handleSubmit = () => {
     if (!nombre.trim()) return;
-    if (!descripcion.trim()) return;
 
     onSave({
       id: data?.id,
       nombre,
-      descripcion,
+      descripcion: descripcion.trim() || undefined,
     });
   };
 

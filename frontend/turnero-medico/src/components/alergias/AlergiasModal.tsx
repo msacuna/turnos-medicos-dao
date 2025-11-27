@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../ui/Modal';
 
 interface AlergiasModalProps {
@@ -14,9 +14,17 @@ export default function AlergiasModal({
 }: AlergiasModalProps) {
   const [nombre, setNombre] = useState(initialData?.nombre || '');
 
+  useEffect(() => {
+    setNombre(initialData?.nombre || '');
+  }, [initialData]);
+
   const handleSubmit = () => {
     if (!nombre.trim()) return;
-    onSave({ nombre });
+    if (initialData && initialData.nombre === nombre.trim()) {
+      onClose();
+      return;
+    }
+    onSave({ nombre: nombre.trim() });
   };
 
   return (

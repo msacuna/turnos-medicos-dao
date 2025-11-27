@@ -1,15 +1,11 @@
 import { useState, useEffect } from 'react';
 import styles from '../../styles/pages/antecedentes.module.css';
-
-type Antecedente = {
-  id?: number;
-  nombre: string;
-};
+import { type Antecedente, type AntecedentePayload } from '@/types/Antecedente';
 
 type Props = {
   data: Antecedente | null;
   onClose: () => void;
-  onSave: (item: Antecedente) => void;
+  onSave: (item: AntecedentePayload) => void;
 };
 
 export default function AntecedentesModal({ data, onClose, onSave }: Props) {
@@ -18,12 +14,23 @@ export default function AntecedentesModal({ data, onClose, onSave }: Props) {
   useEffect(() => {
     if (data) {
       setNombre(data.nombre);
+    } else {
+      setNombre('');
     }
   }, [data]);
 
   const handleSubmit = () => {
-    if (!nombre.trim()) return;
-    onSave({ id: data?.id, nombre });
+    const trimmed = nombre.trim();
+    if (!trimmed) return;
+
+    // Evitar guardar si no hubo cambios
+    if (data && data.nombre === trimmed) {
+      onClose();
+      return;
+    }
+
+    onSave({ id: data?.id, nombre: trimmed });
+    onClose();
   };
 
   return (
