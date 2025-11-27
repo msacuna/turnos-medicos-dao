@@ -30,6 +30,16 @@ class ManejadorDeExcepciones:
         )
 
     @staticmethod
+    async def general_handler(request: Request, exc: NotImplementedError):
+        return JSONResponse(
+            status_code=501,
+            content={
+                "error": "Funcionalidad no implementada",
+                "mensaje": str(exc)
+            }
+        )
+
+    @staticmethod
     async def general_handler(request: Request, exc: Exception):
         # Captura cualquier error no controlado (NullPointer, etc.)
         import traceback
@@ -38,9 +48,10 @@ class ManejadorDeExcepciones:
             content={
                 "error": "Error Interno del Servidor",
                 "mensaje": f"Error: {str(exc)}",
-                "traceback": traceback.format_exc()
+                #"traceback": traceback.format_exc()
             }
         )
+    
 
     # Método estático para registrar todo en la APP
     @staticmethod
@@ -48,3 +59,5 @@ class ManejadorDeExcepciones:
         app.add_exception_handler(RecursoNoEncontradoException, ManejadorDeExcepciones.not_found_handler)
         app.add_exception_handler(ReglaDeNegocioException, ManejadorDeExcepciones.business_rule_handler)
         app.add_exception_handler(Exception, ManejadorDeExcepciones.general_handler)
+        app.add_exception_handler(NotImplementedError, ManejadorDeExcepciones.general_handler)
+        

@@ -173,7 +173,7 @@ class AgendaProfesionalService(SujetoTurno):
             Matriz con formato [[email, telefono, fecha_hora], ...] donde fecha_hora es "YYYY-MM-DD HH:MM:SS"
         """
         # 1. Obtener turnos de la agenda para los días especificados
-        turnos = self.turno_service.obtener_turnos_by_agenda_and_days(id_agenda, dias)
+        turnos = self.turno_service.repository.get_by_agenda_and_days(id_agenda, dias)
         
         # 2. Matriz para almacenar los datos de notificación
         datos_notificacion = []
@@ -181,7 +181,7 @@ class AgendaProfesionalService(SujetoTurno):
         # 3. Cancelar cada turno y recopilar datos
         for turno in turnos:
             # Solo procesar turnos que tengan paciente asignado
-            if turno.dni_paciente and turno.paciente:
+            if turno.estado.nombre == "Agendado":
                 # Obtener email del paciente
                 email_paciente = turno.paciente.email
 
@@ -197,14 +197,20 @@ class AgendaProfesionalService(SujetoTurno):
                 
                 # Cancelar el turno usando el servicio
                 self.turno_service.cancelar_turno(turno.id)
+            elif turno.estado.nombre == "Disponible":
+                # Cancelar el turno usando el servicio
+                self.turno_service.cancelar_turno(turno.id)
 
         # 4. Notificar a los suscriptores sobre los turnos cancelados --> Patron Observer
 
         self.agregar_suscriptor(NotificadorEmail())
         self.agregar_suscriptor(NotificadorSMS())
         self.notificar(datos_notificacion)
-        self.eliminar_suscriptor(NotificadorEmail())
-        self.eliminar_suscriptor(NotificadorSMS())
+        for suscriptor in self.suscriptores:
+            self.eliminar_suscriptor(suscriptor)
+
+        return datos_notificacion
+
         
     # def get_agenda_actual_por_profesional(self, id_profesional: int) -> AgendaProfesionalRead:
     #     """Obtiene la agenda del mes actual para un profesional dado"""

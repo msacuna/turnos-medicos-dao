@@ -12,3 +12,4 @@ class RecursoNoEncontradoException(BaseAppException):
 class ReglaDeNegocioException(BaseAppException):
     """Para validaciones lógicas (ej: Alergia duplicada)"""
     pass
+

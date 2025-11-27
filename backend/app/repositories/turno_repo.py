@@ -34,6 +34,6 @@ class TurnoRepository(BaseRepository[Turno]):
             func.extract('day', Turno.fecha).in_(dias)
         ).options(
             # Eager loading para obtener datos del paciente
-            select(Turno).options(selectinload(Turno.paciente))
+            selectinload(Turno.paciente)
         )
         return list(self.session.exec(statement).all())

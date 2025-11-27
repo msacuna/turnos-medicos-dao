@@ -71,17 +71,17 @@ class Ausente(EstadoTurnoAbs):
     def es_finalizado(self) -> bool:
         return False
     def cancelar(self, ctx) -> None:
-        pass
+        super().cancelar(ctx)
     def liberar(self, ctx) -> None:
-        pass
+        super().liberar(ctx)
     def agendar(self, ctx) -> None:
-        pass
+        super().agendar(ctx)
     def iniciarTurno(self, ctx) -> None:
-        pass
+        super().iniciarTurno(ctx)
     def finalizarTurno(self, ctx) -> None:
-        pass
+        super().finalizarTurno(ctx)
     def marcarInasistencia(self, ctx) -> None:
-        pass
+        super().marcarInasistencia(ctx)
 
 class Cancelado(EstadoTurnoAbs):
     nombre: str = "Cancelado"
@@ -100,17 +100,17 @@ class Cancelado(EstadoTurnoAbs):
     def es_finalizado(self) -> bool:
         return False
     def cancelar(self, ctx) -> None:
-        pass
+        super().cancelar(ctx)
     def liberar(self, ctx) -> None:
-        pass
+        super().liberar(ctx)
     def agendar(self, ctx) -> None:
-        pass
+        super().agendar(ctx)
     def iniciarTurno(self, ctx) -> None:
-        pass
+        super().iniciarTurno(ctx)
     def finalizarTurno(self, ctx) -> None:
-        pass
+        super().finalizarTurno(ctx)
     def marcarInasistencia(self, ctx) -> None:
-        pass
+        super().marcarInasistencia(ctx)
 
 class Disponible(EstadoTurnoAbs):
     nombre: str = "Disponible"
@@ -139,13 +139,13 @@ class Disponible(EstadoTurnoAbs):
         ctx.set_estado(Cancelado())
     
     def liberar(self, ctx) -> None:
-        pass
+        super().liberar(ctx)
     def iniciarTurno(self, ctx) -> None:
-        pass
+        super().iniciarTurno(ctx)
     def finalizarTurno(self, ctx) -> None:
-        pass
+        super().finalizarTurno(ctx)
     def marcarInasistencia(self, ctx) -> None:
-        pass
+        super().marcarInasistencia(ctx)
 
 class EnProceso(EstadoTurnoAbs):
     nombre: str = "En Proceso"
@@ -164,17 +164,17 @@ class EnProceso(EstadoTurnoAbs):
     def es_finalizado(self) -> bool:
         return False
     def cancelar(self, ctx) -> None:
-        pass
+        super().cancelar(ctx)
     def liberar(self, ctx) -> None:
-        pass
+        super().liberar(ctx)
     def agendar(self, ctx) -> None:
-        pass
+        super().agendar(ctx)
     def iniciarTurno(self, ctx) -> None:
-        pass
+        super().iniciarTurno(ctx)
     def finalizarTurno(self, ctx) -> None:
         ctx.set_estado(Finalizado())
     def marcarInasistencia(self, ctx) -> None:
-        pass
+        super().marcarInasistencia(ctx)
 
 class Finalizado(EstadoTurnoAbs):
     nombre: str = "Finalizado"
@@ -193,17 +193,17 @@ class Finalizado(EstadoTurnoAbs):
     def es_disponible(self) -> bool:
         return False
     def cancelar(self, ctx) -> None:
-        pass
+        super().cancelar(ctx)
     def liberar(self, ctx) -> None:
-        pass
+        super().liberar(ctx)
     def agendar(self, ctx) -> None:
-        pass
+        super().agendar(ctx)
     def iniciarTurno(self, ctx) -> None:
-        pass
+        super().iniciarTurno(ctx)
     def finalizarTurno(self, ctx) -> None:
-        pass
+        super().finalizarTurno(ctx)
     def marcarInasistencia(self, ctx) -> None:
-        pass
+        super().marcarInasistencia(ctx)
 
 class Agendado(EstadoTurnoAbs):
     nombre: str = "Agendado"
@@ -235,8 +235,8 @@ class Agendado(EstadoTurnoAbs):
 
     def iniciarTurno(self, ctx: "Turno"):
         ctx.set_estado(EnProceso())
-    
+
     def agendar(self, ctx) -> None:
-        pass
+        super().agendar(ctx)
     def finalizarTurno(self, ctx) -> None:
-        pass
+        super().finalizarTurno(ctx)

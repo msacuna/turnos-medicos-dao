@@ -145,3 +145,19 @@ def obtener_turnos_de_agenda_profesional(
     turnos =  service.get_turnos_de_agenda(profesional_id, agenda_id)
     return turnos
     
+@router.patch("/agenda/{id_agenda}/cancelar-turnos")
+def cancelar_turnos_de_agenda_profesional(
+    id_agenda: int,
+    dias: list[int] = Body(...),
+    service: AgendaProfesionalService = Depends(get_agenda_profesional_service)
+):
+    
+    data = service.cancelar_turnos(id_agenda, dias)
+    mensajes = "Se cancelaron exitosamente {} turnos".format(len(data))
+        
+    
+    
+    return {
+        "mensaje": mensajes,
+        "contactos_notificados": data
+    }
