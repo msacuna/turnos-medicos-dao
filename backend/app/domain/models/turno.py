@@ -39,33 +39,30 @@ class Turno(SQLModel, table=True):
             raise ValueError("hora_fin_estimada debe ser mayor que hora_inicio")
         return self
 
-    def set_estado(self, nuevo_estado):
+    def set_estado(self, nuevo_estado: "EstadoTurnoAbs") -> None:
         self.nombre_estado = nuevo_estado.nombre
 
     @property
     def estado(self) -> "EstadoTurnoAbs":
         return build_estado_turno(self.nombre_estado)
     
-    def agendar(self, dni_paciente: int, cobertura: float):
+    def agendar(self, dni_paciente: int, cobertura: float) -> None:
         self.estado.agendar(self, dni_paciente, cobertura)
     
-    def cancelar(self):
+    def cancelar(self) -> None:
         self.estado.cancelar(self)
     
-    def liberar(self):
+    def liberar(self) -> None:
         self.estado.liberar(self)
     
-    def iniciar(self):
+    def iniciar(self) -> None:
         self.estado.iniciarTurno(self)
     
-    def finalizar(self):
+    def finalizar(self) -> None:
         self.estado.finalizarTurno(self)
     
-    def marcar_ausente(self):
+    def marcar_ausente(self) -> None:
         self.estado.marcarInasistencia(self)
-    
-    def cancelar(self):
-        self.estado.cancelar(self)
     
     def es_disponible(self) -> bool:
         return self.estado.es_disponible()
