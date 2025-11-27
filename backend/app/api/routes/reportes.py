@@ -10,4 +10,6 @@ def reporte_turnos_por_especialidad(service: ReporteService = Depends(get_report
     return service.reporte_turnos_especialidad()
 
 
-@router.get("/turnos-por-especialidad", response_model=None)
+@router.get("/pacientes-por-obra-social", response_model=None)
+def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
+    return service.reporte_pacientes_por_obra_social()
