@@ -4,6 +4,7 @@ class ReporteCantidadTurnoPorEspecialidad(BaseModel):
     especialidad: str
     cantidad_turnos: int
 
+
 class ReporteMontoTurnoPorEspecialidad(BaseModel):
     especialidad: str
     monto_total: float

@@ -10,6 +10,11 @@ router = APIRouter(prefix="/reportes", tags=["Reportes"])
 def reporte_turnos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
     return service.reporte_cantidad_turnos_especialidad()
 
+
+@router.get("/pacientes-por-obra-social", response_model=None)
+def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
+    return service.reporte_pacientes_por_obra_social()
+
 @router.get("/montos-por-especialidad", response_model=list[ReporteMontoTurnoPorEspecialidad])
 def reporte_montos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
     return service.reporte_montos_especialidad()
