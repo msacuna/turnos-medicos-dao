@@ -8,6 +8,9 @@ from reportlab.platypus.tables import Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 import os
+import matplotlib.pyplot as plt
+from io import BytesIO
+from reportlab.platypus import Image
 
 
 class ReporteService:
@@ -65,6 +68,45 @@ class ReporteService:
         # Agregar tabla a los elementos del PDF
         elements.append(Spacer(1, 0.5 * inch))  # Espaciado antes de la tabla
         elements.append(table)
+
+        # Crear gráficos de torta
+        nombres_obras_sociales = [dato["obra_social"] for dato in datos]
+        cantidades_afiliados = [dato["cantidad_pacientes"] for dato in datos]
+        ingresos_totales = [dato["monto_total_turnos"] for dato in datos]
+
+        # Filtrar datos para excluir obras sociales sin pacientes o ingresos
+        nombres_obras_sociales_afiliados = [nombres_obras_sociales[i] for i in range(len(cantidades_afiliados)) if cantidades_afiliados[i] > 0]
+        cantidades_afiliados_filtrados = [cantidad for cantidad in cantidades_afiliados if cantidad > 0]
+
+        nombres_obras_sociales_ingresos = [nombres_obras_sociales[i] for i in range(len(ingresos_totales)) if ingresos_totales[i] > 0]
+        ingresos_totales_filtrados = [ingreso for ingreso in ingresos_totales if ingreso > 0]
+
+        # Gráfico de torta: Obra social por cantidad de afiliados
+        buffer_afiliados = BytesIO()
+        plt.figure(figsize=(6, 6))
+        plt.pie(cantidades_afiliados_filtrados, labels=nombres_obras_sociales_afiliados, autopct='%1.1f%%', startangle=140)
+        plt.title("Relación de Obras Sociales por Cantidad de Afiliados")
+        plt.savefig(buffer_afiliados, format='png')
+        plt.close()
+        buffer_afiliados.seek(0)
+
+        # Gráfico de torta: Obra social por ingresos
+        buffer_ingresos = BytesIO()
+        plt.figure(figsize=(6, 6))
+        plt.pie(ingresos_totales_filtrados, labels=nombres_obras_sociales_ingresos, autopct='%1.1f%%', startangle=140)
+        plt.title("Relación de Obras Sociales por Ingresos")
+        plt.savefig(buffer_ingresos, format='png')
+        plt.close()
+        buffer_ingresos.seek(0)
+
+        # Agregar gráficos al PDF
+        elements.append(Spacer(1, 0.5 * inch))
+        elements.append(Paragraph("Gráfico: Relación de Obras Sociales por Cantidad de Afiliados", styles['Heading2']))
+        elements.append(Image(buffer_afiliados, width=4 * inch, height=4 * inch))
+
+        elements.append(Spacer(1, 0.5 * inch))
+        elements.append(Paragraph("Gráfico: Relación de Obras Sociales por Ingresos", styles['Heading2']))
+        elements.append(Image(buffer_ingresos, width=4 * inch, height=4 * inch))
 
         # Construir el PDF
         doc.build(elements)
