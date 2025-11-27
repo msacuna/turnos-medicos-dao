@@ -9,7 +9,7 @@ class ReporteRepository:
     def session(self):
         return db.get_session
 
-    def get_turno_por_especialidad(self) -> list[dict]:
+    def get_cantidad_turnos_por_especialidad(self) -> list[dict]:
         # SQL puro
         query = text("""
             SELECT e.nombre AS especialidad, COUNT(t.id) AS cantidad_turnos
@@ -20,4 +20,39 @@ class ReporteRepository:
         """)
 
         result = self.session.execute(query)
+        return [row._asdict() for row in result.fetchall()]
+    
+    def get_monto_turnos_por_especialidad(self) -> list[dict]:
+        query = text("""
+            SELECT e.nombre AS especialidad, SUM(t.monto) AS monto_total
+            FROM especialidad e
+            JOIN turno t ON t.id_especialidad = e.id
+            GROUP BY e.nombre
+            ORDER BY monto_total DESC
+        """)
+
+        result = self.session.execute(query)
+        return [row._asdict() for row in result.fetchall()]
+    
+    def get_turnos_por_periodo(self, mes_inicio: int, mes_fin: int, anio: int) -> list[dict]:
+        """
+        Retorna un resumen de turnos en un periodo agrupados por estado, con montos y cantidades.
+        """
+        query = text("""
+            SELECT 
+                t.nombre_estado AS estado,
+                COUNT(t.id) AS cantidad,
+                SUM(t.monto) AS monto_estimado
+            FROM turno t
+            WHERE 
+                EXTRACT(MONTH FROM t.fecha) BETWEEN :mes_inicio AND :mes_fin
+                AND EXTRACT(YEAR FROM t.fecha) = :anio
+            GROUP BY t.nombre_estado
+        """)
+
+        result = self.session.execute(
+            query,
+            # Se pasa la query anterior + los siguientes parámetros
+            {"mes_inicio": mes_inicio, "mes_fin": mes_fin, "anio": anio}
+            )
         return [row._asdict() for row in result.fetchall()]
