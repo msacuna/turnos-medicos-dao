@@ -10,6 +10,16 @@ def reporte_turnos_por_especialidad(service: ReporteService = Depends(get_report
     return service.reporte_turnos_especialidad()
 
 
-@router.get("/pacientes-por-obra-social", response_model=None)
+@router.get("/pacientes-por-obra-social", response_model=dict)
 def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
-    return service.reporte_pacientes_por_obra_social()
+    mensaje = "El reporte se ha generado correctamente y se encuentra en la carpeta 'reportes' del proyecto."
+    ruta = service.reporte_pacientes_por_obra_social()
+    return {"mensaje": mensaje,
+            "ruta": ruta}
+
+@router.get("/profesionales-por-especialidad", response_model=dict)
+def reporte_profesionales_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
+    mensaje = "El reporte se ha generado correctamente y se encuentra en la carpeta 'reportes' del proyecto."
+    ruta = service.reporte_profesionales_por_especialidad()
+    return {"mensaje": mensaje,
+            "ruta": ruta}

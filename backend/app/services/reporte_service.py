@@ -112,8 +112,57 @@ class ReporteService:
         # Devolver la ruta absoluta como respuesta
         return ruta_absoluta
 
+    def reporte_profesionales_por_especialidad(self):
+        resultados = self.repo.get_profesional_por_especialidad()
+        
+        if not resultados:
+            raise Exception("No hay datos disponibles para generar el reporte.")
 
+        # Verificar si la carpeta existe, si no, crearla
+        self.verificar_o_crear_carpeta()
 
+        doc = SimpleDocTemplate("../../reportes/profesionales_por_especialidad.pdf", pagesize=letter)
+
+        elements = []
+        styles = getSampleStyleSheet()
+
+        # Título principal
+        title = "Listado de profesionales según especialidad"
+        elements.append(Paragraph(title, styles['Title']))
+
+        # Párrafo introductorio
+        intro = "Generación de listados por cada especialidad de los profesionales y la cantidad de dichos profesionales."
+        elements.append(Paragraph(intro, styles['Normal']))
+        elements.append(Spacer(1, 0.5 * inch))
+
+        # Generar listas por especialidad
+        for resultado in resultados:
+            especialidad = resultado["especialidad"]
+            cantidad_profesionales = resultado["cantidad_profesionales"]
+            nombres_profesionales = resultado["nombres_profesionales"]
+
+            # Título de la especialidad
+            elements.append(Paragraph(f"Especialidad: {especialidad}", styles['Heading2']))
+            elements.append(Paragraph(f"Cantidad de profesionales: {cantidad_profesionales}", styles['Normal']))
+
+            # Lista de nombres de profesionales
+            if nombres_profesionales:
+                lista_nombres = nombres_profesionales.split(", ")
+                for nombre in lista_nombres:
+                    elements.append(Paragraph(f"- {nombre}", styles['Normal']))
+            else:
+                elements.append(Paragraph("No hay profesionales registrados para esta especialidad.", styles['Italic']))
+
+            elements.append(Spacer(1, 0.1 * inch))  # Espaciado entre especialidades
+
+        # Construir el PDF
+        doc.build(elements)
+
+        # Obtener la ruta absoluta del archivo PDF
+        ruta_absoluta = os.path.abspath("../../reportes/profesionales_por_especialidad.pdf")
+
+        # Devolver la ruta absoluta como respuesta
+        return ruta_absoluta
 
     def verificar_o_crear_carpeta(self):
         carpeta_reportes = os.path.abspath("../../reportes")  # Ensure absolute path
