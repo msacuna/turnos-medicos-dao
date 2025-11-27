@@ -2,7 +2,9 @@ from sqlalchemy import func
 from app.domain.models import Turno
 from app.repositories.turno_repo import TurnoRepository
 from app.domain.schemas.turno import TurnoCreate, TurnoUpdate, TurnoRead
-from app.services import EstadoTurnoService, PacienteService, ConsultaService
+from app.services.estado_turno_service import EstadoTurnoService
+from app.services.paciente_service import PacienteService
+from app.services.consulta_service import ConsultaService
 from app.domain.schemas.consulta import ConsultaCreate
 
 
