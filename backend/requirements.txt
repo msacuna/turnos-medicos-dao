@@ -12,5 +12,6 @@ pymysql
 # alembic
 pydantic-settings
 python-dotenv
-# reportlab
+# reportes
 reportlab
+matplotlib
