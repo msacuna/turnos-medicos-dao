@@ -13,3 +13,4 @@ pymysql
 pydantic-settings
 python-dotenv
 # reportlab
+reportlab
