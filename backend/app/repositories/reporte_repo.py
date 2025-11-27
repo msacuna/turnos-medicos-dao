@@ -97,3 +97,18 @@ class ReporteRepository:
             {"mes_inicio": mes_inicio, "mes_fin": mes_fin, "anio": anio}
         )
         return [row._asdict() for row in result.fetchall()]
+    def get_profesional_por_especialidad(self) -> list[dict]:
+        # SQL puro
+        
+        query = text("""
+            SELECT e.nombre AS especialidad, 
+                   GROUP_CONCAT(CONCAT(pr.nombre, ' ', pr.apellido) SEPARATOR ', ') AS nombres_profesionales,
+                   COUNT(pr.id) AS cantidad_profesionales
+            FROM especialidad e
+            LEFT JOIN profesional pr ON pr.id_especialidad = e.id
+            GROUP BY e.nombre
+            ORDER BY cantidad_profesionales DESC
+        """)
+
+        result = self.session.execute(query)
+        return [row._asdict() for row in result.fetchall()]

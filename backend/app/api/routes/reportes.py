@@ -18,9 +18,10 @@ def reporte_cantidad_turnos_por_especialidad(service: ReporteService = Depends(g
         raise HTTPException(status_code=500, detail=f"Error al generar el PDF: {str(e)}")
 
 
-@router.get("/pacientes-por-obra-social", response_model=None)
+@router.get("/pacientes-por-obra-social", response_model=dict)
 def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
-    return service.reporte_pacientes_por_obra_social()
+    mensaje = "El reporte se ha generado correctamente y se encuentra en la carpeta 'reportes' del proyecto."
+    ruta = service.reporte_pacientes_por_obra_social()
 
 @router.get("/montos-por-especialidad", response_model=None)
 def reporte_montos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
@@ -52,3 +53,10 @@ def obtener_reporte_turnos_periodo(
         return {"mensaje": "PDF generado exitosamente", "ruta": ruta_pdf}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al generar el PDF: {str(e)}")
+
+@router.get("/profesionales-por-especialidad", response_model=dict)
+def reporte_profesionales_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
+    mensaje = "El reporte se ha generado correctamente y se encuentra en la carpeta 'reportes' del proyecto."
+    ruta = service.reporte_profesionales_por_especialidad()
+    return {"mensaje": mensaje,
+            "ruta": ruta}
