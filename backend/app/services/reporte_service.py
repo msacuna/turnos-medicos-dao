@@ -9,3 +9,6 @@ class ReporteService:
         resultados = self.repo.get_turno_por_especialidad()
         reportes = [ReporteTurnoPorEspecialidad.model_validate(r) for r in resultados]
         return reportes
+    
+
+    
