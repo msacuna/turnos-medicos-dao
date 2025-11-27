@@ -34,6 +34,7 @@ app.include_router(medicamentos_router)
 app.include_router(laboratorios_router)
 app.include_router(obras_sociales_router)
 app.include_router(turnos_router)
+app.include_router(reportes_router)
 
 @app.get("/")
 def root():

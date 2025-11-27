@@ -16,6 +16,7 @@ from .profesional_service import ProfesionalService
 from .agenda_profesional_service import AgendaProfesionalService
 from .consulta_service import ConsultaService
 from .paciente_service import PacienteService
+from .reporte_service import ReporteService
 
 __all__ = [
     "EspecialidadService",
@@ -35,5 +36,6 @@ __all__ = [
     "ProfesionalService",
     "AgendaProfesionalService",
     "ConsultaService",
-    "PacienteService"
+    "PacienteService",
+    "ReporteService",
     ]

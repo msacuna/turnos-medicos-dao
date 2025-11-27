@@ -117,3 +117,8 @@ def get_agenda_profesional_service(
             profesional_service: ProfesionalService = Depends(get_profesional_service),
             turno_service: TurnoService = Depends(get_turno_service)) -> AgendaProfesionalService:
     return AgendaProfesionalService(repo, horario_profesional_service, profesional_service, turno_service)
+
+def get_reporte_repo() -> ReporteRepository:
+    return ReporteRepository()
+def get_reporte_service(repo: ReporteRepository = Depends(get_reporte_repo)) -> ReporteService:
+    return ReporteService(repo)

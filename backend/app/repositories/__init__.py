@@ -15,7 +15,7 @@ from .receta_repo import RecetaRepository
 from .detalle_receta_repo import DetalleRecetaRepository
 from .consulta_repo import ConsultaRepository
 from .agenda_profesional_repo import AgendaProfesionalRepo
-
+from .reporte_repo import ReporteRepository
 
 
 __all__ = [
@@ -36,4 +36,5 @@ __all__ = [
     "DetalleRecetaRepository",
     "ConsultaRepository",
     "AgendaProfesionalRepo",
+    "ReporteRepository"
 ]

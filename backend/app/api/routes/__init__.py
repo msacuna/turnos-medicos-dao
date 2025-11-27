@@ -7,7 +7,7 @@ from .obra_social import router as obras_sociales_router
 from .paciente import router as pacientes_router
 from .profesional import router as profesionales_router
 from .turno import router as turnos_router
-
+from .reportes import router as reportes_router
 
 __all__ = [
     "especialidad_router",
@@ -19,4 +19,5 @@ __all__ = [
     "pacientes_router",
     "profesionales_router",
     "turnos_router",
+    "reportes_router",
 ]

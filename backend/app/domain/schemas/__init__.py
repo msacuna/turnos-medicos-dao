@@ -15,6 +15,7 @@ from .receta import RecetaCreate, RecetaRead, RecetaUpdate
 from .consulta import ConsultaCreate, ConsultaRead, ConsultaUpdate
 from .turno import TurnoRead, TurnoCreate, TurnoUpdate
 from .agenda_profesional import AgendaProfesionalRead
+from .reporte import ReporteTurnoPorEspecialidad
 
 # Rebuild models to resolve forward references
 RecetaRead.model_rebuild()
@@ -66,4 +67,5 @@ __all__ = [
     "TurnoCreate",
     "TurnoUpdate",
     "AgendaProfesionalRead",
+    "ReporteTurnoPorEspecialidad"
 ]
