@@ -2,10 +2,8 @@ from sqlalchemy import func
 from app.domain.models import Turno
 from app.repositories.turno_repo import TurnoRepository
 from app.domain.schemas.turno import TurnoCreate, TurnoUpdate, TurnoRead
-from app.services import EstadoTurnoService
-from app.services.paciente_service import PacienteService
+from app.services import EstadoTurnoService, PacienteService, ConsultaService
 from app.domain.schemas.consulta import ConsultaCreate
-from app.services.consulta_service import ConsultaService
 
 
 class TurnoService:
@@ -13,7 +11,7 @@ class TurnoService:
                 repository: TurnoRepository,
                 estado_turno_service: EstadoTurnoService,
                 paciente_service: PacienteService,
-                consulta_service = ConsultaService):
+                consulta_service: ConsultaService):
         
         self.repository = repository
         self.estado_turno_service = estado_turno_service
@@ -25,13 +23,13 @@ class TurnoService:
         turnos = self.repository.get_all()
         return [TurnoRead.model_validate(t) for t in turnos]
     
-    def obtener_por_id(self, id: int) -> TurnoRead | None:
+    def obtener_por_id(self, id: int) -> TurnoRead:
         turno = self.repository.get_by_id(id)
         if not turno:
             raise ValueError(f"No se encontró el turno con ID {id}.")
         return TurnoRead.model_validate(turno)
 
-    def obtener_turno(self, id: int) -> Turno | None:
+    def obtener_turno(self, id: int) -> Turno:
         turno = self.repository.get_by_id_with_especialidad(id)
         if not turno:
             raise ValueError(f"No se encontró el turno con ID {id}.")

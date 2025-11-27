@@ -14,6 +14,8 @@ from .detalle_receta_service import DetalleRecetaService
 from .receta_service import RecetaService
 from .profesional_service import ProfesionalService
 from .agenda_profesional_service import AgendaProfesionalService
+from .consulta_service import ConsultaService
+from .paciente_service import PacienteService
 
 __all__ = [
     "EspecialidadService",
@@ -32,4 +34,6 @@ __all__ = [
     "RecetaService",
     "ProfesionalService",
     "AgendaProfesionalService",
+    "ConsultaService",
+    "PacienteService"
     ]
