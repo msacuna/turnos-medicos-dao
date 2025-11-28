@@ -1,13 +1,12 @@
 // src/pages/medico/Turno.tsx
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import styles from '@/styles/pages/turno.module.css';
 
 import type { Turno } from '@/types/Turno';
 import turnoService from '@/service/turnoService';
-import FinalizarConsultaModal from '@/components/consultas/FinalizarConsultaModal';
 
 import { format } from 'date-fns';
 
@@ -22,7 +21,6 @@ export default function TurnoPage() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedDayTurnos, setSelectedDayTurnos] = useState<Turno[]>([]);
     const [selectedTurno, setSelectedTurno] = useState<Turno | null>(null);
-  const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
 
     const [menuOpen, setMenuOpen] = useState(false);
     const openMenu = () => setMenuOpen(true);
@@ -43,13 +41,6 @@ export default function TurnoPage() {
         load();
     }, []);
 
-    // cuando cambie la fecha seleccionada, actualizar lista lateral
-    useEffect(() => {
-        const sel = selectedDate;
-        const yyyy = sel.getFullYear();
-        const mm = String(sel.getMonth() + 1).padStart(2, '0');
-        const dd = String(sel.getDate()).padStart(2, '0');
-        const dateStr = `${yyyy}-${mm}-${dd}`; // formato yyyy-mm-dd
   useEffect(() => {
     const yyyy = selectedDate.getFullYear();
     const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -80,21 +71,11 @@ export default function TurnoPage() {
 
         // si value es null o distinto, no hacemos nada
     };
-  const handleDayClick = (value: unknown) => {
-    if (value instanceof Date) {
-      setSelectedDate(value);
-      return;
-    }
-    if (Array.isArray(value) && value[0] instanceof Date) {
-      setSelectedDate(value[0]);
-    }
-  };
 
   const cambiarEstadoTurno = async (
     nuevoEstado:
       | 'Disponible'
       | 'Agendado'
-      | 'Finalizado'
       | 'Cancelado'
       | 'En Proceso'
   ) => {
@@ -110,9 +91,6 @@ export default function TurnoPage() {
         }
         case 'Disponible':
           await turnoService.liberar(selectedTurno.id);
-          break;
-        case 'Finalizado':
-          await turnoService.finalizar(selectedTurno.id);
           break;
         case 'Cancelado':
           await turnoService.cancelar(selectedTurno.id);
