@@ -79,9 +79,6 @@ export default function TurnoPage() {
         case 'Disponible':
           await turnoService.liberar(selectedTurno.id);
           break;
-        case 'Finalizado':
-          await turnoService.finalizar(selectedTurno.id);
-          break;
         case 'Cancelado':
           await turnoService.cancelar(selectedTurno.id);
           break;
@@ -216,8 +213,18 @@ export default function TurnoPage() {
         <FinalizarConsultaModal
           turno={selectedTurno}
           onClose={() => setModalFinalizarVisible(false)}
-          onFinalizado={async () => {
-            await cambiarEstadoTurno('Finalizado');
+          onFinalizado={async (consultaData) => {
+            if (!selectedTurno) return;
+            try {
+              await turnoService.finalizar(selectedTurno.id, consultaData); // PASAR consultaData
+              const refreshed = await turnoService.listar();
+              setTurnos(refreshed);
+              setSelectedTurno(null);
+              setModalFinalizarVisible(false);
+            } catch (err) {
+              console.error(err);
+              alert('Error finalizando turno');
+            }
           }}
         />
       )}
