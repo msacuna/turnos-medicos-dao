@@ -273,3 +273,5 @@ class AgendaProfesionalService(SujetoTurno):
             raise RecursoNoEncontradoException(f"No se encontró una agenda para el profesional {id_profesional} en {mes}/{anio_actual}")
         
         return AgendaProfesionalRead.model_validate(agenda)
+    
+    

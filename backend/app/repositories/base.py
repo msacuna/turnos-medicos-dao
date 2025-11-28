@@ -1,11 +1,11 @@
 from typing import Generic, TypeVar, Optional, Any
-from sqlmodel import select
+from sqlmodel import Session, select
 from app.core.database import db
 
 T = TypeVar("T")
 
 class BaseRepository(Generic[T]):
-    def __init__(self, model: type[T]):
+    def __init__(self, model: type[T], session: Session):
         self.model = model
 
     @property

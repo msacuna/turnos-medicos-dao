@@ -51,3 +51,12 @@ def finalizar_turno(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+@router.get("/{turno_id}/marcar-inasistencia", response_model=TurnoRead)
+def marcar_inasistencia(
+    turno_id: int,
+    service: TurnoService = Depends(get_turno_service)
+):
+    try:
+        return service.marcar_inasistencia(turno_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
