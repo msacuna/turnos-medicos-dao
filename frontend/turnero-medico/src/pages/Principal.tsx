@@ -9,6 +9,8 @@ import styles from '../styles/pages/principal.module.css';
 
 export default function Principal() {
   const { user } = useAuth();
+  console.log('USER EN PRINCIPAL:', user);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const openMenu = () => setMenuOpen(true);

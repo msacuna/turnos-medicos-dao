@@ -18,7 +18,7 @@ export default function Login() {
     // ADMIN
     if (usuario === 'admin' && contrasena === '1234') {
       console.log('ENTRÓ COMO ADMIN');
-      login('admin', 'administrador');
+      login('administrador', 'admin', 2);
       navigate('/principal');
       return;
     }
@@ -26,7 +26,9 @@ export default function Login() {
     // MÉDICO
     if (usuario === 'medico' && contrasena === '1234') {
       console.log('ENTRÓ COMO MÉDICO');
-      login('medico', 'medico');
+
+      login('medico', 'medico', 1);
+
       navigate('/principal');
       return;
     }
