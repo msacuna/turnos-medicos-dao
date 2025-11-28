@@ -146,8 +146,19 @@ export default function RegistroTurno() {
     setLoading(prev => ({ ...prev, turnos: true }));
 
     try {
-      const agendaId = 1;
-      const t = await turnoService.obtenerTurnosAgenda(idProfesional, agendaId);
+      // Obtener el mes actual (1-12)
+      const mesActual = new Date().getMonth() + 1;
+      
+      // Buscar la agenda del profesional para el mes actual
+      const agenda = await turnoService.obtenerAgendaPorMes(idProfesional, mesActual);
+      
+      if (!agenda || !agenda.id) {
+        mostrarMensaje('error', 'El profesional no tiene agenda disponible para este mes');
+        return;
+      }
+      
+      // Ahora obtener los turnos con el ID de agenda encontrado
+      const t = await turnoService.obtenerTurnosAgenda(idProfesional, agenda.id);
       
       if (!t || t.length === 0) {
         mostrarMensaje('info', 'El profesional seleccionado no tiene turnos disponibles');
@@ -174,7 +185,7 @@ export default function RegistroTurno() {
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as import('axios').AxiosError;
         if (axiosError.response?.status === 404) {
-          mensaje = 'El profesional no tiene agenda disponible.';
+          mensaje = 'El profesional no tiene agenda disponible para este mes.';
         } else if (axiosError.response?.status === 500) {
           mensaje = 'Error del servidor. El profesional podría no tener agenda configurada.';
         }
