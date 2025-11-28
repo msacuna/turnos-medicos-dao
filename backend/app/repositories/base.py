@@ -7,11 +7,8 @@ T = TypeVar("T")
 class BaseRepository(Generic[T]):
     def __init__(self, model: type[T], session: Session):
         self.model = model
-
-    @property
-    def session(self):
-        return db.get_session
-
+        self.session = session
+    
     def get_all(self) -> list[T]:
         statement = select(self.model)
         result = self.session.exec(statement)
