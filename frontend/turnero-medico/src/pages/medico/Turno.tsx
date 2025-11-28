@@ -25,6 +25,8 @@ export default function TurnoPage() {
       try {
         setLoading(true);
         const data = await turnoService.listar();
+        console.log('TURNOS CARGADOS:', data);
+
         setTurnos(data);
       } catch (err) {
         console.error('Error cargando turnos:', err);
