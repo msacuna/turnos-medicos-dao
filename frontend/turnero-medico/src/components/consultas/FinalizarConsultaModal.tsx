@@ -1,7 +1,8 @@
-// src/components/FinalizarConsultaModal.tsx
-import React, { useState } from 'react';
+// src/components/consultas/FinalizarConsultaModal.tsx
+import React, { useState, useEffect } from 'react';
 import type { Turno } from '@/types/Turno';
-import type { ConsultaCreate } from '@/types/Consulta'; // definí esta interfaz según tu backend
+import type { ConsultaCreate } from '@/types/Consulta';
+import type { RecetaCreate } from '@/types/Receta';
 import styles from '@/styles/components/modal.module.css';
 import medicamentoService from '@/service/medicamentoService';
 
@@ -11,11 +12,6 @@ interface Props {
   onFinalizado: (consultaData: ConsultaCreate) => void;
 }
 
-interface RecetaItem {
-  medicamentoId: number;
-  cantidad: number;
-}
-
 export default function FinalizarConsultaModal({
   turno,
   onClose,
@@ -23,45 +19,78 @@ export default function FinalizarConsultaModal({
 }: Props) {
   const [diagnostico, setDiagnostico] = useState('');
   const [observaciones, setObservaciones] = useState('');
-  const [receta, setReceta] = useState<RecetaItem[]>([
-    { medicamentoId: 0, cantidad: 1 },
-  ]);
+
+  // Inicializamos receta con fecha actual y un detalle vacío
+  const [receta, setReceta] = useState<RecetaCreate>({
+    fecha: new Date().toISOString().slice(0, 10),
+    detalles_receta: [
+      {
+        id_medicamento: 0,
+        dosis: '',
+        frecuencia: '',
+        duracion_dias: 1,
+        cantidad: 1,
+        indicaciones: '',
+      },
+    ],
+  });
+
   const [medicamentos, setMedicamentos] = useState<
     { id: number; nombre: string }[]
   >([]);
 
-  // cargar medicamentos al abrir modal
-  React.useEffect(() => {
+  // Cargar lista de medicamentos al abrir modal
+  useEffect(() => {
     const load = async () => {
-      const data = await medicamentoService.listar();
-      setMedicamentos(data);
+      try {
+        const data = await medicamentoService.getAll();
+        setMedicamentos(data);
+      } catch (err) {
+        console.error('Error cargando medicamentos:', err);
+      }
     };
     load();
   }, []);
 
   const handleAgregarMedicamento = () => {
-    setReceta([...receta, { medicamentoId: 0, cantidad: 1 }]);
+    setReceta((prev) => ({
+      ...prev,
+      detalles_receta: [
+        ...prev.detalles_receta,
+        {
+          id_medicamento: 0,
+          dosis: '',
+          frecuencia: '',
+          duracion_dias: 1,
+          cantidad: 1,
+          indicaciones: '',
+        },
+      ],
+    }));
   };
 
-  const handleCambiarMedicamento = (
+  const handleCambiarDetalle = (
     index: number,
-    campo: 'medicamentoId' | 'cantidad',
+    campo: 'id_medicamento' | 'cantidad',
     valor: number
   ) => {
-    const nuevaReceta = [...receta];
-    nuevaReceta[index][campo] = valor;
-    setReceta(nuevaReceta);
+    setReceta((prev) => {
+      const nuevosDetalles = [...prev.detalles_receta];
+      nuevosDetalles[index][campo] = valor;
+      return { ...prev, detalles_receta: nuevosDetalles };
+    });
   };
 
   const handleFinalizar = () => {
-    if (!diagnostico) {
+    // Validar diagnóstico
+    if (!diagnostico.trim()) {
       alert('El diagnóstico es obligatorio');
       return;
     }
 
-    // validar receta
-    for (const item of receta) {
-      if (item.medicamentoId === 0 || item.cantidad <= 0) {
+    // Validar receta
+    for (const detalle of receta.detalles_receta) {
+      if (detalle.id_medicamento === 0 || detalle.cantidad <= 0) {
         alert(
           'Todos los medicamentos deben estar seleccionados con cantidad válida'
         );
@@ -69,10 +98,12 @@ export default function FinalizarConsultaModal({
       }
     }
 
+    // Enviar datos completos
     onFinalizado({
       diagnostico,
       observaciones,
       receta,
+      nombre_motivo_consulta: 'Consulta General', // o dejar que el backend lo complete
     });
   };
 
@@ -99,17 +130,17 @@ export default function FinalizarConsultaModal({
         </label>
 
         <h4>Receta</h4>
-        {receta.map((item, index) => (
+        {receta.detalles_receta.map((detalle, index) => (
           <div
             key={index}
             style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}
           >
             <select
-              value={item.medicamentoId}
+              value={detalle.id_medicamento}
               onChange={(e) =>
-                handleCambiarMedicamento(
+                handleCambiarDetalle(
                   index,
-                  'medicamentoId',
+                  'id_medicamento',
                   Number(e.target.value)
                 )
               }
@@ -125,13 +156,9 @@ export default function FinalizarConsultaModal({
             <input
               type="number"
               min={1}
-              value={item.cantidad}
+              value={detalle.cantidad}
               onChange={(e) =>
-                handleCambiarMedicamento(
-                  index,
-                  'cantidad',
-                  Number(e.target.value)
-                )
+                handleCambiarDetalle(index, 'cantidad', Number(e.target.value))
               }
             />
           </div>

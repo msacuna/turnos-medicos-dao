@@ -17,11 +17,6 @@ export interface DetalleReceta {
   indicaciones?: string;
 }
 
-export interface RecetaCreate {
-  fecha: string; // puede ser string ISO o Date
-  detalles_receta: DetalleReceta[];
-}
-
 export interface ConsultaCreate {
   diagnostico: string; // obligatorio
   observaciones?: string;
