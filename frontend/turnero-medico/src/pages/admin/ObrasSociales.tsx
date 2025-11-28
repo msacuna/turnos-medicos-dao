@@ -84,7 +84,7 @@ export default function ObrasSociales() {
 
   // 🔹 Eliminar — tu backend NO tiene DELETE, así que esto se deja listo
   const handleDelete = async () => {
-    // ❌ si no tienes DELETE en backend, eliminamos solo del estado
+    if (deleteId === null) return; // seguridad: no hacer nada si no hay ID
     setObras((prev) => prev.filter((o) => o.id !== deleteId));
     setDeleteId(null);
 
