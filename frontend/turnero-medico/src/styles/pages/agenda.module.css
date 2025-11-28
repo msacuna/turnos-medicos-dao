@@ -41,3 +41,22 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+/* agenda.module.css */
+
+/* Todos los días de la semana en negro */
+.react-calendar__month-view__days__day,
+.react-calendar__month-view__days__day--weekend {
+  color: black !important;
+}
+
+/* Días fuera del mes siguen en gris */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #ccc !important;
+}
+
+/* Día seleccionado */
+.react-calendar__tile--active {
+  background: #1e90ff !important; /* azul */
+  color: white !important;
+}

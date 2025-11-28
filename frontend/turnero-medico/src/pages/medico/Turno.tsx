@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '../../styles/global.css';
 import styles from '@/styles/pages/turno.module.css';
 
 import type { Turno } from '@/types/Turno';
