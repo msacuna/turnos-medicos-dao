@@ -37,3 +37,4 @@ class TurnoRepository(BaseRepository[Turno]):
             selectinload(Turno.paciente)
         )
         return list(self.session.exec(statement).all())
+    

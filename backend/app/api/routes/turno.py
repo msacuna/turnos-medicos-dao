@@ -60,3 +60,12 @@ def marcar_inasistencia(
         return service.marcar_inasistencia(turno_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/", response_model=list[TurnoRead])
+def obtener_todos_los_turnos_con_especialidad(
+    service: TurnoService = Depends(get_turno_service)
+):
+    try:
+        return service.obtener_todos()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
