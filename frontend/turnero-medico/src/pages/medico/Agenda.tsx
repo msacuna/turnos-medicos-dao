@@ -20,33 +20,23 @@ export default function Agenda() {
     const [horarioHasta, setHorarioHasta] = useState('17:00');
     const [dias, setDias] = useState<DiaAgenda[]>([]);
 
-    const [anio, setAnio] = useState<number>(new Date().getFullYear());
-    const [mes, setMes] = useState<number>(new Date().getMonth() + 2); // mes siguiente
+  const mesActual = new Date().getMonth() + 1;
+  const [mes, setMes] = useState<number>(mesActual);
 
-    const [menuOpen, setMenuOpen] = useState(false);
-    const openMenu = () => setMenuOpen(true);
-    const closeMenu = () => setMenuOpen(false);
+  useEffect(() => {
+    if (!idProfesional) return; // El user aún no está cargado
 
-    useEffect(() => {
-        if (!idProfesional) return; // protección
-        if (mes > 12) {
-            setMes(1);
-            setAnio(anio + 1);
-        }
-        agendaService.obtenerAgenda(idProfesional, anio, mes).then((agenda) => {
-            if (agenda) setDias(agenda.dias);
-        });
-    }, [anio, mes]);
+    agendaService.obtenerAgenda(idProfesional, mes).then((agenda) => {
+      if (agenda) setDias(agenda.dias);
+      else setDias([]);
+    });
+  }, [idProfesional, mes]); // ← AGREGADO idProfesional
 
-    const handleClickDay = (
-        value: Date | Date[] | null,
-        _event?: React.MouseEvent<HTMLButtonElement>
-    ) => {
-        if (!value) return;
-        if (Array.isArray(value)) return; // ignorar rangos
+  const handleClickDay = (value: Date | Date[] | null) => {
+    if (!value || Array.isArray(value)) return;
 
-        const date: Date = value; // ya es Date
-        setFechaSeleccionada(date);
+    const date = value;
+    setFechaSeleccionada(date);
 
         const diaNum = date.getDate();
         const diaAgenda = dias.find((d) => d.dia === diaNum);
@@ -59,21 +49,23 @@ export default function Agenda() {
         }
     };
 
-    const handleGuardar = () => {
-        if (!fechaSeleccionada) return;
-        if (!idProfesional) return; // ← protección necesaria
+  const handleGuardar = () => {
+    if (!fechaSeleccionada || !idProfesional) return;
+
+    agendaService
+      .guardarDia(idProfesional, fechaSeleccionada, horarioDesde, horarioHasta)
+      .then(() => {
         const diaNum = fechaSeleccionada.getDate();
         const nuevoDia: DiaAgenda = {
-            dia: diaNum,
-            turnos: [{ desde: horarioDesde, hasta: horarioHasta }],
+          dia: diaNum,
+          turnos: [{ desde: horarioDesde, hasta: horarioHasta }],
         };
 
-        agendaService.guardarDia(idProfesional, anio, mes, nuevoDia).then(() => {
-            const otrasDias = dias.filter((d) => d.dia !== diaNum);
-            setDias([...otrasDias, nuevoDia]);
-            alert('Horario guardado!');
-        });
-    };
+        const otrasDias = dias.filter((d) => d.dia !== diaNum);
+        setDias([...otrasDias, nuevoDia]);
+        alert('Horario guardado!');
+      });
+  };
 
     const handleCancelar = () => {
         setFechaSeleccionada(null);
@@ -86,32 +78,23 @@ export default function Agenda() {
         (_, i) => `${i.toString().padStart(2, '0')}:00`
     );
 
-    // Filtra las horas de "Hasta" para que sean posteriores a "Desde"
-    const horasHasta = horas.filter((h) => h > horarioDesde);
+  const horasHasta = horas.filter((h) => h > horarioDesde);
 
     const diaActual = fechaSeleccionada?.getDate() || 0;
     const diaAgenda = dias.find((d) => d.dia === diaActual);
 
     if (!idProfesional) return <p>Cargando datos del profesional...</p>;
 
-    return (
-        <div>
-            <Navbar title="Agenda del médico" onMenuClick={openMenu} />
-            {menuOpen && (
-                <div className={pageStyles.overlay} onClick={closeMenu}></div>
-            )}
-            <div className={styles.container}>
+  return (
+    <div className={styles.container}>
+      <h1>Agenda del médico</h1>
 
-                <MedicoMenu isOpen={menuOpen} onClose={closeMenu} />
-
-                <Calendar
-                    onClickDay={handleClickDay}
-                    value={fechaSeleccionada}
-                    activeStartDate={new Date(anio, mes - 1, 1)}
-                    tileDisabled={({ date, view }) =>
-                        view === 'month' && date.getMonth() !== mes - 1
-                    }
-                />
+      <Calendar
+        key={`${mes}`}
+        onClickDay={handleClickDay}
+        value={fechaSeleccionada}
+        defaultActiveStartDate={new Date(new Date().getFullYear(), mes - 1, 1)}
+      />
 
                 {fechaSeleccionada && (
                     <div className={styles.detalles}>
@@ -130,41 +113,42 @@ export default function Agenda() {
                             </div>
                         )}
 
-                        <div className={styles.selects}>
-                            <label>
-                                Desde:
-                                <select
-                                    value={horarioDesde}
-                                    onChange={(e) => setHorarioDesde(e.target.value)}
-                                >
-                                    {horas.map((h) => (
-                                        <option key={h} value={h}>
-                                            {h}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label>
-                                Hasta:
-                                <select
-                                    value={horarioHasta}
-                                    onChange={(e) => setHorarioHasta(e.target.value)}
-                                >
-                                    {horasHasta.map((h) => (
-                                        <option key={h} value={h}>
-                                            {h}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        </div>
-                        <div className={styles.botones}>
-                            <button onClick={handleCancelar}>Cancelar</button>
-                            <button onClick={handleGuardar}>Guardar cambios</button>
-                        </div>
-                    </div>
-                )}
-            </div>
+          <div className={styles.selects}>
+            <label>
+              Desde:
+              <select
+                value={horarioDesde}
+                onChange={(e) => setHorarioDesde(e.target.value)}
+              >
+                {horas.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Hasta:
+              <select
+                value={horarioHasta}
+                onChange={(e) => setHorarioHasta(e.target.value)}
+              >
+                {horasHasta.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className={styles.botones}>
+            <button onClick={handleCancelar}>Cancelar</button>
+            <button onClick={handleGuardar}>Guardar cambios</button>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 }

@@ -29,20 +29,22 @@ export default function TurnoPage() {
     const closeMenu = () => setMenuOpen(false);
     const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                setLoading(true);
-                const data = await turnoService.listar();
-                setTurnos(data);
-            } catch (err) {
-                console.error('Error cargando turnos:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, []);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const data = await turnoService.listar();
+        console.log('TURNOS CARGADOS:', data);
+
+        setTurnos(data);
+      } catch (err) {
+        console.error('Error cargando turnos:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
     useEffect(() => {
         const yyyy = selectedDate.getFullYear();
