@@ -16,7 +16,7 @@ export default function RegistroTurno() {
   const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
   const [profesionales, setProfesionales] = useState<Profesional[]>([]);
 
-  const [idEspecialidad, setIdEspecialidad] = useState('');
+  const [, setIdEspecialidad] = useState('');
   const [idProfesional, setIdProfesional] = useState('');
 
   const [turnos, setTurnos] = useState<Turno[]>([]);
@@ -29,21 +29,47 @@ export default function RegistroTurno() {
 
   // ------------------ BUSCAR PACIENTE ------------------
   const buscarPaciente = async () => {
-    if (!dni) return;
-    const encontrado = await turnoService.buscarPacientePorDni(dni);
-
-    if (!encontrado) {
-      setPaciente(null);
-      setNoEncontrado(true);
+    if (!dni) {
+      alert('Por favor, ingrese un DNI');
       return;
     }
 
-    setPaciente(encontrado);
-    setNoEncontrado(false);
+    try {
+      const encontrado = await turnoService.buscarPacientePorDni(dni);
 
-    // Cargar especialidades
-    const esp = await turnoService.obtenerEspecialidades();
-    setEspecialidades(esp);
+      if (!encontrado) {
+        setPaciente(null);
+        setNoEncontrado(true);
+        return;
+      }
+
+      setPaciente(encontrado);
+      setNoEncontrado(false);
+
+      // Cargar especialidades
+      const esp = await turnoService.obtenerEspecialidades();
+      setEspecialidades(esp);
+
+    } catch (error: unknown) {
+      console.error('Error buscando paciente:', error);
+      
+      // Manejar diferentes tipos de errores
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as import('axios').AxiosError;
+        
+        if (axiosError.response?.status === 404) {
+          // Paciente no encontrado
+          setPaciente(null);
+          setNoEncontrado(true);
+        } else {
+          // Otros errores (500, network, etc.)
+          alert('Error al buscar el paciente. Por favor, verifique la conexión e intente nuevamente.');
+        }
+      } else {
+        // Error de red u otro tipo
+        alert('Error de conexión. Por favor, intente nuevamente.');
+      }
+    }
   };
 
   // ------------------ BUSCAR PROFESIONALES ------------------
@@ -55,17 +81,49 @@ export default function RegistroTurno() {
 
   // ------------------ BUSCAR TURNOS ------------------
   const obtenerTurnosAgenda = async () => {
-    if (!idProfesional) return;
+  if (!idProfesional) return;
 
-    // El backend debería devolverte una agenda, pero vos me diste el endpoint tipo:
-    // GET /profesionales/{profesional_id}/agenda/{agenda_id}/turnos
-    // Para este ejemplo, voy a asumir agendaId = 1
-    const agendaId = 1; // <- Cambialo cuando tengas el real
-
+  try {
+    const agendaId = 1; // Mantener la lógica original como fallback
     const t = await turnoService.obtenerTurnosAgenda(idProfesional, agendaId);
+    
+    if (!t || t.length === 0) {
+      alert('El profesional seleccionado no tiene turnos disponibles en este momento.');
+      return;
+    }
+    
     setTurnos(t);
     setMostrarCalendario(true);
-  };
+
+  } catch (error: unknown) {
+    console.error('Error obteniendo turnos:', error);
+    
+    let mensaje = 'No se pudieron obtener los turnos del profesional seleccionado.';
+    
+    if (error instanceof Error) {
+      // Error específico de agenda no disponible
+      if (error.message === 'AGENDA_NO_DISPONIBLE') {
+        mensaje = 'El profesional seleccionado no tiene agenda disponible para este período.';
+      }
+      // Error de red/CORS
+      else if (error.message === 'Network Error' || error.message.includes('CORS')) {
+        mensaje = 'Hay un problema de conexión. El profesional seleccionado podría no tener agenda configurada.';
+      }
+    }
+    
+    // Si es un error de axios
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as import('axios').AxiosError;
+      if (axiosError.response?.status === 404) {
+        mensaje = 'El profesional seleccionado no tiene agenda disponible.';
+      } else if (axiosError.response?.status === 500) {
+        mensaje = 'Error del servidor. El profesional seleccionado podría no tener agenda configurada.';
+      }
+    }
+    
+    alert(mensaje + '\n\nPor favor, seleccione otro profesional o intente más tarde.');
+  }
+};
 
   // ------------------ FILTRAR TURNOS POR FECHA ------------------
   const filtrarTurnosPorDia = (fecha: Date) => {
@@ -76,9 +134,30 @@ export default function RegistroTurno() {
 
   // ------------------ AGENDAR ------------------
   const agendar = async (turnoId: number) => {
-    if (!paciente) return; // protección
-    await turnoService.agendar(turnoId, paciente.dni);
-    alert('Turno registrado con éxito');
+    if (!paciente) return;
+    
+    try {
+      // Agendar el turno
+      await turnoService.agendar(turnoId, paciente.dni);
+      
+      // Mostrar mensaje de éxito
+      alert('Turno registrado con éxito');
+
+      // Resetear todo el estado para volver al inicio
+      setDni('');
+      setNoEncontrado(false);
+      setPaciente(null);
+      setEspecialidades([]);
+      setProfesionales([]);
+      setIdProfesional('');
+      setTurnos([]);
+      setTurnosFiltrados([]);
+      setMostrarCalendario(false);
+      
+    } catch (error) {
+      console.error('Error agendando turno:', error);
+      alert('Error al agendar el turno. Por favor, intente nuevamente.');
+    }
   };
 
   return (
@@ -156,7 +235,7 @@ export default function RegistroTurno() {
 
           <div className={styles.actionsRow}>
             <button onClick={() => navigate(-1)}>Cancelar</button>
-            <button onClick={buscarTurnos}>Buscar</button>
+            <button onClick={obtenerTurnosAgenda}>Buscar</button>
           </div>
         </div>
       )}
@@ -176,13 +255,22 @@ export default function RegistroTurno() {
               className={`${styles.turno} ${
                 t.dni_paciente ? styles.ocupado : styles.libre
               }`}
-              onClick={() => !t.dni_paciente && agendar(t.id)}
+              onClick={() => {
+                // Solo permitir click en turnos libres
+                if (!t.dni_paciente) {
+                  agendar(t.id);
+                }
+              }}
+              style={{ 
+                cursor: t.dni_paciente ? 'not-allowed' : 'pointer' 
+              }}
             >
               <span>
-                {t.hora_inicio.substring(0, 5)} - {t.hora_fin.substring(0, 5)}
+                {t.hora_inicio?.substring(0, 5) || 'N/A'} - {t.hora_fin_estimada?.substring(0, 5) || 'N/A'}
               </span>
 
               {t.dni_paciente && <strong>OCUPADO</strong>}
+              {!t.dni_paciente && <em>Disponible</em>}
             </div>
           ))}
         </div>
