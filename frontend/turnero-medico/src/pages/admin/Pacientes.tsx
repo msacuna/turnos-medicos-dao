@@ -12,6 +12,8 @@ export default function Pacientes() {
   const fetchPacientes = async () => {
     try {
       const res = await pacienteService.listar();
+      console.log('DEVUELVE EL BACK:', res);
+
       setPacientes(res);
     } catch (error) {
       console.error('Error al cargar pacientes:', error);
@@ -40,7 +42,7 @@ export default function Pacientes() {
 
       <button
         className={styles.addButton}
-        onClick={() => navigate('/admin/registrar-paciente')}
+        onClick={() => navigate('/admin/RegistroPacientes')}
       >
         + Nuevo paciente
       </button>
@@ -74,7 +76,7 @@ export default function Pacientes() {
                 <button
                   className={styles.editButton}
                   onClick={() =>
-                    navigate(`/admin/registroPaciente?dni=${p.dni}`)
+                    navigate(`/admin/RegistroPacientes?dni=${p.dni}`)
                   }
                 >
                   Editar

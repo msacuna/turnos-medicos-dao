@@ -7,7 +7,9 @@ import {
   type PacienteUpdate,
 } from '../types/Paciente';
 
-const BASE_URL = '/pacientes';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+const BASE_URL = `${API_BASE}/pacientes`;
 
 export default {
   async listar(): Promise<Paciente[]> {

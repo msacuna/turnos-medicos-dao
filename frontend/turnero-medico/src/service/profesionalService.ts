@@ -1,15 +1,15 @@
-// src/service/profesionalService.ts
-
-import api from 'axios';
+import axios from 'axios';
 import {
   type Profesional,
   type ProfesionalCreate,
   type ProfesionalUpdate,
 } from '@/types/Profesional';
 
+const API_BASE = 'http://localhost:8000';
+
 // Obtener todos los profesionales
 export const obtenerProfesionales = async (): Promise<Profesional[]> => {
-  const response = await api.get('/profesionales/');
+  const response = await axios.get(`${API_BASE}/profesionales/`);
   return response.data;
 };
 
@@ -17,7 +17,7 @@ export const obtenerProfesionales = async (): Promise<Profesional[]> => {
 export const obtenerProfesionalPorId = async (
   id: number
 ): Promise<Profesional> => {
-  const response = await api.get(`/profesionales/${id}`);
+  const response = await axios.get(`${API_BASE}/profesionales/${id}`);
   return response.data;
 };
 
@@ -25,19 +25,22 @@ export const obtenerProfesionalPorId = async (
 export const crearProfesional = async (
   data: ProfesionalCreate
 ): Promise<Profesional> => {
-  const response = await api.post('/profesionales/crear', data);
+  const response = await axios.post(`${API_BASE}/profesionales/crear`, data);
   return response.data;
 };
 
-// PREPARADO: actualizar cuando tengas endpoint en backend
+// Actualizar profesional
 export const actualizarProfesional = async (
   data: ProfesionalUpdate
 ): Promise<Profesional> => {
-  const response = await api.put(`/profesionales/${data.id}`, data);
+  const response = await axios.put(
+    `${API_BASE}/profesionales/${data.id}`,
+    data
+  );
   return response.data;
 };
 
-// PREPARADO: eliminar cuando agregues endpoint
+// Eliminar profesional
 export const eliminarProfesional = async (id: number): Promise<void> => {
-  await api.delete(`/profesionales/${id}`);
+  await axios.delete(`${API_BASE}/profesionales/${id}`);
 };
