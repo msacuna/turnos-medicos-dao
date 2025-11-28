@@ -1,6 +1,6 @@
 // src/pages/medico/Turno.tsx
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../../styles/global.css';
@@ -8,7 +8,6 @@ import styles from '@/styles/pages/turno.module.css';
 
 import type { Turno } from '@/types/Turno';
 import turnoService from '@/service/turnoService';
-import FinalizarConsultaModal from '@/components/consultas/FinalizarConsultaModal';
 
 import { format } from 'date-fns';
 
@@ -27,30 +26,27 @@ export default function TurnoPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const openMenu = () => setMenuOpen(true);
     const closeMenu = () => setMenuOpen(false);
-    const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        const data = await turnoService.listar();
-        console.log('TURNOS CARGADOS:', data);
-
-        setTurnos(data);
-      } catch (err) {
-        console.error('Error cargando turnos:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
 
     useEffect(() => {
-        const yyyy = selectedDate.getFullYear();
-        const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const dd = String(selectedDate.getDate()).padStart(2, '0');
-        const dateStr = `${yyyy}-${mm}-${dd}`;
+        const load = async () => {
+            try {
+                setLoading(true);
+                const data = await turnoService.listar();
+                setTurnos(data);
+            } catch (err) {
+                console.error('Error cargando turnos:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+  useEffect(() => {
+    const yyyy = selectedDate.getFullYear();
+    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(selectedDate.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
 
         const filtered = turnos
             .filter((t) => t.fecha === dateStr)
@@ -60,44 +56,50 @@ export default function TurnoPage() {
         setSelectedTurno(null);
     }, [selectedDate, turnos]);
 
+    // no dependemos del type exportado de la lib: aceptamos value como unknown
     const handleDayClick = (value: unknown) => {
+        // si la librería pasa un array (range) o null no rompes nada
         if (value instanceof Date) {
             setSelectedDate(value);
             return;
         }
+
+        // si usás selectRange en algún momento:
         if (Array.isArray(value) && value[0] instanceof Date) {
             setSelectedDate(value[0]);
+            return;
         }
+
+        // si value es null o distinto, no hacemos nada
     };
 
-    const cambiarEstadoTurno = async (
-        nuevoEstado:
-            | 'Disponible'
-            | 'Agendado'
-            | 'Finalizado'
-            | 'Cancelado'
-            | 'En Proceso'
-    ) => {
-        if (!selectedTurno) return;
+  const cambiarEstadoTurno = async (
+    nuevoEstado:
+      | 'Disponible'
+      | 'Agendado'
+      | 'Cancelado'
+      | 'En Proceso'
+  ) => {
+    if (!selectedTurno) return;
 
-        try {
-            switch (nuevoEstado) {
-                case 'Agendado': {
-                    const dni = Number(prompt('DNI del paciente:'));
-                    if (!dni) return;
-                    await turnoService.agendar(selectedTurno.id, dni);
-                    break;
-                }
-                case 'Disponible':
-                    await turnoService.liberar(selectedTurno.id);
-                    break;
-                case 'Cancelado':
-                    await turnoService.cancelar(selectedTurno.id);
-                    break;
-                case 'En Proceso':
-                    await turnoService.iniciar(selectedTurno.id);
-                    break;
-            }
+    try {
+      switch (nuevoEstado) {
+        case 'Agendado': {
+          const dni = Number(prompt('DNI del paciente:'));
+          if (!dni) return;
+          await turnoService.agendar(selectedTurno.id, dni);
+          break;
+        }
+        case 'Disponible':
+          await turnoService.liberar(selectedTurno.id);
+          break;
+        case 'Cancelado':
+          await turnoService.cancelar(selectedTurno.id);
+          break;
+        case 'En Proceso':
+          await turnoService.iniciar(selectedTurno.id);
+          break;
+      }
 
             const refreshed = await turnoService.listar();
             setTurnos(refreshed);
@@ -109,7 +111,7 @@ export default function TurnoPage() {
     };
 
     const fmtTime = (timeStr: string) => {
-        if (!timeStr) return '';
+            if (!timeStr) return '';
         const [h, m] = timeStr.split(':');
         return `${h}:${m}`;
     };
@@ -144,7 +146,7 @@ export default function TurnoPage() {
                                 const count = turnos.filter((t) => t.fecha === dateStr).length;
                                 if (count > 0)
                                     return <div className={styles.dotCount}>{count}</div>;
-                            }
+                                              }
                             return null;
                         }}
                     />
@@ -170,7 +172,6 @@ export default function TurnoPage() {
                                     <div className={styles.slotTime}>
                                         {fmtTime(t.hora_inicio)} - {fmtTime(t.hora_fin_estimada)}
                                     </div>
-
                                     <div className={styles.slotInfo}>
                                         <div className={styles.especialidad}>
                                             {t.especialidad?.nombre ??
@@ -203,55 +204,30 @@ export default function TurnoPage() {
                                 {selectedTurno.monto?.toFixed(2) ?? '0.00'}
                             </p>
 
-                            {/* ✅ Aquí va un solo div con todos los botones dinámicos */}
                             <div className={styles.detailActions}>
+                                {/* Aquí podés poner botones para agendar/liberar/iniciar según estado */}
                                 {selectedTurno.nombre_estado === 'Disponible' && (
-                                    <button onClick={() => cambiarEstadoTurno('Agendado')}>
+                                    <button
+                                        onClick={async () => {
+                                            const dni = Number(prompt('DNI del paciente:'));
+                                            if (!dni) return;
+                                            try {
+                                                await turnoService.agendar(selectedTurno.id, dni);
+                                                const refreshed = await turnoService.listar();
+                                                setTurnos(refreshed);
+                                            } catch (err) {
+                                                console.error(err);
+                                                alert('Error agendando turno');
+                                            }
+                                        }}
+                                    >
                                         Agendar
-                                    </button>
-                                )}
-                                {selectedTurno.nombre_estado === 'Agendado' && (
-                                    <>
-                                        <button onClick={() => cambiarEstadoTurno('Disponible')}>
-                                            Liberar
-                                        </button>
-                                        <button onClick={() => cambiarEstadoTurno('Cancelado')}>
-                                            Cancelar
-                                        </button>
-                                        <button onClick={() => cambiarEstadoTurno('En Proceso')}>
-                                            Iniciar
-                                        </button>
-                                    </>
-                                )}
-                                {selectedTurno.nombre_estado === 'En Proceso' && (
-                                    <button onClick={() => setModalFinalizarVisible(true)}>
-                                        Finalizar
                                     </button>
                                 )}
                             </div>
                         </div>
                     )}
                 </div>
-                {/* ✅ Modal condicional */}
-                {modalFinalizarVisible && selectedTurno && (
-                    <FinalizarConsultaModal
-                        turno={selectedTurno}
-                        onClose={() => setModalFinalizarVisible(false)}
-                        onFinalizado={async (consultaData) => {
-                            if (!selectedTurno) return;
-                            try {
-                                await turnoService.finalizar(selectedTurno.id, consultaData); // PASAR consultaData
-                                const refreshed = await turnoService.listar();
-                                setTurnos(refreshed);
-                                setSelectedTurno(null);
-                                setModalFinalizarVisible(false);
-                            } catch (err) {
-                                console.error(err);
-                                alert('Error finalizando turno');
-                            }
-                        }}
-                    />
-                )}
             </div>
         </div>
     );

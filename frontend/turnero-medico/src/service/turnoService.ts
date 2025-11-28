@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import type { Turno } from '@/types/Turno';
+import type { Profesional } from '@/types/Profesional';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -49,14 +50,44 @@ const turnoService = {
   },
 
   async obtenerProfesionalesPorEspecialidad(idEsp: string) {
-    const res = await axios.get(
-      `${API_BASE}/profesionales/especialidad/${idEsp}`
-    );
-    return res.data;
-  },
+  const res = await axios.get<Profesional[]>(`${API_BASE}/profesionales/`);
+  // Filtrar por id_especialidad del lado del cliente
+  return res.data.filter((prof: Profesional) => prof.id_especialidad === parseInt(idEsp));
+},
 
-  async obtenerTurnosAgenda(idProfesional: string, agendaId: number) {
-    return turnoService.obtenerTurnosDeAgenda(Number(idProfesional), agendaId);
+  async obtenerTurnosAgenda(idProfesional: string, agendaId?: number) {
+    try {
+      // Si se proporciona un agendaId específico, usarlo
+      if (agendaId) {
+        const res = await axios.get<Turno[]>(
+          `${API_BASE}/profesionales/${idProfesional}/agenda/${agendaId}/turnos`
+        );
+        return res.data;
+      }
+      
+      // Si no, intentar obtener la agenda del mes actual
+      const fechaActual = new Date();
+      const mes = fechaActual.getMonth() + 1;
+      
+      const agendaResponse = await axios.get(
+        `${API_BASE}/profesionales/${idProfesional}/agenda/${mes}`
+      );
+      
+      const agenda = agendaResponse.data;
+      const turnosResponse = await axios.get<Turno[]>(
+        `${API_BASE}/profesionales/${idProfesional}/agenda/${agenda.id}/turnos`
+      );
+      
+      return turnosResponse.data;
+      
+    } catch (error: unknown) {
+      // Lanzar un error específico que el componente pueda identificar
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        throw new Error('AGENDA_NO_DISPONIBLE');
+      }
+      // Re-lanzar otros errores
+      throw error;
+    }
   },
 
   async iniciar(turnoId: number) {
