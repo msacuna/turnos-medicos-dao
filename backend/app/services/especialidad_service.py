@@ -16,11 +16,11 @@ class EspecialidadService:
             raise ValueError(f"No se encontró la especialidad con ID {id}.")
         return EspecialidadRead.model_validate(especialidad)
 
-    def crear_especialidad(self, nombre: str) -> EspecialidadCreate:
+    def crear_especialidad(self, nombre: str, precio: float) -> EspecialidadCreate:
         existente = self.repo.get_by_nombre(nombre)
         if existente:
             raise ValueError(f"La especialidad con nombre '{nombre}' ya existe.")
-        nueva = Especialidad(nombre=nombre)
+        nueva = Especialidad(nombre=nombre, precio=precio)
         return EspecialidadCreate.model_validate(self.repo.add(nueva))
 
     def actualizar(self, id: int, data: EspecialidadUpdate) -> Especialidad | None:

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/especialidades", tags=["Especialidades"])
 # esto es uno de los problemitas de usar arquitectura de capas con FastAPI
 @router.post("/", response_model=EspecialidadCreate, status_code=status.HTTP_201_CREATED)
 def crear_especialidad(especialidad_in: EspecialidadCreate, service: EspecialidadService = Depends(get_especialidad_service)):
-    return service.crear_especialidad(nombre=especialidad_in.nombre)
+    return service.crear_especialidad(nombre=especialidad_in.nombre, precio=especialidad_in.precio)
 
 @router.get("/", response_model=list[EspecialidadRead])
 def listar_especialidades(service: EspecialidadService = Depends(get_especialidad_service)):
