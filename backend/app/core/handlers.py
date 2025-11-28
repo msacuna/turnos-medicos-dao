@@ -48,7 +48,7 @@ class ManejadorDeExcepciones:
             content={
                 "error": "Error Interno del Servidor",
                 "mensaje": f"Error: {str(exc)}",
-                #"traceback": traceback.format_exc()
+                "traceback": traceback.format_exc()
             }
         )
     

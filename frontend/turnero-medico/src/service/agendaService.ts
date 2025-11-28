@@ -5,10 +5,10 @@ const API_URL = 'http://localhost:8000/profesionales';
 const DIAS_MAP: Record<string, string> = {
     LUNES: 'Lunes',
     MARTES: 'Martes',
-    MIERCOLES: 'Miercoles',
+    MIÉRCOLES: 'Miercoles',
     JUEVES: 'Jueves',
     VIERNES: 'Viernes',
-    SABADO: 'Sabado',
+    SÁBADO: 'Sabado',
 };
 
 export const getHorariosProfesional = async (profesionalId: number) => {

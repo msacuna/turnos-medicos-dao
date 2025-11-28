@@ -61,8 +61,8 @@ export default function Agenda() {
                             dia_back: backend,
                             color,
                             trabaja: false,
-                            hora_inicio: '',
-                            hora_fin: '',
+                            hora_inicio: '',  // string vacío en lugar de null
+                            hora_fin: '',     // string vacío en lugar de null
                         };
                 });
 
@@ -80,7 +80,17 @@ export default function Agenda() {
     const actualizarCampo = (dia_front: string, campo: string, valor: any) => {
         setHorarios((prev) =>
             prev.map((h) =>
-                h.dia_front === dia_front ? { ...h, [campo]: valor } : h
+                h.dia_front === dia_front 
+                    ? { 
+                        ...h, 
+                        [campo]: valor,
+                        // Si se desactiva trabaja, limpiar las horas
+                        ...(campo === 'trabaja' && !valor && {
+                            hora_inicio: '',
+                            hora_fin: ''
+                        })
+                    } 
+                    : h
             )
         );
     };
@@ -92,7 +102,7 @@ export default function Agenda() {
         setGuardando(dia_front);
 
         try {
-            await updateHorarioProfesional(profesionalId!, horario.dia_back, {
+            await updateHorarioProfesional(profesionalId!, horario.dia_front, {
                 trabaja: horario.trabaja,
                 hora_inicio: horario.trabaja ? horario.hora_inicio : null,
                 hora_fin: horario.trabaja ? horario.hora_fin : null,
@@ -186,7 +196,7 @@ export default function Agenda() {
                                             </svg>
                                             <input
                                                 type="time"
-                                                value={h.hora_inicio}
+                                                value={h.hora_inicio || ''}
                                                 onChange={(e) =>
                                                     actualizarCampo(
                                                         h.dia_front,

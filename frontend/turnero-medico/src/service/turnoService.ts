@@ -83,7 +83,8 @@ const turnoService = {
                 const res = await axios.get<Turno[]>(
                     `${API_BASE}/profesionales/${idProfesional}/agenda/${agendaId}/turnos`
                 );
-                return res.data;
+                // Filtrar turnos con estado DISPONIBLE
+                return res.data.filter(turno => String(turno.nombre_estado) === 'Disponible');
             }
 
             // Si no, intentar obtener la agenda del mes actual
@@ -96,7 +97,8 @@ const turnoService = {
                 `${API_BASE}/profesionales/${idProfesional}/agenda/${agenda.id}/turnos`
             );
 
-            return turnosResponse.data;
+            // Filtrar turnos con estado DISPONIBLE
+            return turnosResponse.data.filter(turno => String(turno.nombre_estado) === 'Disponible');
 
         } catch (error: unknown) {
             // Lanzar un error específico que el componente pueda identificar
