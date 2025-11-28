@@ -30,7 +30,34 @@ const turnoService = {
     return res.data;
   },
 
-  // ...y los demás endpoints de tu router (iniciar, finalizar, cancelar)
+  // Obtener turnos por profesional y agenda
+  async obtenerTurnosDeAgenda(profesionalId: number, agendaId: number) {
+    const res = await axios.get<Turno[]>(
+      `${API_BASE}/profesionales/${profesionalId}/agenda/${agendaId}/turnos`
+    );
+    return res.data;
+  },
+
+  async buscarPacientePorDni(dni: string) {
+    const res = await axios.get(`${API_BASE}/pacientes/${dni}`);
+    return res.data;
+  },
+
+  async obtenerEspecialidades() {
+    const res = await axios.get(`${API_BASE}/especialidades`);
+    return res.data;
+  },
+
+  async obtenerProfesionalesPorEspecialidad(idEsp: string) {
+    const res = await axios.get(
+      `${API_BASE}/profesionales/especialidad/${idEsp}`
+    );
+    return res.data;
+  },
+
+  async obtenerTurnosAgenda(idProfesional: string, agendaId: number) {
+    return turnoService.obtenerTurnosDeAgenda(Number(idProfesional), agendaId);
+  },
 };
 
 export default turnoService;

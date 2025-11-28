@@ -5,11 +5,12 @@ import styles from '../../styles/pages/agenda.module.css';
 import { agendaService } from '../../service/agendaService';
 import type { DiaAgenda } from '../../types/Agenda';
 
-interface AgendaProps {
-  idProfesional: number;
-}
+import { useAuth } from '../../hooks/useAuth';
 
-export default function Agenda({ idProfesional }: AgendaProps) {
+export default function Agenda() {
+  const { user } = useAuth();
+  const idProfesional = user?.id;
+
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null);
   const [horarioDesde, setHorarioDesde] = useState('08:00');
   const [horarioHasta, setHorarioHasta] = useState('17:00');
@@ -19,6 +20,7 @@ export default function Agenda({ idProfesional }: AgendaProps) {
   const [mes, setMes] = useState<number>(new Date().getMonth() + 2); // mes siguiente
 
   useEffect(() => {
+    if (!idProfesional) return; // protección
     if (mes > 12) {
       setMes(1);
       setAnio(anio + 1);
@@ -26,7 +28,7 @@ export default function Agenda({ idProfesional }: AgendaProps) {
     agendaService.obtenerAgenda(idProfesional, anio, mes).then((agenda) => {
       if (agenda) setDias(agenda.dias);
     });
-  }, [idProfesional, anio, mes]);
+  }, [anio, mes]);
 
   const handleClickDay = (
     value: Date | Date[] | null,
@@ -51,6 +53,7 @@ export default function Agenda({ idProfesional }: AgendaProps) {
 
   const handleGuardar = () => {
     if (!fechaSeleccionada) return;
+    if (!idProfesional) return; // ← protección necesaria
     const diaNum = fechaSeleccionada.getDate();
     const nuevoDia: DiaAgenda = {
       dia: diaNum,
@@ -80,6 +83,8 @@ export default function Agenda({ idProfesional }: AgendaProps) {
 
   const diaActual = fechaSeleccionada?.getDate() || 0;
   const diaAgenda = dias.find((d) => d.dia === diaActual);
+
+  if (!idProfesional) return <p>Cargando datos del profesional...</p>;
 
   return (
     <div className={styles.container}>

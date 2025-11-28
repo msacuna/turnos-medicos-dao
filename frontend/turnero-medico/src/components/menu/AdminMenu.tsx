@@ -83,16 +83,20 @@ export default function AdminMenu({ isOpen, onClose }: AdminMenuProps) {
 
       <div className={styles.menuOptions}>
         {/* Otros enlaces */}
-        <Link to="/registrar-turno" className={styles.menuButton}>
+        <Link to="/admin/registroTurno" className={styles.menuButton}>
           Registrar turno
         </Link>
 
-        <Link to="/admin/Pacientes" className={styles.menuButton}>
+        <Link to="/admin/pacientes" className={styles.menuButton}>
           Pacientes
         </Link>
 
         <Link to="/admin/profesionales" className={styles.menuButton}>
           Profesionales
+        </Link>
+
+        <Link to="/admin/reportes" className={styles.menuButton}>
+          Reportes
         </Link>
       </div>
     </div>

@@ -19,6 +19,8 @@ import Pacientes from './pages/admin/Pacientes';
 import Profesional from './pages/admin/Profesional';
 import Turno from './pages/medico/Turno';
 import Agenda from './pages/medico/Agenda';
+import Reporte from './pages/admin/Reporte';
+import RegistroTurno from './pages/admin/RegistroTurno';
 
 function PrivateRoute({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -149,6 +151,26 @@ export default function App() {
             element={
               <RoleRoute allowed={['medico']}>
                 <Agenda />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → REPORTES */}
+          <Route
+            path="/admin/reportes"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <Reporte />
+              </RoleRoute>
+            }
+          />
+
+          {/* ADMIN → REGISTRO TURNOS */}
+          <Route
+            path="/admin/registroTurno"
+            element={
+              <RoleRoute allowed={['administrador']}>
+                <RegistroTurno />
               </RoleRoute>
             }
           />
