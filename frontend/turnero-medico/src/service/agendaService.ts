@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/profesional';
+const API_URL = 'http://localhost:8000/profesionales';
 
 const DIAS_MAP: Record<string, string> = {
   LUNES: 'Lunes',
