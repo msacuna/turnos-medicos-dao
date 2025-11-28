@@ -8,6 +8,7 @@ import obraSocialService from '../../service/obraSocialService';
 import {
   type ObraSocial,
   type ObraSocialPayload,
+  type TipoObraSocialEnum,
 } from '../../types/ObraSocial';
 
 export default function ObrasSociales() {
@@ -53,11 +54,10 @@ export default function ObrasSociales() {
       if (selected) {
         // EDITAR
         const updated = await obraSocialService.actualizar(selected.id!, {
-          id: selected.id,
           nombre: data.nombre,
           cuit: data.cuit,
           porcentaje_cobertura: data.porcentaje_cobertura,
-          nombre_tipo: data.nombre_tipo,
+          nombre_tipo: data.nombre_tipo as TipoObraSocialEnum,
         });
 
         setObras((prev) =>
@@ -66,10 +66,10 @@ export default function ObrasSociales() {
       } else {
         // CREAR
         const created = await obraSocialService.crear({
-          nombre: data.nombre,
-          cuit: data.cuit,
-          porcentaje_cobertura: data.porcentaje_cobertura,
-          nombre_tipo: data.nombre_tipo,
+          nombre: data.nombre!,
+          cuit: data.cuit!,
+          porcentaje_cobertura: data.porcentaje_cobertura!,
+          nombre_tipo: data.nombre_tipo!,
         });
 
         setObras((prev) => [...prev, created]);
@@ -84,7 +84,7 @@ export default function ObrasSociales() {
 
   // 🔹 Eliminar — tu backend NO tiene DELETE, así que esto se deja listo
   const handleDelete = async () => {
-    // ❌ si no tienes DELETE en backend, eliminamos solo del estado
+    if (deleteId === null) return; // seguridad: no hacer nada si no hay ID
     setObras((prev) => prev.filter((o) => o.id !== deleteId));
     setDeleteId(null);
 

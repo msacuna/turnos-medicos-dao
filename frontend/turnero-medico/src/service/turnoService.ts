@@ -58,6 +58,22 @@ const turnoService = {
   async obtenerTurnosAgenda(idProfesional: string, agendaId: number) {
     return turnoService.obtenerTurnosDeAgenda(Number(idProfesional), agendaId);
   },
+
+  async iniciar(turnoId: number) {
+    const res = await axios.patch(`${BASE}/${turnoId}/iniciar`);
+    return res.data;
+  },
+
+  async finalizar(turnoId: number, consultaData: unknown) {
+    const res = await axios.patch(`${BASE}/${turnoId}/finalizar`, consultaData);
+    return res.data;
+  },
+
+  async cancelar(turnoId: number) {
+    // Si querés, podés agregar un endpoint `/cancelar` en backend o usar liberar
+    const res = await axios.patch(`${BASE}/${turnoId}/liberar`);
+    return res.data;
+  },
 };
 
 export default turnoService;
