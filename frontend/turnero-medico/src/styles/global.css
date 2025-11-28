@@ -1,57 +1,55 @@
 :root {
-    --bg: #cce3ea;
-    --primary: #90cbe3;
-    --secondary: #d0e6dd;
-    --accent: #9cd3e8;
-    --text: #000000;
+  --bg: #cce3ea;
+  --primary: #90cbe3;
+  --secondary: #d0e6dd;
+  --accent: #9cd3e8;
+  --text: #000000;
 
-    /* spacing */
-    --container-max-w: 1200px;
-    --radius: 8px;
-    --gap: 1rem;
-    --navbar-height: 64px;
+  /* spacing */
+  --container-max-w: 1200px;
+  --radius: 8px;
+  --gap: 1rem;
+  --navbar-height: 64px;
 }
 
 /* Base resets */
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-
 html,
 body,
 #root {
-    height: 100%;
+  height: 100%;
 }
-
 body {
-    margin: 0;
-    font-family: Inter, system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Contenedor central con borde (espacio entre texto y final pantalla) */
 .app-container {
-    max-width: var(--container-max-w);
-    margin: 0 auto;
-    padding: 24px;
+  max-width: var(--container-max-w);
+  margin: 0 auto;
+  padding: 24px;
 }
 
 /* Card default */
 .card {
-    background: white;
-    border-radius: var(--radius);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-    padding: 16px;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  padding: 16px;
 }
 
 /* Reglas responsivas simples */
 @media (max-width: 768px) {
-    .app-container {
-        padding: 12px;
-    }
+  .app-container {
+    padding: 12px;
+  }
 }
 
 /* FINES DE SEMANA Y DÍAS NORMALES EN NEGRO */
@@ -75,23 +73,4 @@ body {
 .react-calendar__tile--active {
   background: #1e90ff !important;
   color: white !important;
-}
-
-.react-calendarmonth-viewdaysday,
-.react-calendarmonth-viewdaysday--weekend {
-    color: black !important;
-}
-
-.react-calendarmonth-viewdays__day--neighboringMonth {
-    color: #ccc !important;
-}
-
-.react-calendar__tile--now {
-    background: white !important;
-    color: black !important;
-}
-
-.react-calendar__tile--active {
-    background: #1e90ff !important;
-    color: white !important;
 }
