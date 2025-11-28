@@ -106,7 +106,7 @@ export default function ObrasSociales() {
     return (
         <div className={styles.container}>
 
-            <Navbar title="Especialidades" onMenuClick={openMenu} />
+            <Navbar title="" onMenuClick={openMenu} />
             {menuOpen && (
                 <div className={pageStyles.overlay} onClick={closeMenu}></div>
             )}

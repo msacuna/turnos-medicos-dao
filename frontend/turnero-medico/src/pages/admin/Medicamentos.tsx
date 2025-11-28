@@ -91,7 +91,7 @@ export default function Medicamentos() {
             )}
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
-            <h1>Medicamentos</h1>
+
 
             <button className={styles.createButton} onClick={handleCreate}>
                 + Agregar Medicamento

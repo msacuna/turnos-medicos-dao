@@ -28,13 +28,12 @@ export default function Reporte() {
 
     return (
         <div>
-            <Navbar title="" onMenuClick={openMenu} />
+            <Navbar title="Reportes" onMenuClick={openMenu} />
             {menuOpen && (
                 <div className={pageStyles.overlay} onClick={closeMenu}></div>
             )}
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
-            <h1>Reportes</h1>
 
             {mensaje && (
                 <p style={{ background: 'lightgreen', padding: '10px' }}>{mensaje}</p>

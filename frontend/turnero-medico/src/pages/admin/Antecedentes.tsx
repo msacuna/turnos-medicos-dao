@@ -86,8 +86,6 @@ export default function Antecedentes() {
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
 
 
-            <h1>Antecedentes</h1>
-
             <button className={styles.createButton} onClick={handleCreate}>
                 + Agregar Antecedente
             </button>

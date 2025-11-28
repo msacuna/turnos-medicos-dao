@@ -42,13 +42,12 @@ export default function Pacientes() {
 
     return (
         <div className={styles.container}>
-            <Navbar title="" onMenuClick={openMenu} />
+            <Navbar title="Pacientes" onMenuClick={openMenu} />
             {menuOpen && (
                 <div className={pageStyles.overlay} onClick={closeMenu}></div>
             )}
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
-            <h1 className={styles.title}>Pacientes</h1>
 
             <button
                 className={styles.addButton}

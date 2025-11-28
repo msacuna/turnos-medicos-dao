@@ -67,14 +67,12 @@ export default function ProfesionalPage() {
 
     return (
         <div className={styles.container}>
-            <Navbar title="" onMenuClick={openMenu} />
+            <Navbar title="Profesionales" onMenuClick={openMenu} />
             {menuOpen && (
                 <div className={pageStyles.overlay} onClick={closeMenu}></div>
             )}
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
-
-            <h1>Profesionales</h1>
 
             <button className={styles.createButton} onClick={handleCreate}>
                 + Nuevo Profesional

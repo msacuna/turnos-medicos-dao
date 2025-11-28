@@ -89,13 +89,12 @@ export default function RegistroTurno() {
 
     return (
         <div className={styles.container}>
-            <Navbar title="" onMenuClick={openMenu} />
+            <Navbar title="Registrar Turno" onMenuClick={openMenu} />
             {menuOpen && (
                 <div className={pageStyles.overlay} onClick={closeMenu}></div>
             )}
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
-            <h1>Registrar turno</h1>
 
             {/* BUSCAR PACIENTE */}
             <div className={styles.card}>

@@ -91,7 +91,7 @@ export default function Alergias() {
 
             <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
 
-            <h1 className={styles.title}>Alergias</h1>
+            
 
             <button className={styles.createButton} onClick={openCreate}>
                 Nueva Alergia

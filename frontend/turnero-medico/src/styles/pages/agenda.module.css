@@ -1,43 +1,63 @@
 .container {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 10px;
-  font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 10px;
+    font-family: Arial, sans-serif;
 }
 
 .detalles {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
 .selects {
-  display: flex;
-  gap: 20px;
-  margin: 15px 0;
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
 }
 
 .selects label {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
 }
 
 .botones {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
 }
 
 button {
-  padding: 8px 16px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 8px 16px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
+}
+
+/* agenda.module.css */
+
+/* Todos los días de la semana en negro */
+.react-calendar_month-viewdays_day,
+.react-calendar_month-viewdays_day--weekend {
+    color: black !important;
+}
+
+/* Días fuera del mes siguen en gris */
+.react-calendar_month-viewdays_day--neighboringMonth {
+    color: #ccc !important;
+}
+
+/* Día seleccionado */
+.react-calendar__tile--active {
+    background: #1e90ff !important;
+    /* azul */
+    color: white !important;
 }
