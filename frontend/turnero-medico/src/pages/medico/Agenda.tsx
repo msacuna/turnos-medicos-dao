@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import styles from '@/style/global.css';
+import '../../styles/global.css';
+
 import styles from '../../styles/pages/agenda.module.css';
 import { agendaService } from '../../service/agendaService';
 import type { DiaAgenda } from '../../types/Agenda';

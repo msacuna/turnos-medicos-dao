@@ -54,6 +54,29 @@ body {
     }
 }
 
+/* FINES DE SEMANA Y DÍAS NORMALES EN NEGRO */
+.react-calendar__month-view__days__day,
+.react-calendar__month-view__days__day--weekend {
+  color: black !important;
+}
+
+/* DÍA FUERA DEL MES */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #ccc !important;
+}
+
+/* DÍA DE HOY (para que deje de ser azul/amarillo) */
+.react-calendar__tile--now {
+  background: white !important;
+  color: black !important;
+}
+
+/* DÍA SELECCIONADO */
+.react-calendar__tile--active {
+  background: #1e90ff !important;
+  color: white !important;
+}
+
 .react-calendarmonth-viewdaysday,
 .react-calendarmonth-viewdaysday--weekend {
     color: black !important;

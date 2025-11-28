@@ -43,3 +43,5 @@ export class MedicamentoService {
     await axios.delete(`${API_URL}/${id}`);
   }
 }
+
+export default MedicamentoService;

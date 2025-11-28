@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // estilos por defecto (puedes sobrescribir)
+import 'react-calendar/dist/Calendar.css';
+import '../../styles/global.css';
 import styles from '@/styles/pages/turno.module.css';
 
 import type { Turno } from '@/types/Turno';
 import turnoService from '@/service/turnoService';
+import FinalizarConsultaModal from '@/components/consultas/FinalizarConsultaModal';
 
 import { format } from 'date-fns';
 
@@ -25,6 +27,7 @@ export default function TurnoPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const openMenu = () => setMenuOpen(true);
     const closeMenu = () => setMenuOpen(false);
+  const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -41,13 +44,11 @@ export default function TurnoPage() {
         load();
     }, []);
 
-    // cuando cambie la fecha seleccionada, actualizar lista lateral
-    useEffect(() => {
-        const sel = selectedDate;
-        const yyyy = sel.getFullYear();
-        const mm = String(sel.getMonth() + 1).padStart(2, '0');
-        const dd = String(sel.getDate()).padStart(2, '0');
-        const dateStr = `${yyyy}-${mm}-${dd}`; // formato yyyy-mm-dd
+  useEffect(() => {
+    const yyyy = selectedDate.getFullYear();
+    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(selectedDate.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
 
         const filtered = turnos
             .filter((t) => t.fecha === dateStr)
@@ -57,29 +58,59 @@ export default function TurnoPage() {
         setSelectedTurno(null);
     }, [selectedDate, turnos]);
 
-    // no dependemos del type exportado de la lib: aceptamos value como unknown
-    const handleDayClick = (value: unknown) => {
-        // si la librería pasa un array (range) o null no rompes nada
-        if (value instanceof Date) {
-            setSelectedDate(value);
-            return;
+  const handleDayClick = (value: unknown) => {
+    if (value instanceof Date) {
+      setSelectedDate(value);
+      return;
+    }
+    if (Array.isArray(value) && value[0] instanceof Date) {
+      setSelectedDate(value[0]);
+    }
+  };
+
+  const cambiarEstadoTurno = async (
+    nuevoEstado:
+      | 'Disponible'
+      | 'Agendado'
+      | 'Finalizado'
+      | 'Cancelado'
+      | 'En Proceso'
+  ) => {
+    if (!selectedTurno) return;
+
+    try {
+      switch (nuevoEstado) {
+        case 'Agendado': {
+          const dni = Number(prompt('DNI del paciente:'));
+          if (!dni) return;
+          await turnoService.agendar(selectedTurno.id, dni);
+          break;
         }
+        case 'Disponible':
+          await turnoService.liberar(selectedTurno.id);
+          break;
+        case 'Cancelado':
+          await turnoService.cancelar(selectedTurno.id);
+          break;
+        case 'En Proceso':
+          await turnoService.iniciar(selectedTurno.id);
+          break;
+      }
 
-        // si usás selectRange en algún momento:
-        if (Array.isArray(value) && value[0] instanceof Date) {
-            setSelectedDate(value[0]);
-            return;
-        }
+      const refreshed = await turnoService.listar();
+      setTurnos(refreshed);
+      setSelectedTurno(null);
+    } catch (err) {
+      console.error(err);
+      alert('Error cambiando estado del turno');
+    }
+  };
 
-        // si value es null o distinto, no hacemos nada
-    };
-
-    const fmtTime = (timeStr: string) => {
-        // timeStr expected "HH:MM:SS"
-        if (!timeStr) return '';
-        const [h, m] = timeStr.split(':');
-        return `${h}:${m}`;
-    };
+  const fmtTime = (timeStr: string) => {
+    if (!timeStr) return '';
+    const [h, m] = timeStr.split(':');
+    return `${h}:${m}`;
+  };
 
     return (
         <div>
@@ -109,15 +140,12 @@ export default function TurnoPage() {
                                 const dd = String(date.getDate()).padStart(2, '0');
                                 const dateStr = `${yyyy}-${mm}-${dd}`;
                                 const count = turnos.filter((t) => t.fecha === dateStr).length;
-
-                                if (count > 0) {
+                                if (count > 0)
                                     return <div className={styles.dotCount}>{count}</div>;
-                                }
-                            }
+                                              }
                             return null;
                         }}
                     />
-
                     {loading && <p>Cargando turnos...</p>}
                 </div>
 
@@ -173,31 +201,55 @@ export default function TurnoPage() {
                                 {selectedTurno.monto?.toFixed(2) ?? '0.00'}
                             </p>
 
-                            <div className={styles.detailActions}>
-                                {/* Aquí podés poner botones para agendar/liberar/iniciar según estado */}
-                                {selectedTurno.nombre_estado === 'Disponible' && (
-                                    <button
-                                        onClick={async () => {
-                                            const dni = Number(prompt('DNI del paciente:'));
-                                            if (!dni) return;
-                                            try {
-                                                await turnoService.agendar(selectedTurno.id, dni);
-                                                const refreshed = await turnoService.listar();
-                                                setTurnos(refreshed);
-                                            } catch (err) {
-                                                console.error(err);
-                                                alert('Error agendando turno');
-                                            }
-                                        }}
-                                    >
-                                        Agendar
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
+            {/* ✅ Aquí va un solo div con todos los botones dinámicos */}
+            <div className={styles.detailActions}>
+              {selectedTurno.nombre_estado === 'Disponible' && (
+                <button onClick={() => cambiarEstadoTurno('Agendado')}>
+                  Agendar
+                </button>
+              )}
+              {selectedTurno.nombre_estado === 'Agendado' && (
+                <>
+                  <button onClick={() => cambiarEstadoTurno('Disponible')}>
+                    Liberar
+                  </button>
+                  <button onClick={() => cambiarEstadoTurno('Cancelado')}>
+                    Cancelar
+                  </button>
+                  <button onClick={() => cambiarEstadoTurno('En Proceso')}>
+                    Iniciar
+                  </button>
+                </>
+              )}
+              {selectedTurno.nombre_estado === 'En Proceso' && (
+                <button onClick={() => setModalFinalizarVisible(true)}>
+                  Finalizar
+                </button>
+              )}
             </div>
-        </div>
-    );
+          </div>
+        )}
+      </div>
+      {/* ✅ Modal condicional */}
+      {modalFinalizarVisible && selectedTurno && (
+        <FinalizarConsultaModal
+          turno={selectedTurno}
+          onClose={() => setModalFinalizarVisible(false)}
+          onFinalizado={async (consultaData) => {
+            if (!selectedTurno) return;
+            try {
+              await turnoService.finalizar(selectedTurno.id, consultaData); // PASAR consultaData
+              const refreshed = await turnoService.listar();
+              setTurnos(refreshed);
+              setSelectedTurno(null);
+              setModalFinalizarVisible(false);
+            } catch (err) {
+              console.error(err);
+              alert('Error finalizando turno');
+            }
+          }}
+        />
+      )}
+    </div>
+  );
 }
