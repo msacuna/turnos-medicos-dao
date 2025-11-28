@@ -27,7 +27,7 @@ export default function TurnoPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const openMenu = () => setMenuOpen(true);
     const closeMenu = () => setMenuOpen(false);
-  const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
+    const [modalFinalizarVisible, setModalFinalizarVisible] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -44,11 +44,11 @@ export default function TurnoPage() {
         load();
     }, []);
 
-  useEffect(() => {
-    const yyyy = selectedDate.getFullYear();
-    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(selectedDate.getDate()).padStart(2, '0');
-    const dateStr = `${yyyy}-${mm}-${dd}`;
+    useEffect(() => {
+        const yyyy = selectedDate.getFullYear();
+        const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(selectedDate.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
 
         const filtered = turnos
             .filter((t) => t.fecha === dateStr)
@@ -58,59 +58,59 @@ export default function TurnoPage() {
         setSelectedTurno(null);
     }, [selectedDate, turnos]);
 
-  const handleDayClick = (value: unknown) => {
-    if (value instanceof Date) {
-      setSelectedDate(value);
-      return;
-    }
-    if (Array.isArray(value) && value[0] instanceof Date) {
-      setSelectedDate(value[0]);
-    }
-  };
-
-  const cambiarEstadoTurno = async (
-    nuevoEstado:
-      | 'Disponible'
-      | 'Agendado'
-      | 'Finalizado'
-      | 'Cancelado'
-      | 'En Proceso'
-  ) => {
-    if (!selectedTurno) return;
-
-    try {
-      switch (nuevoEstado) {
-        case 'Agendado': {
-          const dni = Number(prompt('DNI del paciente:'));
-          if (!dni) return;
-          await turnoService.agendar(selectedTurno.id, dni);
-          break;
+    const handleDayClick = (value: unknown) => {
+        if (value instanceof Date) {
+            setSelectedDate(value);
+            return;
         }
-        case 'Disponible':
-          await turnoService.liberar(selectedTurno.id);
-          break;
-        case 'Cancelado':
-          await turnoService.cancelar(selectedTurno.id);
-          break;
-        case 'En Proceso':
-          await turnoService.iniciar(selectedTurno.id);
-          break;
-      }
+        if (Array.isArray(value) && value[0] instanceof Date) {
+            setSelectedDate(value[0]);
+        }
+    };
 
-      const refreshed = await turnoService.listar();
-      setTurnos(refreshed);
-      setSelectedTurno(null);
-    } catch (err) {
-      console.error(err);
-      alert('Error cambiando estado del turno');
-    }
-  };
+    const cambiarEstadoTurno = async (
+        nuevoEstado:
+            | 'Disponible'
+            | 'Agendado'
+            | 'Finalizado'
+            | 'Cancelado'
+            | 'En Proceso'
+    ) => {
+        if (!selectedTurno) return;
 
-  const fmtTime = (timeStr: string) => {
-    if (!timeStr) return '';
-    const [h, m] = timeStr.split(':');
-    return `${h}:${m}`;
-  };
+        try {
+            switch (nuevoEstado) {
+                case 'Agendado': {
+                    const dni = Number(prompt('DNI del paciente:'));
+                    if (!dni) return;
+                    await turnoService.agendar(selectedTurno.id, dni);
+                    break;
+                }
+                case 'Disponible':
+                    await turnoService.liberar(selectedTurno.id);
+                    break;
+                case 'Cancelado':
+                    await turnoService.cancelar(selectedTurno.id);
+                    break;
+                case 'En Proceso':
+                    await turnoService.iniciar(selectedTurno.id);
+                    break;
+            }
+
+            const refreshed = await turnoService.listar();
+            setTurnos(refreshed);
+            setSelectedTurno(null);
+        } catch (err) {
+            console.error(err);
+            alert('Error cambiando estado del turno');
+        }
+    };
+
+    const fmtTime = (timeStr: string) => {
+        if (!timeStr) return '';
+        const [h, m] = timeStr.split(':');
+        return `${h}:${m}`;
+    };
 
     return (
         <div>
@@ -142,7 +142,7 @@ export default function TurnoPage() {
                                 const count = turnos.filter((t) => t.fecha === dateStr).length;
                                 if (count > 0)
                                     return <div className={styles.dotCount}>{count}</div>;
-                                              }
+                            }
                             return null;
                         }}
                     />
@@ -201,55 +201,56 @@ export default function TurnoPage() {
                                 {selectedTurno.monto?.toFixed(2) ?? '0.00'}
                             </p>
 
-            {/* ✅ Aquí va un solo div con todos los botones dinámicos */}
-            <div className={styles.detailActions}>
-              {selectedTurno.nombre_estado === 'Disponible' && (
-                <button onClick={() => cambiarEstadoTurno('Agendado')}>
-                  Agendar
-                </button>
-              )}
-              {selectedTurno.nombre_estado === 'Agendado' && (
-                <>
-                  <button onClick={() => cambiarEstadoTurno('Disponible')}>
-                    Liberar
-                  </button>
-                  <button onClick={() => cambiarEstadoTurno('Cancelado')}>
-                    Cancelar
-                  </button>
-                  <button onClick={() => cambiarEstadoTurno('En Proceso')}>
-                    Iniciar
-                  </button>
-                </>
-              )}
-              {selectedTurno.nombre_estado === 'En Proceso' && (
-                <button onClick={() => setModalFinalizarVisible(true)}>
-                  Finalizar
-                </button>
-              )}
+                            {/* ✅ Aquí va un solo div con todos los botones dinámicos */}
+                            <div className={styles.detailActions}>
+                                {selectedTurno.nombre_estado === 'Disponible' && (
+                                    <button onClick={() => cambiarEstadoTurno('Agendado')}>
+                                        Agendar
+                                    </button>
+                                )}
+                                {selectedTurno.nombre_estado === 'Agendado' && (
+                                    <>
+                                        <button onClick={() => cambiarEstadoTurno('Disponible')}>
+                                            Liberar
+                                        </button>
+                                        <button onClick={() => cambiarEstadoTurno('Cancelado')}>
+                                            Cancelar
+                                        </button>
+                                        <button onClick={() => cambiarEstadoTurno('En Proceso')}>
+                                            Iniciar
+                                        </button>
+                                    </>
+                                )}
+                                {selectedTurno.nombre_estado === 'En Proceso' && (
+                                    <button onClick={() => setModalFinalizarVisible(true)}>
+                                        Finalizar
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                {/* ✅ Modal condicional */}
+                {modalFinalizarVisible && selectedTurno && (
+                    <FinalizarConsultaModal
+                        turno={selectedTurno}
+                        onClose={() => setModalFinalizarVisible(false)}
+                        onFinalizado={async (consultaData) => {
+                            if (!selectedTurno) return;
+                            try {
+                                await turnoService.finalizar(selectedTurno.id, consultaData); // PASAR consultaData
+                                const refreshed = await turnoService.listar();
+                                setTurnos(refreshed);
+                                setSelectedTurno(null);
+                                setModalFinalizarVisible(false);
+                            } catch (err) {
+                                console.error(err);
+                                alert('Error finalizando turno');
+                            }
+                        }}
+                    />
+                )}
             </div>
-          </div>
-        )}
-      </div>
-      {/* ✅ Modal condicional */}
-      {modalFinalizarVisible && selectedTurno && (
-        <FinalizarConsultaModal
-          turno={selectedTurno}
-          onClose={() => setModalFinalizarVisible(false)}
-          onFinalizado={async (consultaData) => {
-            if (!selectedTurno) return;
-            try {
-              await turnoService.finalizar(selectedTurno.id, consultaData); // PASAR consultaData
-              const refreshed = await turnoService.listar();
-              setTurnos(refreshed);
-              setSelectedTurno(null);
-              setModalFinalizarVisible(false);
-            } catch (err) {
-              console.error(err);
-              alert('Error finalizando turno');
-            }
-          }}
-        />
-      )}
-    </div>
-  );
+        </div>
+    );
 }

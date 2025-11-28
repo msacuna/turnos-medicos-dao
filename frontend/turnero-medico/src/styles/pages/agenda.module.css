@@ -47,18 +47,19 @@ button:hover {
 /* Todos los días de la semana en negro */
 .react-calendar__month-view__days__day,
 .react-calendar__month-view__days__day--weekend {
-  color: black !important;
+    color: black !important;
 }
 
 /* Días fuera del mes siguen en gris */
 .react-calendar__month-view__days__day--neighboringMonth {
-  color: #ccc !important;
+    color: #ccc !important;
 }
 
 /* Día seleccionado */
 .react-calendar__tile--active {
-  background: #1e90ff !important; /* azul */
-  color: white !important;
+    background: #1e90ff !important;
+    /* azul */
+    color: white !important;
 }
 
 /* agenda.module.css */

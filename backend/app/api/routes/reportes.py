@@ -22,6 +22,8 @@ def reporte_cantidad_turnos_por_especialidad(service: ReporteService = Depends(g
 def reporte_pacientes_por_obra_social(service: ReporteService = Depends(get_reporte_service)):
     mensaje = "El reporte se ha generado correctamente y se encuentra en la carpeta 'reportes' del proyecto."
     ruta = service.reporte_pacientes_por_obra_social()
+    return {"mensaje": mensaje,
+            "ruta": ruta}
 
 @router.get("/montos-por-especialidad", response_model=None)
 def reporte_montos_por_especialidad(service: ReporteService = Depends(get_reporte_service)):
