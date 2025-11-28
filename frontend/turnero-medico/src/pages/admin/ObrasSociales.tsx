@@ -5,6 +5,10 @@ import ObrasSocialesModal from '../../components/obrasSociales/ObrasSocialesModa
 import ConfirmDeleteModal from '../../components/common/ConfirmDeleteModal';
 
 import obraSocialService from '../../service/obraSocialService';
+import Navbar from '@/components/ui/Navbar';
+import AdminMenu from '@/components/menu/AdminMenu';
+import pageStyles from '@/styles/pages/principal.module.css';
+
 import {
   type ObraSocial,
   type ObraSocialPayload,
@@ -19,6 +23,9 @@ export default function ObrasSociales() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const openMenu = () => setMenuOpen(true);
+  const closeMenu = () => setMenuOpen(false);
 
   // 🔹 Cargar desde el backend
   const fetchObras = async () => {
@@ -84,7 +91,7 @@ export default function ObrasSociales() {
 
   // 🔹 Eliminar — tu backend NO tiene DELETE, así que esto se deja listo
   const handleDelete = async () => {
-    if (deleteId === null) return; // seguridad: no hacer nada si no hay ID
+    // ❌ si no tienes DELETE en backend, eliminamos solo del estado
     setObras((prev) => prev.filter((o) => o.id !== deleteId));
     setDeleteId(null);
 
@@ -98,6 +105,13 @@ export default function ObrasSociales() {
 
   return (
     <div className={styles.container}>
+      <Navbar title="Especialidades" onMenuClick={openMenu} />
+      {menuOpen && (
+        <div className={pageStyles.overlay} onClick={closeMenu}></div>
+      )}
+
+      <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
+
       <h1 className={styles.title}>Obras Sociales</h1>
 
       <button className={styles.createButton} onClick={openCreate}>

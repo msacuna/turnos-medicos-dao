@@ -1,0 +1,17 @@
+# Crear entorno virtual (.venv)
+# pip install -r requirements.txt
+# Luego de definir todas las dependencias correctamente
+# ejecutar: pip freeze > requirements.txt
+# (esto coloca dependencias con versiones en este archivo)
+
+fastapi[standard]
+uvicorn[standard]
+sqlalchemy
+sqlmodel # Agregado para usar SQLModel
+pymysql
+# alembic
+pydantic-settings
+python-dotenv
+# reportes
+reportlab
+matplotlib

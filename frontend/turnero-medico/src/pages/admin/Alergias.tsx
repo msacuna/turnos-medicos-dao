@@ -3,138 +3,151 @@ import styles from '../../styles/pages/alergias.module.css';
 
 import AlergiasModal from '../../components/alergias/AlergiasModal';
 import ConfirmDeleteModal from '../../components/common/ConfirmDeleteModal';
+import Navbar from '@/components/ui/Navbar';
+import AdminMenu from '@/components/menu/AdminMenu';
+import pageStyles from '@/styles/pages/principal.module.css';
 
 import { AlergiaService } from '../../service/alergiaService';
 import type {
-  Alergia,
-  AlergiaCreate,
-  AlergiaUpdate,
+    Alergia,
+    AlergiaCreate,
+    AlergiaUpdate,
 } from '../../types/Alergia';
 
 export default function Alergias() {
-  const [alergias, setAlergias] = useState<Alergia[]>([]);
-  const [selected, setSelected] = useState<Alergia | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [alergias, setAlergias] = useState<Alergia[]>([]);
+    const [selected, setSelected] = useState<Alergia | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const openMenu = () => setMenuOpen(true);
+    const closeMenu = () => setMenuOpen(false);
 
-  // 🔹 Cargar alergias del backend
-  const loadAlergias = async () => {
-    try {
-      const data = await AlergiaService.getAll();
-      setAlergias(data);
-    } catch (error) {
-      console.error('Error cargando alergias:', error);
-    }
-  };
+    // 🔹 Cargar alergias del backend
+    const loadAlergias = async () => {
+        try {
+            const data = await AlergiaService.getAll();
+            setAlergias(data);
+        } catch (error) {
+            console.error('Error cargando alergias:', error);
+        }
+    };
 
-  useEffect(() => {
-    loadAlergias();
-  }, []);
+    useEffect(() => {
+        loadAlergias();
+    }, []);
 
-  // 🔹 Abrir modal para crear
-  const openCreate = () => {
-    setSelected(null);
-    setIsModalOpen(true);
-  };
+    // 🔹 Abrir modal para crear
+    const openCreate = () => {
+        setSelected(null);
+        setIsModalOpen(true);
+    };
 
-  // 🔹 Abrir modal para editar
-  const openEdit = (item: Alergia) => {
-    setSelected(item);
-    setIsModalOpen(true);
-  };
+    // 🔹 Abrir modal para editar
+    const openEdit = (item: Alergia) => {
+        setSelected(item);
+        setIsModalOpen(true);
+    };
 
-  // 🔹 Guardar (Crear o Editar)
+    // 🔹 Guardar (Crear o Editar)
 
-  const handleSave = async (data: AlergiaCreate | AlergiaUpdate) => {
-    try {
-      if (selected) {
-        // EDITAR
-        await AlergiaService.update(selected.id, data);
-      } else {
-        // CREAR
-        await AlergiaService.create(data);
-      }
+    const handleSave = async (data: AlergiaCreate | AlergiaUpdate) => {
+        try {
+            if (selected) {
+                // EDITAR
+                await AlergiaService.update(selected.id, data);
+            } else {
+                // CREAR
+                await AlergiaService.create(data);
+            }
 
-      await loadAlergias(); // Recargar lista
-      setIsModalOpen(false); // Cerrar modal
-      setSelected(null); // Resetear seleccionado
-    } catch (error) {
-      console.error('Error guardando alergia:', error);
-    }
-  };
+            await loadAlergias(); // Recargar lista
+            setIsModalOpen(false); // Cerrar modal
+            setSelected(null); // Resetear seleccionado
+        } catch (error) {
+            console.error('Error guardando alergia:', error);
+        }
+    };
 
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) return;
+    const handleDelete = async () => {
+        try {
+            if (!deleteId) return;
 
-      await AlergiaService.delete(deleteId);
+            await AlergiaService.delete(deleteId);
 
-      setAlergias((prev) => prev.filter((e) => e.id !== deleteId));
-      setDeleteId(null);
-    } catch (error) {
-      console.error('Error eliminando alergia:', error);
-    }
-  };
+            setAlergias((prev) => prev.filter((e) => e.id !== deleteId));
+            setDeleteId(null);
+        } catch (error) {
+            console.error('Error eliminando alergia:', error);
+        }
+    };
 
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Alergias</h1>
+    return (
+        <div className={styles.container}>
+            <Navbar title="Alergias" onMenuClick={openMenu} />
+            {menuOpen && (
+                <div className={pageStyles.overlay} onClick={closeMenu}></div>
+            )}
 
-      <button className={styles.createButton} onClick={openCreate}>
-        Nueva Alergia
-      </button>
+            <AdminMenu isOpen={menuOpen} onClose={closeMenu} />
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+            <h1 className={styles.title}>Alergias</h1>
 
-        <tbody>
-          {alergias.map((item) => (
-            <tr key={item.id}>
-              <td>{item.nombre}</td>
+            <button className={styles.createButton} onClick={openCreate}>
+                Nueva Alergia
+            </button>
 
-              <td>
-                <button
-                  className={styles.editButton}
-                  onClick={() => openEdit(item)}
-                >
-                  Editar
-                </button>
+            <table className={styles.table}>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
 
-                <button
-                  className={styles.deleteButton}
-                  onClick={() => setDeleteId(item.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <tbody>
+                    {alergias.map((item) => (
+                        <tr key={item.id}>
+                            <td>{item.nombre}</td>
 
-      {isModalOpen && (
-        <AlergiasModal
-          initialData={selected}
-          onSave={handleSave}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelected(null);
-          }}
-        />
-      )}
+                            <td>
+                                <button
+                                    className={styles.editButton}
+                                    onClick={() => openEdit(item)}
+                                >
+                                    Editar
+                                </button>
 
-      {deleteId !== null && (
-        <ConfirmDeleteModal
-          message="¿Estás seguro de eliminar esta alergia?"
-          onCancel={() => setDeleteId(null)}
-          onConfirm={handleDelete}
-        />
-      )}
-    </div>
-  );
+                                <button
+                                    className={styles.deleteButton}
+                                    onClick={() => setDeleteId(item.id)}
+                                >
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {isModalOpen && (
+                <AlergiasModal
+                    initialData={selected}
+                    onSave={handleSave}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setSelected(null);
+                    }}
+                />
+            )}
+
+            {deleteId !== null && (
+                <ConfirmDeleteModal
+                    message="¿Estás seguro de eliminar esta alergia?"
+                    onCancel={() => setDeleteId(null)}
+                    onConfirm={handleDelete}
+                />
+            )}
+        </div>
+    );
 }
