@@ -21,164 +21,174 @@ import Turno from './pages/medico/Turno';
 import Agenda from './pages/medico/Agenda';
 import Reporte from './pages/admin/Reporte';
 import RegistroTurno from './pages/admin/RegistroTurno';
+import CancelarTurnos from './pages/medico/CancelarTurnos';
 
 function PrivateRoute({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+    const { user } = useAuth();
+    return user ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* LOGIN */}
-          <Route path="/login" element={<Login />} />
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <Routes>
+                    {/* LOGIN */}
+                    <Route path="/login" element={<Login />} />
 
-          {/* PRINCIPAL */}
-          <Route
-            path="/principal"
-            element={
-              <PrivateRoute>
-                <Principal />
-              </PrivateRoute>
-            }
-          />
+                    {/* PRINCIPAL */}
+                    <Route
+                        path="/principal"
+                        element={
+                            <PrivateRoute>
+                                <Principal />
+                            </PrivateRoute>
+                        }
+                    />
 
-          {/* ADMIN → ESPECIALIDADES */}
-          <Route
-            path="/admin/especialidades"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Especialidades />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → ESPECIALIDADES */}
+                    <Route
+                        path="/admin/especialidades"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Especialidades />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → ALERGIAS */}
-          <Route
-            path="/admin/alergias"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Alergias />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → ALERGIAS */}
+                    <Route
+                        path="/admin/alergias"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Alergias />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → OBRAS SOCIALES */}
-          <Route
-            path="/admin/obrasSociales"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <ObrasSociales />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → OBRAS SOCIALES */}
+                    <Route
+                        path="/admin/obrasSociales"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <ObrasSociales />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → ANTECEDENTES */}
-          <Route
-            path="/admin/antecedentes"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Antecedentes />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → ANTECEDENTES */}
+                    <Route
+                        path="/admin/antecedentes"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Antecedentes />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → MEDICAMENTOS */}
-          <Route
-            path="/admin/medicamentos"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Medicamentos />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → MEDICAMENTOS */}
+                    <Route
+                        path="/admin/medicamentos"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Medicamentos />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → REGISTRO PACIENTES */}
-          <Route
-            path="/admin/RegistroPacientes"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <RegistroPacientes />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → REGISTRO PACIENTES */}
+                    <Route
+                        path="/admin/RegistroPacientes"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <RegistroPacientes />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → REGISTRO PROFESIONAL */}
-          <Route
-            path="/admin/RegistroProfesional"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <RegistroProfesional />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → REGISTRO PROFESIONAL */}
+                    <Route
+                        path="/admin/RegistroProfesional"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <RegistroProfesional />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → PACIENTES */}
-          <Route
-            path="/admin/pacientes"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Pacientes />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → PACIENTES */}
+                    <Route
+                        path="/admin/pacientes"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Pacientes />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → PROFESIONAL */}
-          <Route
-            path="/admin/profesionales"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Profesional />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → PROFESIONAL */}
+                    <Route
+                        path="/admin/profesionales"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Profesional />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* MEDICO → TURNOS */}
-          <Route
-            path="/medico/turno"
-            element={
-              <RoleRoute allowed={['medico']}>
-                <Turno />
-              </RoleRoute>
-            }
-          />
+                    {/* MEDICO → TURNOS */}
+                    <Route
+                        path="/medico/turno"
+                        element={
+                            <RoleRoute allowed={['medico']}>
+                                <Turno />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* MEDICO → AGENDA */}
-          <Route
-            path="/medico/agenda"
-            element={
-              <RoleRoute allowed={['medico']}>
-                <Agenda />
-              </RoleRoute>
-            }
-          />
+                    {/* MEDICO → AGENDA */}
+                    <Route
+                        path="/medico/agenda"
+                        element={
+                            <RoleRoute allowed={['medico']}>
+                                <Agenda />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → REPORTES */}
-          <Route
-            path="/admin/reportes"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <Reporte />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → REPORTES */}
+                    <Route
+                        path="/admin/reportes"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <Reporte />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* ADMIN → REGISTRO TURNOS */}
-          <Route
-            path="/admin/registroTurno"
-            element={
-              <RoleRoute allowed={['administrador']}>
-                <RegistroTurno />
-              </RoleRoute>
-            }
-          />
+                    {/* ADMIN → REGISTRO TURNOS */}
+                    <Route
+                        path="/admin/registroTurno"
+                        element={
+                            <RoleRoute allowed={['administrador']}>
+                                <RegistroTurno />
+                            </RoleRoute>
+                        }
+                    />
+                    {/* MEDICO → CANCELAR TURNOS*/}
+                    <Route
+                        path="/medico/cancelar-turnos"
+                        element={
+                            <RoleRoute allowed={['medico']}>
+                                <CancelarTurnos />
+                            </RoleRoute>
+                        }
+                    />
 
-          {/* DEFAULT */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+                    {/* DEFAULT */}
+                    <Route path="*" element={<Navigate to="/login" replace />} />
+                </Routes>
+            </AuthProvider>
+        </BrowserRouter>
+    );
 }
