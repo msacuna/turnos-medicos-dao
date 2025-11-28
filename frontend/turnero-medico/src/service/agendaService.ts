@@ -1,104 +1,36 @@
-import type { AgendaProfesional, DiaAgenda, Turno } from '../types/Agenda';
+import axios from 'axios';
 
-const API_BASE = 'http://localhost:8000/profesionales';
+const API_URL = 'http://localhost:8000/profesional';
 
-// Normaliza día de semana para FastAPI
-const mapDiaSemana = (d: Date): string => {
-  const dia = d.toLocaleDateString('es-ES', { weekday: 'long' });
-  return dia
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // quitar tildes (miércoles → miercoles)
-    .toLowerCase(); // lunes, martes, miercoles...
+const DIAS_MAP: Record<string, string> = {
+  LUNES: 'Lunes',
+  MARTES: 'Martes',
+  MIERCOLES: 'Miercoles',
+  JUEVES: 'Jueves',
+  VIERNES: 'Viernes',
+  SABADO: 'Sabado',
 };
 
-export const agendaService = {
-  // Obtener o crear agenda del mes
-  obtenerAgenda: async (
-    idProfesional: number,
-    mes: number
-  ): Promise<AgendaProfesional | null> => {
-    try {
-      const url = `${API_BASE}/${idProfesional}/agenda/${mes}`;
+export const getHorariosProfesional = async (profesionalId: number) => {
+  const response = await axios.get(`${API_URL}/${profesionalId}/horarios`);
+  return response.data;
+};
 
-      const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
-      });
+export const updateHorarioProfesional = async (
+  profesionalId: number,
+  diaFront: string, // "LUNES"
+  datos: {
+    trabaja: boolean;
+    hora_inicio: string | null;
+    hora_fin: string | null;
+  }
+) => {
+  const diaBack = DIAS_MAP[diaFront]; // ← SE TRANSFORMA A "Lunes"
 
-      // Si la agenda NO existe → creamos una nueva
-      if (response.status === 404) {
-        const createRes = await fetch(url, {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (!createRes.ok) return null;
-        return await createRes.json();
-      }
+  const response = await axios.put(
+    `${API_URL}/${profesionalId}/horarios/${diaBack}`,
+    datos
+  );
 
-      if (!response.ok) return null;
-
-      return await response.json();
-    } catch (e) {
-      console.error('Error obteniendo agenda:', e);
-      return null;
-    }
-  },
-
-  // Guardar horario de un DÍA SEMANAL
-  guardarDia: async (
-    idProfesional: number,
-    fecha: Date,
-    desde: string,
-    hasta: string
-  ) => {
-    try {
-      const diaSemana = mapDiaSemana(fecha);
-
-      const response = await fetch(
-        `${API_BASE}/${idProfesional}/horarios/${diaSemana}`,
-        {
-          method: 'PUT',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            hora_inicio: desde,
-            hora_fin: hasta,
-            trabaja: true,
-          }),
-        }
-      );
-
-      if (!response.ok) return null;
-
-      return await response.json();
-    } catch (e) {
-      console.error('Error guardando horario:', e);
-      return null;
-    }
-  },
-
-  obtenerTurnos: async (
-    idProfesional: number,
-    idAgenda: number
-  ): Promise<Turno[]> => {
-    try {
-      const response = await fetch(
-        `${API_BASE}/${idProfesional}/agenda/${idAgenda}/turnos`,
-        {
-          method: 'GET',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-
-      if (!response.ok) return [];
-
-      return await response.json();
-    } catch (e) {
-      console.error('Error obteniendo turnos:', e);
-      return [];
-    }
-  },
+  return response.data;
 };

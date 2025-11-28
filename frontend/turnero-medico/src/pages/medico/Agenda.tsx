@@ -1,152 +1,168 @@
-import { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import '../../styles/global.css';
-
-import styles from '../../styles/pages/agenda.module.css';
-import { agendaService } from '../../service/agendaService';
-import type { DiaAgenda } from '../../types/Agenda';
-
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import {
+  getHorariosProfesional,
+  updateHorarioProfesional,
+} from '../../service/agendaService';
+import Navbar from '@/components/ui/Navbar';
+
+import MedicoMenu from '@/components/menu/MedicoMenu';
+import pageStyles from '@/styles/pages/principal.module.css';
+
+// Días que mostrará el frontend
+const DIAS = [
+  { front: 'LUNES', backend: 'Lunes' },
+  { front: 'MARTES', backend: 'Martes' },
+  { front: 'MIERCOLES', backend: 'Miercoles' },
+  { front: 'JUEVES', backend: 'Jueves' },
+  { front: 'VIERNES', backend: 'Viernes' },
+  { front: 'SABADO', backend: 'Sabado' },
+];
 
 export default function Agenda() {
   const { user } = useAuth();
-  const idProfesional = user?.id;
 
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null);
-  const [horarioDesde, setHorarioDesde] = useState('08:00');
-  const [horarioHasta, setHorarioHasta] = useState('17:00');
-  const [dias, setDias] = useState<DiaAgenda[]>([]);
+  const profesionalId = user?.id ?? null;
 
-  const mesActual = new Date().getMonth() + 1;
-  const [mes, setMes] = useState<number>(mesActual);
+  const [horarios, setHorarios] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const openMenu = () => setMenuOpen(true);
+  const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
-    if (!idProfesional) return; // El user aún no está cargado
+    if (!profesionalId) return;
 
-    agendaService.obtenerAgenda(idProfesional, mes).then((agenda) => {
-      if (agenda) setDias(agenda.dias);
-      else setDias([]);
-    });
-  }, [idProfesional, mes]); // ← AGREGADO idProfesional
+    const loadHorarios = async () => {
+      try {
+        const data = await getHorariosProfesional(profesionalId);
 
-  const handleClickDay = (value: Date | Date[] | null) => {
-    if (!value || Array.isArray(value)) return;
+        // Normalizamos los datos para que coincidan con los días del frontend
+        const map = DIAS.map(({ front, backend }) => {
+          const encontrado = data.find((h) => h.dia_semana === backend);
+          return encontrado
+            ? {
+                dia_front: front,
+                dia_back: backend,
+                trabaja: true,
+                hora_inicio: encontrado.hora_inicio.slice(0, 5),
+                hora_fin: encontrado.hora_fin.slice(0, 5),
+              }
+            : {
+                dia_front: front,
+                dia_back: backend,
+                trabaja: false,
+                hora_inicio: '',
+                hora_fin: '',
+              };
+        });
 
-    const date = value;
-    setFechaSeleccionada(date);
+        setHorarios(map);
+      } catch (e) {
+        console.error('Error cargando horarios:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const diaNum = date.getDate();
-    const diaAgenda = dias.find((d) => d.dia === diaNum);
-    if (diaAgenda && diaAgenda.turnos.length > 0) {
-      setHorarioDesde(diaAgenda.turnos[0].desde);
-      setHorarioHasta(diaAgenda.turnos[0].hasta);
-    } else {
-      setHorarioDesde('08:00');
-      setHorarioHasta('17:00');
+    loadHorarios();
+  }, [profesionalId]);
+
+  const actualizarCampo = (dia_front: string, campo: string, valor: any) => {
+    setHorarios((prev) =>
+      prev.map((h) =>
+        h.dia_front === dia_front ? { ...h, [campo]: valor } : h
+      )
+    );
+  };
+
+  const guardarCambios = async (dia_front: string) => {
+    const horario = horarios.find((h) => h.dia_front === dia_front);
+    if (!horario) return;
+
+    setGuardando(true);
+
+    try {
+      await updateHorarioProfesional(profesionalId!, horario.dia_back, {
+        trabaja: horario.trabaja,
+        hora_inicio: horario.trabaja ? horario.hora_inicio : null,
+        hora_fin: horario.trabaja ? horario.hora_fin : null,
+      });
+
+      alert('Horario actualizado correctamente');
+    } catch (e) {
+      console.error('Error guardando horario:', e);
+      alert('Error al guardar horario');
+    } finally {
+      setGuardando(false);
     }
   };
 
-  const handleGuardar = () => {
-    if (!fechaSeleccionada || !idProfesional) return;
-
-    agendaService
-      .guardarDia(idProfesional, fechaSeleccionada, horarioDesde, horarioHasta)
-      .then(() => {
-        const diaNum = fechaSeleccionada.getDate();
-        const nuevoDia: DiaAgenda = {
-          dia: diaNum,
-          turnos: [{ desde: horarioDesde, hasta: horarioHasta }],
-        };
-
-        const otrasDias = dias.filter((d) => d.dia !== diaNum);
-        setDias([...otrasDias, nuevoDia]);
-        alert('Horario guardado!');
-      });
-  };
-
-  const handleCancelar = () => {
-    setFechaSeleccionada(null);
-    setHorarioDesde('08:00');
-    setHorarioHasta('17:00');
-  };
-
-  const horas = Array.from(
-    { length: 24 },
-    (_, i) => `${i.toString().padStart(2, '0')}:00`
-  );
-
-  const horasHasta = horas.filter((h) => h > horarioDesde);
-
-  const diaActual = fechaSeleccionada?.getDate() || 0;
-  const diaAgenda = dias.find((d) => d.dia === diaActual);
-
-  if (!idProfesional) return <p>Cargando datos del profesional...</p>;
+  if (loading) return <p>Cargando horarios del profesional...</p>;
 
   return (
-    <div className={styles.container}>
-      <h1>Agenda del médico</h1>
+    <div>
+      <Navbar title="Horarios del Profesional" onMenuClick={openMenu} />
+      {menuOpen && (
+        <div className={pageStyles.overlay} onClick={closeMenu}></div>
+      )}
 
-      <Calendar
-        key={`${mes}`}
-        onClickDay={handleClickDay}
-        value={fechaSeleccionada}
-        defaultActiveStartDate={new Date(new Date().getFullYear(), mes - 1, 1)}
-      />
+      <MedicoMenu isOpen={menuOpen} onClose={closeMenu} />
 
-      {fechaSeleccionada && (
-        <div className={styles.detalles}>
-          <h2>Definir horarios disponibles:</h2>
+      {horarios.map((h) => (
+        <div
+          key={h.dia_front}
+          style={{ border: '1px solid #ccc', padding: 10, marginBottom: 10 }}
+        >
+          <h3>{h.dia_front}</h3>
 
-          {diaAgenda && diaAgenda.turnos.length > 0 && (
-            <div className={styles.turnosGuardados}>
-              <h3>Turnos ya guardados:</h3>
-              <ul>
-                {diaAgenda.turnos.map((t, idx) => (
-                  <li key={idx}>
-                    {t.desde} - {t.hasta}
-                  </li>
-                ))}
-              </ul>
+          <label>
+            <input
+              type="checkbox"
+              checked={h.trabaja}
+              onChange={(e) =>
+                actualizarCampo(h.dia_front, 'trabaja', e.target.checked)
+              }
+            />
+            Trabaja este día
+          </label>
+
+          {h.trabaja && (
+            <div style={{ marginTop: 10 }}>
+              <label>
+                Inicio:
+                <input
+                  type="time"
+                  value={h.hora_inicio}
+                  onChange={(e) =>
+                    actualizarCampo(h.dia_front, 'hora_inicio', e.target.value)
+                  }
+                />
+              </label>
+
+              <label style={{ marginLeft: 20 }}>
+                Fin:
+                <input
+                  type="time"
+                  value={h.hora_fin}
+                  onChange={(e) =>
+                    actualizarCampo(h.dia_front, 'hora_fin', e.target.value)
+                  }
+                />
+              </label>
             </div>
           )}
 
-          <div className={styles.selects}>
-            <label>
-              Desde:
-              <select
-                value={horarioDesde}
-                onChange={(e) => setHorarioDesde(e.target.value)}
-              >
-                {horas.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Hasta:
-              <select
-                value={horarioHasta}
-                onChange={(e) => setHorarioHasta(e.target.value)}
-              >
-                {horasHasta.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className={styles.botones}>
-            <button onClick={handleCancelar}>Cancelar</button>
-            <button onClick={handleGuardar}>Guardar cambios</button>
-          </div>
+          <button
+            onClick={() => guardarCambios(h.dia_front)}
+            disabled={guardando}
+            style={{ marginTop: 10 }}
+          >
+            Guardar {h.dia_front}
+          </button>
         </div>
-      )}
+      ))}
     </div>
   );
 }
