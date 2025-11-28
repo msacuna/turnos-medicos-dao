@@ -1,0 +1,51 @@
+.container {
+  padding: 20px;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.createButton {
+  background-color: var(--primary-color);
+  color: black;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  background: #e7f4f8;
+  padding: 12px;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.editButton {
+  padding: 6px 10px;
+  background-color: #90cbe3;
+  border: none;
+  margin-right: 8px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.deleteButton {
+  padding: 6px 10px;
+  background-color: #e57c7c;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}

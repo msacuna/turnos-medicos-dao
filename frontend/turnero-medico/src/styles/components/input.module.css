@@ -1,0 +1,35 @@
+/* Contenedor para label + input */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* Estilo del label */
+.label {
+  font-size: 0.9rem;
+  color: black;
+  font-weight: 500;
+}
+
+/* Estilo base del input */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+
+  background: white; /* fondo blanco */
+  color: black; /* texto del input negro */
+  border-radius: 10px; /* borde redondeado */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+
+  font-size: 1rem;
+  outline: none;
+  transition: 0.15s ease;
+}
+
+/* Estilo de focus */
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(144, 203, 227, 0.35); /* highlight del primary */
+}

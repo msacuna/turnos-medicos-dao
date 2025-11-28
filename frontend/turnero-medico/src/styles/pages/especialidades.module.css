@@ -1,0 +1,113 @@
+/* ---------- CONTENEDOR GENERAL ---------- */
+.container {
+  padding: 20px;
+}
+
+/* ---------- BUSCADOR + BOTÓN AGREGAR ---------- */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+  font-size: 15px;
+}
+
+/* Botón circular de agregar */
+.addButton {
+  background: #0066ff;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.addButton:hover {
+  background: #0053cc;
+}
+
+/* ---------- TABLA ---------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th {
+  text-align: left;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #ccc;
+  font-size: 16px;
+}
+
+.table td {
+  padding: 14px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 15px;
+}
+
+/* Hover en filas */
+.table tr:hover {
+  background: #f4f7ff;
+}
+
+/* Contenedor scroll para móviles */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+/* ---------- ACCIONES ---------- */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actionButton {
+  background: #444;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.actionButton:hover {
+  background: #222;
+}
+
+/* ---------- OVERLAY DEL MENÚ ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 900;
+}
+
+/* ---------- MENÚ LATERAL (POR SI EN ALGÚN MOMENTO LO USÁS AQUÍ) ---------- */
+.sideMenu {
+  position: fixed;
+  top: 0;
+  left: -260px; /* oculto por defecto */
+  width: 260px;
+  height: 100vh;
+  background: white;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  z-index: 1000;
+  transition: left 0.3s ease;
+}
+
+.sideMenu.open {
+  left: 0;
+}
