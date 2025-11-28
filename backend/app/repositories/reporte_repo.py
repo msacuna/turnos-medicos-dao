@@ -1,13 +1,11 @@
-from sqlmodel import text
+from sqlmodel import Session, text
 from app.core.database import db
 
 class ReporteRepository:
-    def __init__(self):
-        pass
+    def __init__(self, session: Session):
+        self.session = session
 
-    @property
-    def session(self):
-        return db.get_session
+    
 
     def get_cantidad_turnos_por_especialidad(self) -> list[dict]:
         # SQL puro

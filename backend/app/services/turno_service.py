@@ -20,7 +20,7 @@ class TurnoService:
         self.paciente_service = paciente_service
         self.consulta_service = consulta_service
     
-    
+
     def obtener_todos(self) -> list[TurnoRead]:
         turnos = self.repository.get_all()
         return [TurnoRead.model_validate(t) for t in turnos]
@@ -103,3 +103,9 @@ class TurnoService:
         if not turnos:
             raise ValueError(f"No se encontraron turnos para la agenda con ID {id_agenda} en los días {dias}.")
         return [TurnoRead.model_validate(t) for t in turnos]
+    
+    def marcar_inasistencia(self, id: int) -> TurnoRead:
+        turno = self.obtener_turno(id)
+        turno.marcar_inasistencia()
+        turno_actualizado = self.repository.update(turno)
+        return TurnoRead.model_validate(turno_actualizado)

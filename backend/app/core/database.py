@@ -6,7 +6,12 @@ from typing import Optional
 from .config import settings
 
 # 1. Configuración del Engine
-engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(
+    settings.DATABASE_URL,
+    pool_size=20,  # Número máximo de conexiones en el pool
+    max_overflow=30,  # Conexiones adicionales permitidas
+    pool_pre_ping=True  # Verifica que las conexiones sean válidas antes de usarlas
+)
 
 # 2. Función para obtener sesión de DB
 _current_session: ContextVar[Optional[Session]] = ContextVar("current_session", default=None)
@@ -27,13 +32,22 @@ class DatabaseManagerSingleton:
             _current_session.set(current_session)
         return current_session
     
+    def close_session(self):
+        current_session = _current_session.get()
+        if current_session is not None:
+            current_session.close()
+            _current_session.set(None)
+
 db = DatabaseManagerSingleton()
 
+# Actualizar el método get_session para usar un contexto
 def get_session():
-    with db.get_session as session:
+    session = db.get_session
+    try:
         yield session
+    finally:
+        db.close_session()
 
-# Faltaria cerrar la session en algun momento?
 
 def validate_db_schema():
     """
